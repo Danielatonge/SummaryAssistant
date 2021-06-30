@@ -1,0 +1,24 @@
+<template>
+  <v-footer padless>
+    <v-container>
+      <v-row class="py-5">
+        <router-link class="home-link" to="/">
+          <p class="text-h3 font-weight-bold mb-0">Summary</p>
+          <p class="body-2 text-center mb-0">Your personal assistent</p>
+        </router-link>
+        <div class="text-decoration-underline my-auto ml-15">info@summary.com</div>
+      </v-row>
+    </v-container>
+  </v-footer>
+</template>
+
+<script>
+export default {};
+</script>
+
+<style scoped>
+.home-link {
+  text-decoration: none;
+  color: unset;
+}
+</style>
