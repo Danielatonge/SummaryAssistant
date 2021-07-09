@@ -9,20 +9,12 @@
             height="400"
           >
             <div class="my-auto">
-              <div class="mb-6">
-                <v-btn class="px-6" outlined rounded>
-                  Создать конференцию
-                </v-btn>
-              </div>
-              <div class="mb-6">
-                <v-btn class="px-6" outlined rounded>
-                  Подключиться к конференции
-                </v-btn>
-              </div>
-              <div>
-                <v-btn class="px-6" outlined rounded>
-                  Получить расшифровку
-                </v-btn>
+              <div class="mb-6" v-for="(item, index) in functions" :key="index">
+                <router-link :to="item.link" class="reset-link">
+                  <v-btn class="px-6" outlined rounded>
+                    {{ item.text }}
+                  </v-btn>
+                </router-link>
               </div>
             </div>
           </v-sheet>
@@ -33,7 +25,15 @@
 </template>
 
 <script>
-export default {};
+export default {
+  data: () => ({
+    functions: [
+      { text: "Создать конференцию", link: "/conference/create" },
+      { text: "Подключиться к конференции", link: "/conference/connect" },
+      { text: "Получить расшифровку", link: "/conference/get-encoding" },
+    ],
+  }),
+};
 </script>
 
 <style>

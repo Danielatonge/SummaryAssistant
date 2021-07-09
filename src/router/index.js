@@ -1,13 +1,17 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
-import Decoder from "../views/Decoder.vue";
+import Decode from "../views/Decode.vue";
 import Conference from "../views/Conference.vue";
 import CreateConference from "../components/CreateConference.vue";
+import CreatedConference from "../components/CreatedConference.vue";
 import ConnectConference from "../components/ConnectConference.vue";
+import ConnectedConference from "../components/ConnectedConference.vue";
 import GetConference from "../components/GetConference.vue";
 import VoiceNote from "../views/VoiceNote.vue";
 import Reference from "../views/Reference.vue";
+import Settings from "../views/Settings.vue";
+import DecodeVideo from "../components/DecodeVideo.vue";
 
 
 Vue.use(VueRouter);
@@ -19,31 +23,14 @@ const routes = [
     component: Home,
   },
   {
-    path: "/decoder",
-    name: "Decoder",
-    component: Decoder,
+    path: "/decode",
+    name: "Decode",
+    component: Decode,
   },
   {
-    path: "/conference",
-    name: "Conference",
-    component: Conference,
-    children: [
-      {
-        path: 'create',
-        name: "CreateConference",
-        component: CreateConference,
-      },
-      {
-        path: 'connect',
-        name: "ConnectConference",
-        component: ConnectConference,
-      },
-      {
-        path: 'get-encoding',
-        name: "GetConference",
-        component: GetConference,
-      },
-    ]
+    path: "/decode/video",
+    name: "DecodeVideo",
+    component: DecodeVideo,
   },
   {
     path: "/voice_note",
@@ -54,7 +41,42 @@ const routes = [
     path: "/reference",
     name: "Reference",
     component: Reference,
-  }
+  },
+  {
+    path: "/settings",
+    name: "Settings",
+    component: Settings,
+  },
+  {
+    path: "/conference",
+    name: "Conference",
+    component: Conference,
+  },
+  {
+    path: "/conference/create",
+    name: "CreateConference",
+    component: CreateConference,
+  },
+  {
+    path: "/conference/created",
+    name: "CreatedConference",
+    component: CreatedConference,
+  },
+  {
+    path: "/conference/connect",
+    name: "ConnectConference",
+    component: ConnectConference,
+  },
+  {
+    path: "/conference/connected",
+    name: "ConnectedConference",
+    component: ConnectedConference,
+  },
+  {
+    path: "/conference/get-encoding",
+    name: "GetConference",
+    component: GetConference,
+  },
 ];
 
 const router = new VueRouter({
