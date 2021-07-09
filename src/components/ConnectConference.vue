@@ -7,7 +7,7 @@
             <v-row class="justify-center">
               <v-col cols="12" class="d-flex">
                 <v-icon large @click="RouteConference">mdi-arrow-left</v-icon>
-                <div class="text-h4 mx-auto">
+                <div class="text-h5 mx-auto">
                   <span class="ml-n10"> Подключение к конференции </span>
                 </div>
               </v-col>
