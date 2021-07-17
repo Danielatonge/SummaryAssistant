@@ -1,13 +1,12 @@
 <template>
   <div>
     <v-container>
-      <v-row>
-        <router-link class="reset-link" to="/">
-          <p class="text-h3 font-weight-bold mb-0">Summary</p>
+      <v-row class="d-flex justify-space-between">
+        <router-link class="reset-link text-color" to="/" >
+          <p class="font-weight-bold mb-0" style="font-size:36px">Summary</p>
           <p class="body-2 text-center">Your personal assistent</p>
         </router-link>
 
-        <v-spacer></v-spacer>
         <div class="my-auto hidden-lg-and-up">
           <v-menu offset-y>
             <template v-slot:activator="{ on, attrs }">
@@ -37,21 +36,23 @@
         </div>
         <div class="my-auto d-lg-flex hidden-md-and-down">
           <v-tabs v-model="tab" class="mr-4" background-color="transparent">
-            <v-tabs-slider color="blue"></v-tabs-slider>
+            <v-tabs-slider class="text-color"></v-tabs-slider>
             <v-tab
               v-for="item in links"
               :key="item.text"
               router
               :to="item.route"
+              class="size-tab text-color"
             >
               {{ item.text }}
             </v-tab>
             <v-tab router to="/settings">
-              <v-icon>mdi-cog-outline</v-icon>
+              <v-icon class="text-color">mdi-cog-outline</v-icon>
             </v-tab>
           </v-tabs>
-          <v-btn rounded outlined class="my-auto"> Войти </v-btn>
+          
         </div>
+        <v-btn rounded outlined class="my-auto d-lg-flex hidden-md-and-down size-tab text-color"> Войти </v-btn>
       </v-row>
     </v-container>
   </div>
@@ -60,7 +61,7 @@
 <script>
 export default {
   data: () => ({
-    tab: "/",
+    tab: null,
     links: [
       { text: "Расшифровка", route: "/decode" },
       { text: "Конференции", route: "/conference" },
@@ -75,5 +76,9 @@ export default {
 .reset-link {
   text-decoration: none;
   color: unset !important;
+}
+.size-tab {
+  font-size: 1.125rem !important;
+  font-weight: 400 !important;
 }
 </style>

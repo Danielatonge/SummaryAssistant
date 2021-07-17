@@ -15,7 +15,7 @@
         </v-col>
         <v-col cols="12" md="7" lg="8" xl="9" class="pl-md-10 my-auto">
             <span><v-icon>mdi-help-circle-outline</v-icon></span>
-          <v-img :src="require('../assets/signal.jpg')"></v-img>
+          <v-img :src="require('../assets/signal.png')"></v-img>
         </v-col>
       </v-row>
     </v-container>

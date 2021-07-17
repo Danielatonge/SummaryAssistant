@@ -10,7 +10,7 @@
         <v-col cols="12" class="voice-border">
           <v-row>
             <v-col cols="6" md="4" lg="3">
-              <v-navigation-drawer permanent height="500px" v-model="archives">
+              <v-navigation-drawer permanent height="500px" color="transparent" v-model="archives">
                 <template v-slot:prepend>
                   <v-list-item>
                     <v-list-item-content class="text-center">
@@ -40,7 +40,7 @@
       </v-row>
       <v-row class="mt-10">
         <v-col cols="12">
-          <v-img :src="require('../assets/signal.jpg')"></v-img>
+          <v-img :src="require('../assets/signal.png')"></v-img>
         </v-col>
       </v-row>
     </v-container>

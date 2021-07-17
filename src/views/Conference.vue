@@ -11,7 +11,7 @@
             <div class="my-auto">
               <div class="mb-6" v-for="(item, index) in functions" :key="index">
                 <router-link :to="item.link" class="reset-link">
-                  <v-btn class="px-6" outlined rounded>
+                  <v-btn dark width="330px" outlined rounded :class="item.blue? 'primary-fill': 'orange-fill'">
                     {{ item.text }}
                   </v-btn>
                 </router-link>
@@ -28,13 +28,17 @@
 export default {
   data: () => ({
     functions: [
-      { text: "Создать конференцию", link: "/conference/create" },
-      { text: "Подключиться к конференции", link: "/conference/connect" },
-      { text: "Получить расшифровку", link: "/conference/get-encoding" },
+      { text: "Создать конференцию", link: "/conference/create", blue: false },
+      { text: "Подключиться к конференции", link: "/conference/connect", blue: true },
+      { text: "Получить расшифровку", link: "/conference/get-encoding", blue: true },
     ],
   }),
 };
 </script>
 
 <style>
+.orange-fill {
+  background-color: #fb6337;
+  border: unset;
+}
 </style>

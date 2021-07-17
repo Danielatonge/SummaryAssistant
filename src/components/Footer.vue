@@ -1,5 +1,5 @@
 <template>
-  <v-footer padless>
+  <v-footer padless class="footer-background" dark>
     <v-container>
       <v-row class="py-5">
         <router-link class="home-link" to="/">
@@ -20,5 +20,9 @@ export default {};
 .home-link {
   text-decoration: none;
   color: unset;
+}
+.footer-background {
+  background: url('../assets/footer_background.svg') no-repeat center center !important;
+  background-size: cover !important;
 }
 </style>

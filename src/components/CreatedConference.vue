@@ -8,10 +8,10 @@
           </v-icon>
           <v-spacer></v-spacer>
           <div class="d-block d-sm-flex">
-            <v-btn class="px-4 mr-3" outlined rounded>
+            <v-btn class="px-4 mr-3 primary-fill" dark outlined rounded>
               Получить расшифровку
             </v-btn>
-            <v-btn class="px-4" outlined rounded> Завершить конференцию </v-btn>
+            <v-btn class="px-4 primary-fill" dark outlined rounded> Завершить конференцию </v-btn>
           </div>
         </v-col>
         <v-col cols="12" class="voice-border">
@@ -21,6 +21,7 @@
                 permanent
                 height="500px"
                 v-model="individual"
+                color="transparent"
               >
                 <template v-slot:prepend>
                   <v-list-item>
@@ -55,7 +56,7 @@
       </v-row>
       <v-row class="mt-10">
         <v-col cols="12">
-          <v-img :src="require('../assets/signal.jpg')"></v-img>
+          <v-img :src="require('../assets/signal.png')"></v-img>
         </v-col>
       </v-row>
     </v-container>

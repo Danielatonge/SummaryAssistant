@@ -6,8 +6,8 @@
           <div class="text-h5 setting-column">
             <v-row class="justify-center">
               <v-col cols="12" class="d-flex">
-                <v-icon large @click="RouteConference"> mdi-arrow-left </v-icon>
-                <div class="text-h4 mx-auto">
+                <v-icon class="text-color" large @click="RouteConference"> mdi-arrow-left </v-icon>
+                <div class="text-h5 mx-auto text-color">
                   <span class="ml-n10"> Создание конференции </span>
                 </div>
               </v-col>
@@ -37,7 +37,7 @@
             <v-row class="justify-center">
               <v-col cols="6" class="text-center">
                 <router-link to="/conference/created" class="reset-link">
-                  <v-btn class="px-10" outlined rounded> Создать </v-btn>
+                  <v-btn class="px-10 primary-fill" dark outlined rounded> Создать </v-btn>
                 </router-link>
               </v-col>
             </v-row>

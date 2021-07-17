@@ -1,7 +1,7 @@
 <template>
   <div>
-    <v-container class="text-center mt-10">
-      <p class="text-h5 font-weight-bold mb-7">
+    <v-container class="text-center mt-10 ">
+      <p class="text-h5 font-weight-bold mb-7 text-color">
         Расшифровка аудио и видео файлов
       </p>
       <v-row class="d-flex justify-center">
@@ -12,12 +12,12 @@
             color="grey lighten-3"
             height="400"
           >
-            <div class="my-auto">
-              <v-icon class="icon-file-move pb-2">mdi-file-move</v-icon>
+            <div class="my-auto text-color">
+              <v-icon class="icon-file-move pb-2 text-color">mdi-file-move</v-icon>
               <p>Пертащите или загрузите файл</p>
               <v-dialog v-model="dialog" persistent max-width="600px">
                 <template v-slot:activator="{ on, attrs }">
-                  <v-btn class="px-6" outlined rounded v-bind="attrs" v-on="on"
+                  <v-btn class="px-6 primary-fill" dark outlined rounded v-bind="attrs" v-on="on"
                     >Загрузить файл</v-btn
                   >
                 </template>

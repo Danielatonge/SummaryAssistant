@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-container class="pb-10">
+    <v-container class="pb-10 text-color">
       <v-row>
         <v-col cols="12">
           <p class="text-h3 font-weight-bold text-center">

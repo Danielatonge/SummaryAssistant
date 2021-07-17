@@ -4,11 +4,11 @@
       <v-row class="justify-center">
         <v-col cols="12" lg="7">
           <div class="text-h5 setting-column">
-            <v-row class="justify-center">
+            <v-row class="justify-center text-color">
               <v-col cols="12" class="d-flex">
-                <v-icon large @click="RouteConference">mdi-arrow-left</v-icon>
-                <div class="text-h4 mx-auto">
-                  <span class=""> Подключение к конференции </span>
+                <v-icon class="text-color" large @click="RouteConference">mdi-arrow-left</v-icon>
+                <div class="text-h5 mx-auto">
+                  <span> Подключение к конференции </span>
                 </div>
               </v-col>
             </v-row>
@@ -37,7 +37,7 @@
             <v-row class="justify-center">
               <v-col cols="6" class="text-center">
                 <router-link to="/conference/connected" class="reset-link">
-                  <v-btn class="px-10" outlined rounded> Подключиться </v-btn>
+                  <v-btn class="px-10 primary-fill" dark outlined rounded> Подключиться </v-btn>
                 </router-link>
               </v-col>
             </v-row>
