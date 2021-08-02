@@ -18,8 +18,8 @@
               </v-col>
               <v-col cols="6">
                 <v-text-field
-                  label="ALT + G"
-                  disabled
+                  v-model="settings.play_pause"
+                  @change="play_pauseChanged"
                   outlined
                   background-color="grey lighten-2"
                   hide-details="auto"
@@ -32,8 +32,8 @@
               </v-col>
               <v-col cols="6">
                 <v-text-field
-                  label="P"
-                  disabled
+                  v-model="settings.previous_period"
+                  @change="previous_periodChanged"
                   outlined
                   background-color="grey lighten-2"
                   hide-details="auto"
@@ -46,8 +46,8 @@
               </v-col>
               <v-col cols="6">
                 <v-text-field
-                  label="ALT + M"
-                  disabled
+                  v-model="settings.next_period"
+                  @change="next_periodChanged"
                   outlined
                   background-color="grey lighten-2"
                   hide-details="auto"
@@ -60,8 +60,8 @@
               </v-col>
               <v-col cols="6">
                 <v-text-field
-                  label="G"
-                  disabled
+                  v-model="settings.decrease_speed"
+                  @change="decrease_speedChanged"
                   outlined
                   background-color="grey lighten-2"
                   hide-details="auto"
@@ -74,8 +74,8 @@
               </v-col>
               <v-col cols="6">
                 <v-text-field
-                  label="SHIFT + G"
-                  disabled
+                  v-model="settings.increase_speed"
+                  @change="increase_speedChanged"
                   outlined
                   background-color="grey lighten-2"
                   hide-details="auto"
@@ -88,8 +88,8 @@
               </v-col>
               <v-col cols="6">
                 <v-text-field
-                  label="F12"
-                  disabled
+                  v-model="settings.restart"
+                  @change="restartChanged"
                   outlined
                   background-color="grey lighten-2"
                   hide-details="auto"
@@ -100,15 +100,17 @@
         </v-col>
         <v-col cols="12" lg="6">
           <div class="text-h5 setting-column">
-            <p class="text-center text-h4 mb-10">Горячие клавиши текстового редактора</p>
+            <p class="text-center text-h4 mb-10">
+              Горячие клавиши текстового редактора
+            </p>
             <v-row>
               <v-col cols="6" class="my-auto">
                 <div>Добавить метку</div>
               </v-col>
               <v-col cols="6">
                 <v-text-field
-                  label="A"
-                  disabled
+                  v-model="settings.add_label"
+                  @change="add_labelChanged"
                   outlined
                   background-color="grey lighten-2"
                   hide-details="auto"
@@ -121,8 +123,8 @@
               </v-col>
               <v-col cols="6">
                 <v-text-field
-                  label="H"
-                  disabled
+                  v-model="settings.copy"
+                  @change="copyChanged"
                   outlined
                   background-color="grey lighten-2"
                   hide-details="auto"
@@ -137,15 +139,73 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+
 export default {
   name: "Settings",
+  created() {
+    this.$store.dispatch("getSettingKeys");
+  },
+  computed: {
+    ...mapGetters(["settings"]),
+  },
+  methods: {
+    play_pauseChanged(newKey) {
+      this.$store.dispatch("modifySettings", {
+        key: newKey,
+        description: "play_pause",
+      });
+    },
+    previous_periodChanged(newKey) {
+      this.$store.dispatch("modifySettings", {
+        key: newKey,
+        description: "previous_period",
+      });
+    },
+    next_periodChanged(newKey) {
+      this.$store.dispatch("modifySettings", {
+        key: newKey,
+        description: "next_period",
+      });
+    },
+    decrease_speedChanged(newKey) {
+      this.$store.dispatch("modifySettings", {
+        key: newKey,
+        description: "decrease_speed",
+      });
+    },
+    increase_speedChanged(newKey) {
+      this.$store.dispatch("modifySettings", {
+        key: newKey,
+        description: "increase_speed",
+      });
+    },
+    restartChanged(newKey) {
+      this.$store.dispatch("modifySettings", {
+        key: newKey,
+        description: "restart",
+      });
+    },
+    add_labelChanged(newKey) {
+      this.$store.dispatch("modifySettings", {
+        key: newKey,
+        description: "add_label",
+      });
+    },
+    copyChanged(newKey) {
+      this.$store.dispatch("modifySettings", {
+        key: newKey,
+        description: "copy",
+      });
+    },
+  },
 };
 </script>
 
 <style>
 .setting-column {
-    border: 1px solid grey;
-    padding: 30px;
-    border-radius: 15px;
+  border: 1px solid grey;
+  padding: 30px;
+  border-radius: 15px;
 }
 </style>

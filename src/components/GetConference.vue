@@ -16,6 +16,7 @@
             <v-row class="justify-center my-12">
               <v-col cols="6">
                 <v-text-field
+                  v-model="confId"
                   label="Номер конференции"
                   outlined
                   background-color="grey lighten-2"
@@ -26,7 +27,15 @@
 
             <v-row class="justify-center">
               <v-col cols="6" class="text-center">
-                <v-btn class="px-10" outlined rounded> Получить </v-btn>
+                <v-btn
+                  @click="getTranscription"
+                  class="px-10 primary-fill"
+                  dark
+                  outlined
+                  rounded
+                >
+                  Получить
+                </v-btn>
               </v-col>
             </v-row>
           </div>
@@ -38,11 +47,25 @@
 
 <script>
 export default {
+  data() {
+    return {
+      confId: "",
+    };
+  },
   methods: {
     RouteConference() {
       this.$router.push("/conference");
     },
-  },
+    getTranscription() {
+      this.$store
+        .dispatch("getTranscription", {
+          confId: this.confId,
+        })
+        .then(() => {
+          this.$router.push({ path: "/conference" });
+        });
+    }
+  }
 };
 </script>
 

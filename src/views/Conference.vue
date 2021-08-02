@@ -11,7 +11,7 @@
             <div class="my-auto">
               <div class="mb-6" v-for="(item, index) in functions" :key="index">
                 <router-link :to="item.link" class="reset-link">
-                  <v-btn dark width="330px" outlined rounded :class="item.blue? 'primary-fill': 'orange-fill'">
+                  <v-btn class="text-h5 font-weight-bold px-10 py-7" dark width="500px" outlined rounded :class="item.blue? 'primary-fill': 'orange-fill'">
                     {{ item.text }}
                   </v-btn>
                 </router-link>

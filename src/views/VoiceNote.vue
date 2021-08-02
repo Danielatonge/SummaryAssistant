@@ -10,7 +10,12 @@
         <v-col cols="12" class="voice-border">
           <v-row>
             <v-col cols="6" md="4" lg="3">
-              <v-navigation-drawer permanent height="500px" color="transparent" v-model="archives">
+              <v-navigation-drawer
+                permanent
+                height="500px"
+                color="transparent"
+                v-model="archives"
+              >
                 <template v-slot:prepend>
                   <v-list-item>
                     <v-list-item-content class="text-center">
@@ -53,9 +58,9 @@ export default {
     return {
       archives: null,
       items: [
-        { title: "#803762003"},
-        { title: "#797518030"},
-        { title: "#752856189"},
+        { title: "#803762003" },
+        { title: "#797518030" },
+        { title: "#752856189" },
       ],
     };
   },
@@ -64,7 +69,7 @@ export default {
 
 <style>
 .voice-border {
-  border: 1px solid #E0E0E0;
+  border: 1px solid #e0e0e0;
   border-radius: 15px;
 }
 </style>

@@ -12,7 +12,9 @@ import VoiceNote from "../views/VoiceNote.vue";
 import Reference from "../views/Reference.vue";
 import Settings from "../views/Settings.vue";
 import DecodeVideo from "../components/DecodeVideo.vue";
-
+import Login from "../components/auth/Login.vue";
+import Register from "../components/auth/Register.vue";
+import Logout from "../components/auth/Logout.vue";
 
 Vue.use(VueRouter);
 
@@ -26,56 +28,113 @@ const routes = [
     path: "/decode",
     name: "Decode",
     component: Decode,
+    meta: {
+      requiresAuth: true,
+    },
   },
   {
     path: "/decode/video",
     name: "DecodeVideo",
     component: DecodeVideo,
+    meta: {
+      requiresAuth: true,
+    },
   },
   {
     path: "/voice_note",
     name: "VoiceNote",
     component: VoiceNote,
+    meta: {
+      requiresAuth: true,
+    },
   },
   {
     path: "/reference",
     name: "Reference",
     component: Reference,
+    meta: {
+      requiresAuth: true,
+    },
   },
   {
     path: "/settings",
     name: "Settings",
     component: Settings,
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
+    path: "/login",
+    name: "Login",
+    component: Login,
+    meta: {
+      requiresVisitor: true,
+    },
+  },
+  {
+    path: "/register",
+    name: "Register",
+    component: Register,
+    meta: {
+      requiresVisitor: true,
+    },
+  },
+  {
+    path: "/logout",
+    name: "Logout",
+    component: Logout,
+    meta: {
+      requiresAuth: true,
+    },
   },
   {
     path: "/conference",
     name: "Conference",
     component: Conference,
+    meta: {
+      requiresAuth: true,
+    },
   },
   {
     path: "/conference/create",
     name: "CreateConference",
     component: CreateConference,
+    meta: {
+      requiresAuth: true,
+    },
   },
   {
     path: "/conference/created",
     name: "CreatedConference",
     component: CreatedConference,
+    meta: {
+      requiresAuth: true,
+    },
   },
   {
     path: "/conference/connect",
     name: "ConnectConference",
     component: ConnectConference,
+    meta: {
+      requiresAuth: true,
+    },
   },
   {
     path: "/conference/connected",
     name: "ConnectedConference",
     component: ConnectedConference,
+    meta: {
+      requiresAuth: true,
+    },
   },
   {
     path: "/conference/get-encoding",
     name: "GetConference",
     component: GetConference,
+    meta: {
+      requiresAuth: true,
+    },
   },
 ];
 

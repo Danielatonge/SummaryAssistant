@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-container class="text-center mt-10 ">
+    <v-container class="text-center mt-10">
       <p class="text-h5 font-weight-bold mb-7 text-color">
         Расшифровка аудио и видео файлов
       </p>
@@ -12,12 +12,26 @@
             color="grey lighten-3"
             height="400"
           >
-            <div class="my-auto text-color">
-              <v-icon class="icon-file-move pb-2 text-color">mdi-file-move</v-icon>
+            <div class="my-auto text-color justify-center">
+              <div class="mx-auto">
+                <v-file-input
+                  v-model="file_upload"
+                  class="pb-10 icon-file"
+                  prepend-icon="mdi-file-move"
+                  hide-input
+                  truncate-length="1"
+                ></v-file-input>
+              </div>
               <p>Пертащите или загрузите файл</p>
               <v-dialog v-model="dialog" persistent max-width="600px">
                 <template v-slot:activator="{ on, attrs }">
-                  <v-btn class="px-6 primary-fill" dark outlined rounded v-bind="attrs" v-on="on"
+                  <v-btn
+                    class="px-6 primary-fill"
+                    dark
+                    outlined
+                    rounded
+                    v-bind="attrs"
+                    v-on="on"
                     >Загрузить файл</v-btn
                   >
                 </template>
@@ -76,7 +90,7 @@
                           <v-text-field
                             class="rounded-lg"
                             label="Количество говорящих"
-                            value="1"
+                            v-model="select.num_speakers"
                             type="number"
                             outlined
                           ></v-text-field>
@@ -119,18 +133,17 @@
                       </v-row>
                     </v-container>
                   </v-card-text>
-                  <v-card-actions>
-                    <router-link to="/decode/video" class="reset-link">
-                      <v-btn
-                        elevation="0"
-                        dark
-                        color="blue darken-1"
-                        class="px-5"
-                        rounded
-                      >
-                        Расшифровать
-                      </v-btn>
-                    </router-link>
+                  <v-card-actions class="px-9 pb-7">
+                    <v-btn
+                      elevation="0"
+                      dark
+                      color="blue darken-1"
+                      class="px-5"
+                      rounded
+                      @click="goToDecodeVideo"
+                    >
+                      Расшифровать
+                    </v-btn>
                     <v-spacer></v-spacer>
                     <v-btn
                       color="blue darken-1"
@@ -157,7 +170,12 @@
             placeholder="www.youtube.ru"
             outlined
           ></v-text-field>
-          <v-btn color="primary" class="rounded-lg ml-5" height="40px">
+          <v-btn
+            @click="dialog = true"
+            color="primary"
+            class="rounded-lg ml-5"
+            height="40px"
+          >
             Загрузить
           </v-btn>
         </v-col>
@@ -171,22 +189,42 @@ export default {
   data() {
     return {
       link: "",
+      file_upload: "",
       dialog: false,
       select: {
         type: "По умолчанию",
-        service: "Гугл",
+        service: "google",
         language: "Русский",
+        num_speakers: 1,
       },
-      types: ["По умолчанию", "Option 2"],
-      services: ["Гугл", "Yahoo", "bing"],
+      types: ["По умолчанию", "По умолчанию 2"],
+      services: ["google", "yahoo", "bing"],
       languages: ["Русский", "English"],
     };
+  },
+  methods: {
+    goToDecodeVideo() {
+      // const current = this;
+      this.$store
+        .dispatch("getStorageLink", this.select.service)
+        .then((response) => {
+          this.$store.dispatch("uploadMediaToStorage", {
+            file: this.file_upload,
+            url: response.storageUrl,
+          });
+        })
+        .then(() => {
+          this.$router.push({path:'decode/video'})
+        });
+    },
   },
 };
 </script>
 
-<style scoped>
-.icon-file-move {
-  font-size: 6rem;
+<style>
+.icon-file .v-icon.v-icon--link.mdi.mdi-file-move.theme--light {
+  font-size: 6rem !important;
+  color: #14396a !important;
+  margin-left: 13rem;
 }
 </style>

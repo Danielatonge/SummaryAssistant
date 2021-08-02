@@ -11,7 +11,15 @@
             <v-btn class="px-4 mr-3 primary-fill" dark outlined rounded>
               Получить расшифровку
             </v-btn>
-            <v-btn class="px-4 primary-fill" dark outlined rounded> Завершить конференцию </v-btn>
+            <v-btn
+              @click="endConference"
+              class="px-4 primary-fill"
+              dark
+              outlined
+              rounded
+            >
+              Завершить конференцию
+            </v-btn>
           </div>
         </v-col>
         <v-col cols="12" class="voice-border">
@@ -26,7 +34,9 @@
                 <template v-slot:prepend>
                   <v-list-item>
                     <v-list-item-content class="text-center">
-                      <v-list-item-title>№ 1286761</v-list-item-title>
+                      <v-list-item-title
+                        >№ {{ confInfo.conferenceId }}</v-list-item-title
+                      >
                     </v-list-item-content>
                   </v-list-item>
                 </template>
@@ -34,15 +44,22 @@
                 <v-divider></v-divider>
 
                 <v-list dense>
+                  <v-list-item link>
+                    <v-list-item-icon class="mr-2">
+                      <v-icon>mdi-account</v-icon>
+                    </v-list-item-icon>
+
+                    <v-list-item-content>
+                      <v-list-item-title>
+                        {{ confInfo.hostName }}
+                      </v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
                   <v-list-item
                     v-for="(item, index) in participants"
                     :key="index"
                     link
                   >
-                    <v-list-item-icon v-show="item.creator" class="mr-2">
-                      <v-icon>mdi-account</v-icon>
-                    </v-list-item-icon>
-
                     <v-list-item-content>
                       <v-list-item-title>{{ item.name }}</v-list-item-title>
                     </v-list-item-content>
@@ -64,19 +81,30 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 export default {
+  computed: {
+    ...mapState("participants"),
+  },
   data() {
     return {
       individual: null,
-      participants: [
-        { name: "Александра Андреевна", creator: true },
-        { name: "Антон Михайлов", creator: false },
-        { name: "Анастасия Иванова", creator: false },
-        { name: "Никита Андреевич", creator: false },
-        { name: "Казаков А.Н.", creator: false },
-        { name: "Петрова Анаствсия Андреев", creator: false },
-      ],
+      confInfo: null,
     };
+  },
+  methods: {
+    endConference() {
+      this.$store
+        .dispatch("endConference", {
+          conferenceId: this.confInfo.conferenceId,
+        })
+        .then(() => {
+          this.$router.push({ path: "/conference" });
+        });
+    },
+  },
+  mounted() {
+    this.confInfo = this.$store.getters.conferenceInfo;
   },
 };
 </script>

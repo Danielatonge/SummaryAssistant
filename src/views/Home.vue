@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-container class="pb-16 px-0">
+    <v-container class="pb-16">
       <v-row class="my-15">
         <v-col cols="12" class="px-0">
           <v-card flat color="transparent">
@@ -21,8 +21,11 @@
                     class="px-10 py-6 text-h5 font-weight-bold yellow-fill text-color"
                     outlined
                     rounded
+                    width="350px"
                   >
+                  <router-link class="reset-link" to="/decode">
                     Начать работу
+                  </router-link>
                   </v-btn>
                 </v-card-actions>
               </v-col>
@@ -54,8 +57,11 @@
                     class="px-10 py-6 text-h5 font-weight-bold primary-fill"
                     outlined
                     rounded dark
+                    width="350px"
                   >
+                  <router-link class="reset-link" :to="item.button_link">
                     {{ item.button_text }}
+                  </router-link>
                   </v-btn>
                 </v-card-actions>
               </v-col>
@@ -91,21 +97,21 @@ export default {
         title: "Расшифровка",
         text: "Summary позволяет расшифровать конференции в реальном врменени, аудио и видео файлы, приложив к этому минимум усилий.",
         button_text: "Загрузить файл",
-        button_link: "",
+        button_link: "/decode",
       },
       {
         picture: "/microphone",
         title: "Конференция",
         text: "Summary позволяет расшифровать конференции в реальном врменени, аудио и видео файлы, приложив к этому минимум усилий.",
         button_text: "Начать конференцию",
-        button_link: "",
+        button_link: "/conference",
       },
       {
         picture: "/note",
         title: "Голосовой блокнот",
         text: "Summary позволяет расшифровать конференции в реальном врменени, аудио и видео файлы, приложив к этому минимум усилий.",
         button_text: "Записать голос",
-        button_link: "",
+        button_link: "/voice_note",
       },
     ],
   }),
