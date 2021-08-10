@@ -185,6 +185,8 @@
 </template>
 
 <script>
+
+
 export default {
   data() {
     return {
@@ -204,7 +206,6 @@ export default {
   },
   methods: {
     goToDecodeVideo() {
-      // const current = this;
       this.$store
         .dispatch("getStorageLink", this.select.service)
         .then((response) => {

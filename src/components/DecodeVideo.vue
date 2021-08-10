@@ -3,7 +3,9 @@
     <v-container class="py-10">
       <v-row>
         <v-col cols="12" class="voice-border">
-          <v-sheet height="500px"> </v-sheet>
+          <v-sheet height="500px">
+            <tiny-editor></tiny-editor>
+          </v-sheet>
         </v-col>
       </v-row>
       <v-row class="mt-16">
@@ -23,7 +25,9 @@
 </template>
 
 <script>
+import TinyEditor from './TinyEditor.vue';
 export default {
+  components: { TinyEditor },
   data() {
     return {};
   },

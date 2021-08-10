@@ -39,7 +39,9 @@
                 </v-list>
               </v-navigation-drawer>
             </v-col>
-            <v-col cols="6" md="8" lg="9"> </v-col>
+            <v-col cols="6" md="8" lg="9">
+              <tiny-editor></tiny-editor>
+            </v-col>
           </v-row>
         </v-col>
       </v-row>
@@ -53,7 +55,10 @@
 </template>
 
 <script>
+import TinyEditor from "@/components/TinyEditor.vue";
+
 export default {
+  components: { TinyEditor },
   data() {
     return {
       archives: null,

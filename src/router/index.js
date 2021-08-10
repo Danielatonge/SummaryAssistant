@@ -105,7 +105,7 @@ const routes = [
     },
   },
   {
-    path: "/conference/created",
+    path: "/conference/created/:id",
     name: "CreatedConference",
     component: CreatedConference,
     meta: {
@@ -121,7 +121,7 @@ const routes = [
     },
   },
   {
-    path: "/conference/connected",
+    path: "/conference/connected/:id",
     name: "ConnectedConference",
     component: ConnectedConference,
     meta: {

@@ -67,8 +67,8 @@ export default {
           conferenceName: this.conferenceName,
           organizerName: this.organizerName,
         })
-        .then(() => {
-          this.$router.push({ path: "/conference/created" });
+        .then((confId) => {
+          this.$router.push({ path: `/conference/created/${confId}` });
         });
     },
     RouteConference() {

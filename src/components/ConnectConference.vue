@@ -78,9 +78,8 @@ export default {
           confId: this.conferenceId,
           partName: this.participantName,
         })
-        .then((response) => {
-          this.$store.dispatch('addParticipant', response);
-          this.$router.push({ path: "/conference/connected" });
+        .then((confId) => {
+          this.$router.push({ path: `/conference/connected/${confId}` });
         });
     },
   },
