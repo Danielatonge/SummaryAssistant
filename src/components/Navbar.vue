@@ -1,17 +1,28 @@
 <template>
-  <div>
-    <v-container>
+  <div class="top-nav py-4">
+    <v-container class="px-6 px-lg-0">
       <v-row class="d-flex justify-space-between">
         <router-link class="reset-link text-color" to="/">
-          <p class="font-weight-bold mb-0" style="font-size: 36px">Summary</p>
-          <p class="body-2 text-center">Your personal assistent</p>
+          <p class="text-h3 font-weight-bold mb-0">Summary</p>
+          <p class="body-2 text-center mb-0">Your personal assistent</p>
         </router-link>
-
+        
         <div class="my-auto hidden-lg-and-up">
-          <v-menu offset-y>
+          <v-menu offset-y >
             <template v-slot:activator="{ on, attrs }">
-              <v-btn elevation="0" large dark v-bind="attrs" v-on="on">
-                <v-icon> mdi-menu </v-icon>
+              <v-btn
+                color="transparent"
+                @focusout="dropdownActive = false"
+                @click="toggleSideBar"
+                elevation="0"
+                height="70"
+                large
+                v-bind="attrs"
+                v-on="on"
+              >
+                <v-icon x-large>
+                  {{ dropdownActive ? "mdi-close" : "mdi-menu" }}
+                </v-icon>
               </v-btn>
             </template>
             <v-list>
@@ -34,9 +45,9 @@
               <v-list-item v-else router to="/logout">
                 <v-list-item-title>Выйти</v-list-item-title>
               </v-list-item>
-            </v-list>
+            </v-list> 
           </v-menu>
-        </div>
+        </div> 
         <div v-if="loggedIn" class="my-auto d-lg-flex hidden-md-and-down">
           <v-tabs v-model="tab" class="mr-4" background-color="transparent">
             <v-tabs-slider class="text-color"></v-tabs-slider>
@@ -84,6 +95,7 @@
 <script>
 export default {
   data: () => ({
+    dropdownActive: false,
     tab: "",
     links: [
       { text: "Расшифровка", route: "/decode" },
@@ -97,16 +109,28 @@ export default {
       return this.$store.getters.loggedIn;
     },
   },
+  methods: {
+    toggleSideBar() {
+      this.dropdownActive = !this.dropdownActive;
+      this.$emit('sidebar-changed');
+    }
+  }
 };
 </script>
 
-<style>
-.reset-link {
-  text-decoration: none;
-  color: unset !important;
+<style scoped>
+.text-color {
+  color: #14396a !important;
 }
 .size-tab {
   font-size: 1.125rem !important;
   font-weight: 400 !important;
+}
+
+@media only screen and (max-width: 1260px) {
+  .top-nav {
+    background-color: #fff !important;
+    padding-bottom: 0.6rem;
+  }
 }
 </style>
