@@ -164,7 +164,7 @@ export default {
         }
           request.open(
             "POST",
-            `https://dpforge.com/1/conference/chunk?conference_id=${That.confId}&participant_id=${That.part.id}`,
+            `https://cors-anywhere.herokuapp.com/https://dpforge.com/1/conference/chunk?conference_id=${That.confId}&participant_id=${That.part.id}`,
             true
           );
           request.setRequestHeader(
