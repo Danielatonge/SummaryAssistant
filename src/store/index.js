@@ -5,7 +5,6 @@ import VuexPersistence from "vuex-persist";
 
 Vue.use(Vuex);
 axios.defaults.baseURL = "https://dpforge.com";
-
 let settings = {
   play_pause: "ALT + G",
   previous_period: "P",
@@ -313,19 +312,12 @@ export default new Vuex.Store({
       });
     },
     uploadMediaToStorage(context, { file, url }) {
-      axios.defaults.headers.common["Authorization"] =
-        "Bearer " + context.state.token;
-      console.log("PUT REQUEST" + url);
-
-      let formData = new FormData();
-      formData.append("file", file);
+      // axios.defaults.headers.common["Authorization"] =
+      //   "Bearer " + context.state.token;
+      console.log("PUT REQUEST: " + url);
 
       axios
-        .put(`${url}`, formData, {
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-          },
-        })
+        .put(`${url}`, file)
         .then((response) => {
           console.log(response);
         })

@@ -211,7 +211,7 @@ export default {
         .then((response) => {
           this.$store.dispatch("uploadMediaToStorage", {
             file: this.file_upload,
-            url: response.storageUrl,
+            url: "https://cors-anywhere.herokuapp.com/"+ response.storageUrl,
           });
         })
         .then(() => {

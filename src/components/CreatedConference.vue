@@ -2,6 +2,7 @@
   <div>
     <v-container class="py-10">
       <v-row>
+        {{supported}}
         <v-col cols="12" class="d-flex flex-wrap">
           <v-icon
             dark
@@ -102,7 +103,7 @@
 
 <script>
 import Editor from "@tinymce/tinymce-vue";
-import RecordRTC from "recordrtc";
+import RecordRTC, { invokeSaveAsDialog } from "recordrtc";
 import axios from "axios";
 import { mapState } from "vuex";
 import html2pdf from "html2pdf.js";
@@ -128,7 +129,7 @@ export default {
       participants: null,
       individual: null,
       confId: null,
-
+      supported: RecordRTC.isTypeSupported('audio/wav'),
       recording: false,
 
       partInfo: null,
@@ -161,7 +162,7 @@ export default {
         bufferSize: 8192,
         numberOfAudioChannels: 1,
         ondataavailable: (event) => {
-          This.blobs.push(event.data);
+          This.blobs.push(event);
           if (This.recordRTC.state == "inactive") {
             console.log(event);
             const blob = new Blob(This.blobs, { type: "audio/wav" });
@@ -183,7 +184,7 @@ export default {
       };
       navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
         const recordRTC = new RecordRTC(stream, options);
-        this.recordRTC = recordRTC;
+        This.recordRTC = recordRTC;
 
         recordRTC.startRecording();
         recordRTC.microphone = stream;
@@ -197,18 +198,19 @@ export default {
       // }, 1000);
     },
     stopRecording() {
-      this.recordRTC.stopRecording(() => {
-        const audioBlob = new Blob(this.blobs, { type: "audio/wav" });
+      const This = this;
+      this.recordRTC.stopRecording((all) => {
+        const audioBlob = new Blob(This.blobs, { type: "audio/wav" });
         console.log("Recording Stopped: ", audioBlob);
-
+        invokeSaveAsDialog(all, "Conference");
         axios
           .post(
-            `/1/conference/chunk?conference_id=${this.confId}&participant_id=${this.part.id}`,
+            `/1/conference/chunk?conference_id=${This.confId}&participant_id=${This.part.id}`,
             audioBlob
           )
           .then((res) => {
             console.log(res);
-            this.blobs = [];
+            This.blobs = [];
           });
       });
       this.recordRTC.microphone.stop();
