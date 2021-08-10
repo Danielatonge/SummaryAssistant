@@ -60,9 +60,8 @@
             <v-col cols="6" md="8" lg="10">
               <editor
                 v-model="editorText"
-                
                 apiKey="06j1sdk82snkig4i7v5u03ne6nrs1dabbh9ftqntbcutrvv6"
-                :disabled=false
+                :disabled="false"
                 :init="{
                   height: 500,
                   menubar: false,
@@ -76,7 +75,7 @@
            alignleft aligncenter alignright alignjustify | \
            bullist numlist outdent indent | removeformat | help',
                 }"
-              /> 
+              />
             </v-col>
           </v-row>
         </v-col>
@@ -92,8 +91,6 @@
 
 <script>
 import Editor from "@tinymce/tinymce-vue";
-import RecordRTC from "recordrtc";
-import axios from "axios";
 import { mapState } from "vuex";
 
 export default {
@@ -123,77 +120,16 @@ export default {
       participants: null,
       individual: null,
       partInfo: null,
-      audioModel: "",
-      stream: null,
-      recordRTC: null,
       blobs: [],
       editorText: [],
     };
   },
   methods: {
     startRecording() {
-      this.recording = true;
-      const This = this;
-      const options = {
-        type: "audio",
-        // recorderType: StereoAudioRecorder,
-        mimeType: "audio/wav",
-        timeSlice: 2000,
-        desiredSampRate: 16000,
-        bufferSize: 8192,
-        numberOfAudioChannels: 1,
-        ondataavailable: (event) => {
-          This.blobs.push(event.data);
-          if (This.recordRTC.state == "inactive") {
-            console.log(event);
-            const blob = new Blob(This.blobs, { type: "audio/wav" });
-            axios
-              .post(
-                `/1/conference/chunk?conference_id=${this.confId}&participant_id=${this.part.id}`,
-                blob
-              )
-              .then((res) => {
-                console.log(res);
-                This.editorText.push(res.data);
-              });
-          }
-        },
-      };
-      navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
-        const recordRTC = new RecordRTC(stream, options);
-        this.recordRTC = recordRTC;
-
-        recordRTC.startRecording();
-        recordRTC.microphone = stream;
-      });
-      // setTimeout(() => {
-      //   const audioBlob = new Blob(this.blobs, { type: "audio/wav" });
-      //   console.log("Recording In process: ", audioBlob);
-      // this.$store.dispatch("sendChunkAudio", audioBlob).then(() => {
-      //   this.blobs = []
-      // });
-      // }, 1000);
+      
     },
-    stopRecording() {
-      this.recordRTC.stopRecording(() => {
-        const audioBlob = new Blob(this.blobs, { type: "audio/wav" });
-        console.log("Recording Stopped: ", audioBlob);
-
-        axios
-          .post(
-            `/1/conference/chunk?conference_id=${this.confId}&participant_id=${this.part.id}`,
-            audioBlob
-          )
-          .then((res) => {
-            console.log(res);
-            this.blobs = [];
-          });
-      });
-      this.recordRTC.microphone.stop();
-    },
-    download() {
-      this.recordRTC.save("audio.wav");
-    },
+    stopRecording() {},
+    download() {},
   },
 };
 </script>
