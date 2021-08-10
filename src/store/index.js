@@ -47,6 +47,9 @@ export default new Vuex.Store({
     participants(state) {
       return state.participants;
     },
+    token(state) {
+      return state.token;
+    }
   },
   mutations: {
     retrieveToken(state, token) {

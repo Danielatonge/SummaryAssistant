@@ -107,6 +107,7 @@ export default {
     console.log(this.part.id);
     this.confId = confId;
     this.participants = this.$store.getters.participantsById(confId);
+    this.token = this.$store.getters.token;
   },
   watch: {
     recording(val) {
@@ -123,6 +124,7 @@ export default {
   },
   data() {
     return {
+      token: "",
       participants: null,
       individual: null,
       confId: "",
@@ -159,7 +161,7 @@ export default {
           let request = new XMLHttpRequest();
           request.onreadystatechange = function() {
             if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-                That.editorText += JSON.parse(this.responseText);
+                That.editorText += JSON.stringify(this.responseText);
             }
         }
           request.open(
@@ -169,7 +171,7 @@ export default {
           );
           request.setRequestHeader(
             "Authorization",
-            "Bearer " + localStorage.getItem("access-token")
+            "Bearer " + That.token
           );
           request.send(blob);
 
@@ -201,7 +203,7 @@ export default {
       this.recordRTC = RecordRTC(stream, options);
       this.recordRTC.startRecording();
       let audio = this.$refs.audio;
-      audio.src = window.URL.createObjectURL(stream);
+      audio.src = URL.createObjectURL(stream);
     },
     errorCallback() {
       //handle error here
