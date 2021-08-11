@@ -325,7 +325,7 @@ export default {
       stream.getAudioTracks().forEach((track) => track.stop());
     },
     download() {
-      this.recordRTC.save("audio.wav");
+      this.recordRTC ? this.recordRTC.save("audio.wav"): null;
     },
     getTranscription() {
       this.$store.dispatch("getTranscription", this.confId).then((data) => {

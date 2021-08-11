@@ -37,7 +37,7 @@
                   <v-list-item>
                     <v-list-item-content class="text-center">
                       <v-list-item-title>
-                        Обсуждение проекта {{ participants }}
+                        Обсуждение проекта : {{ confId }}
                       </v-list-item-title>
                     </v-list-item-content>
                   </v-list-item>
@@ -307,7 +307,7 @@ export default {
       stream.getAudioTracks().forEach((track) => track.stop());
     },
     download() {
-      this.recordRTC.save("audio.wav");
+      this.recordRTC ? this.recordRTC.save("audio.wav"): null;
     },
   },
 };
