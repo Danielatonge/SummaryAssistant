@@ -3,7 +3,7 @@
     <Navbar @sidebar-changed="drawer = !drawer" />
     <v-main>
       <v-navigation-drawer v-show="drawer" class="hidden-lg-and-up" right v-model="drawer" absolute temporary>
-        <v-list nav dense>
+        <v-list nav dense class="text-right">
           <div v-if="loggedIn">
             <v-list-item
               v-for="item in links"
@@ -35,6 +35,7 @@
 <script>
 import Footer from "./components/Footer.vue";
 import Navbar from "./components/Navbar.vue";
+import 'vue-glide-js/dist/vue-glide.css'
 export default {
   components: { Navbar, Footer },
   name: "App",
@@ -68,4 +69,5 @@ div[data-app="true"] {
   text-decoration: none;
   color: unset !important;
 }
+.v-btn__content { width: 100%; white-space: normal; }
 </style>

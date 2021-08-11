@@ -1,6 +1,22 @@
 <template>
   <div>
     <v-container class="text-center mt-10">
+      <v-row>
+        <v-col cols="8">
+          <p
+            class="
+              text-h4
+              px-8
+              font-weight-bold
+              mb-4
+              text-color text-left
+              hidden-md-and-up
+            "
+          >
+            Конференции
+          </p>
+        </v-col>
+      </v-row>
       <v-row class="d-flex justify-center">
         <v-col cols="8">
           <v-sheet
@@ -11,7 +27,14 @@
             <div class="my-auto">
               <div class="mb-6" v-for="(item, index) in functions" :key="index">
                 <router-link :to="item.link" class="reset-link">
-                  <v-btn class="text-h5 font-weight-bold px-10 py-7" dark width="500px" outlined rounded :class="item.blue? 'primary-fill': 'orange-fill'">
+                  <v-btn
+                    class="text-h5 font-weight-bold px-10 py-7"
+                    dark
+                    width="500px"
+                    outlined
+                    rounded
+                    :class="item.blue ? 'primary-fill' : 'orange-fill'"
+                  >
                     {{ item.text }}
                   </v-btn>
                 </router-link>
@@ -29,8 +52,16 @@ export default {
   data: () => ({
     functions: [
       { text: "Создать конференцию", link: "/conference/create", blue: false },
-      { text: "Подключиться к конференции", link: "/conference/connect", blue: true },
-      { text: "Получить расшифровку", link: "/conference/get-encoding", blue: true },
+      {
+        text: "Подключиться к конференции",
+        link: "/conference/connect",
+        blue: true,
+      },
+      {
+        text: "Получить расшифровку",
+        link: "/conference/get-encoding",
+        blue: true,
+      },
     ],
   }),
 };
