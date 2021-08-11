@@ -1,6 +1,6 @@
 <template>
   <v-footer padless class="footer-background" dark>
-    <v-container>
+    <v-container class="px-6 px-lg-0">
       <v-row class="py-5">
         <router-link class="home-link" to="/">
           <p class="text-h3 font-weight-bold mb-0">Summary</p>

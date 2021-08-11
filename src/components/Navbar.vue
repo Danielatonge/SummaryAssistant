@@ -21,9 +21,14 @@
           </v-btn>
         </div>
         <div v-if="loggedIn" class="my-auto d-lg-flex hidden-md-and-down">
-          <v-tabs v-model="tab" class="mr-4" background-color="transparent">
+          <v-tabs
+            optional
+            v-model="tab"
+            class="mr-4"
+            background-color="transparent"
+          >
             <v-tabs-slider class="text-color"></v-tabs-slider>
-            <v-tab class="d-none" key="fallback"></v-tab>
+            <!-- <v-tab class="pa-0 ma-0" style="min-width:0px" key="fallback"></v-tab> -->
             <v-tab
               v-for="item in links"
               :key="item.text"

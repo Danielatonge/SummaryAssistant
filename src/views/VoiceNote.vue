@@ -7,42 +7,42 @@
             mdi-microphone-outline
           </v-icon>
         </v-col>
-        <v-col cols="12" class="voice-border">
-          <v-row>
-            <v-col cols="6" md="4" lg="3">
-              <v-navigation-drawer
-                permanent
-                height="500px"
-                color="transparent"
-                v-model="archives"
-              >
-                <template v-slot:prepend>
-                  <v-list-item>
-                    <v-list-item-content class="text-center">
-                      <v-list-item-title>Архив записей</v-list-item-title>
-                    </v-list-item-content>
-                  </v-list-item>
-                </template>
+        </v-row
+      >
 
-                <v-divider></v-divider>
+      <v-row class="voice-border">
+        <v-col  md="4" lg="2">
+          <v-navigation-drawer
+            permanent
+            height="500px"
+            color="transparent"
+            v-model="archives"
+          >
+            <template v-slot:prepend>
+              <v-list-item>
+                <v-list-item-content class="text-center">
+                  <v-list-item-title>Архив записей</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </template>
 
-                <v-list dense>
-                  <v-list-item v-for="item in items" :key="item.title" link>
-                    <v-list-item-icon>
-                      <v-icon>mdi-folder</v-icon>
-                    </v-list-item-icon>
+            <v-divider></v-divider>
 
-                    <v-list-item-content>
-                      <v-list-item-title>{{ item.title }}</v-list-item-title>
-                    </v-list-item-content>
-                  </v-list-item>
-                </v-list>
-              </v-navigation-drawer>
-            </v-col>
-            <v-col cols="6" md="8" lg="9">
-              <tiny-editor></tiny-editor>
-            </v-col>
-          </v-row>
+            <v-list dense>
+              <v-list-item v-for="item in items" :key="item.title" link>
+                <v-list-item-icon>
+                  <v-icon>mdi-folder</v-icon>
+                </v-list-item-icon>
+
+                <v-list-item-content>
+                  <v-list-item-title>{{ item.title }}</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list>
+          </v-navigation-drawer>
+        </v-col>
+        <v-col md="8" lg="10">
+          <tiny-editor></tiny-editor>
         </v-col>
       </v-row>
       <v-row class="mt-10">
@@ -59,12 +59,12 @@
           </v-icon>
           <v-img width="80%" :src="require('../assets/signal.png')"></v-img>
         </v-col>
-        <v-col cols="12" class="voice-border">
+        <v-col cols="12" class="voice-border my-8">
           <v-sheet height="500px">
             <tiny-editor></tiny-editor>
           </v-sheet>
         </v-col>
-        <v-col cols="12">
+        <v-col cols="12" class="voice-border">
           <v-navigation-drawer
             permanent
             width="100%"

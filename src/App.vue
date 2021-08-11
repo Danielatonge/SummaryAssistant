@@ -69,5 +69,4 @@ div[data-app="true"] {
   text-decoration: none;
   color: unset !important;
 }
-.v-btn__content { width: 100%; white-space: normal; }
 </style>
