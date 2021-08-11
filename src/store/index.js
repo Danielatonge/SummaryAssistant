@@ -31,7 +31,7 @@ export default new Vuex.Store({
     participants: [],
     current_participant: null,
     archives: [],
-    decoded_sample: [],
+    decoded_sample: null,
   },
   getters: {
     loggedIn(state) {
@@ -68,6 +68,14 @@ export default new Vuex.Store({
     },
     destroyToken(state) {
       state.token = null;
+      state.conferenceInfo = [];
+      state.record = null;
+      state.gumStream = null;
+      state.decode_upload = null;
+      state.participants = [];
+      state.current_participant = null;
+      state.archives = [];
+      state.decoded_sample = null;
     },
     setConferenceInfo(state, data) {
       state.conferenceInfo.push(data);
@@ -101,7 +109,7 @@ export default new Vuex.Store({
     },
     addArchive(state, payload) {
       state.archives.push(payload);
-    }
+    },
   },
   actions: {
     modifySettings(context, param) {
@@ -172,7 +180,7 @@ export default new Vuex.Store({
         "Bearer " + context.state.token;
       return new Promise((resolve, reject) => {
         axios
-          .post(`/1/conference/download?conference_id=${confId}&format=json`)
+          .get(`/1/conference/download?conference_id=${confId}&format=json`)
           .then((response) => {
             if (response.data.success) {
               const data = response.data;
@@ -294,7 +302,6 @@ export default new Vuex.Store({
         "Bearer " + context.state.token;
 
       if (context.getters.loggedIn) {
-        localStorage.removeItem("accessToken");
         context.commit("destroyToken");
         // return new Promise((resolve, reject) => {
         //   axios
@@ -336,24 +343,38 @@ export default new Vuex.Store({
       });
     },
     uploadMediaToStorage(context, { file, url }) {
-      console.log("PUT REQUEST: " + url);
-      return new Promise((resolve, reject) => {
-        axios
-          .put(`${url}`, file)
-          .then((response) => {
-            if (response.status === 200) {
-              console.log(
-                "File Successfully Uploaded to Google Cloud Storage. "
-              );
-              resolve(response);
-            } else {
-              console.log("Something went wrong while Uploading File.");
-            }
-          })
-          .catch((err) => {
-            console.log(err);
-            reject(err);
-          });
+      console.log("PUT REQUEST(uploadMediaToStorage): " + url + " -:-" + file);
+      return new Promise((resolve) => {
+        let request = new XMLHttpRequest();
+        request.onreadystatechange = function () {
+          if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+            console.log(this.responseText);
+            resolve(this.responseText);
+          }
+        };
+        const binary = file.getAsBinary;
+        console.log(binary)
+        // const blob = new Blob(file, {type: 'audio/wav'});
+        // https://cors-anywhere.herokuapp.com/
+        request.open("PUT", `https://cors-anywhere.herokuapp.com/${url}`, true);
+        request.send(binary);
+
+        // axios
+        //   .put(`https://cors-anywhere.herokuapp.com/${url}`, formData)
+        //   .then((response) => {
+        //     if (response.status === 200) {
+        //       console.log(
+        //         "File Successfully Uploaded to Google Cloud Storage. "
+        //       );
+        //       resolve(response);
+        //     }
+        //     reject(response.data);
+        //   })
+        //   .catch((err) => {
+        //     console.log("Something went wrong while Uploading File.");
+        //     console.log(err);
+        //     reject(err);
+        //   });
       });
     },
     retrieveToken(context, credentials) {
@@ -402,31 +423,36 @@ export default new Vuex.Store({
     beginTranscription(context, transId) {
       axios.defaults.headers.common["Authorization"] =
         "Bearer " + context.state.token;
-
-      axios
-        .post(`/2/transcribe/start?transcribe_id=${transId}`)
-        .then((response) => {
-          if (response.data.success) {
-            console.log(response.data.success);
-          } else {
-            throw new Error(response.data.errorMessage);
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      console.log("beginTranscription");
+      return new Promise((resolve, reject) => {
+        axios
+          .post(`/2/transcribe/start?transcribe_id=${transId}`)
+          .then((response) => {
+            if (response.data.success) {
+              console.log(response.data.success);
+              resolve(response.data.transcribeId);
+            } else {
+              reject(response.data.errorMessage);
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      });
     },
     verifyTranscriptionStatus(context, transId) {
       axios.defaults.headers.common["Authorization"] =
         "Bearer " + context.state.token;
+      console.log("verifyTranscriptionStatus");
       return new Promise((resolve, reject) => {
         axios
-          .post(`/2/transcribe/check_state?transcribe_id=${transId}`)
+          .get(`/2/transcribe/check_state?transcribe_id=${transId}`)
           .then((response) => {
             if (response.data.success) {
-              while (response.data.state != "READY");
-              // waiting
-              resolve(response.data.state);
+              if (response.data.state === "READY") {
+                console.log(response.data.state);
+                resolve(response.data.state);
+              }
             } else {
               throw new Error(response.data.errorMessage);
             }
@@ -440,9 +466,11 @@ export default new Vuex.Store({
     getDecodedTranscription(context, transId) {
       axios.defaults.headers.common["Authorization"] =
         "Bearer " + context.state.token;
+
+      console.log("getDecodedTranscription");
       return new Promise((resolve, reject) => {
         axios
-          .post(`/2/transcribe/get?transcribe_id=${transId}`)
+          .get(`/2/transcribe/get?transcribe_id=${transId}`)
           .then((response) => {
             if (response.data.success) {
               context.commit("saveDecodeTranscript", response.data);
@@ -487,9 +515,7 @@ export default new Vuex.Store({
         "Bearer " + context.state.token;
       return new Promise((resolve, reject) => {
         axios
-          .post(
-            `/1/speechpad/create?model=default`
-          )
+          .post(`/1/speechpad/create?model=default`)
           .then((response) => {
             if (response.data.success) {
               resolve(response.data.speechpadId);

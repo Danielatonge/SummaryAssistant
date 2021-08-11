@@ -4,7 +4,7 @@
       <v-row>
         <v-col cols="12" class="voice-border">
           <v-sheet height="500px">
-            <tiny-editor :text="decoded_sample"></tiny-editor>
+            <tiny-editor :editorText="editorText"></tiny-editor>
           </v-sheet>
         </v-col>
       </v-row>
@@ -52,7 +52,7 @@
       <v-row>
         <v-col cols="12" class="voice-border">
           <v-sheet height="500px">
-            <tiny-editor :text="editorText"></tiny-editor>
+            <tiny-editor :editorText="editorText"></tiny-editor>
           </v-sheet>
         </v-col>
       </v-row>

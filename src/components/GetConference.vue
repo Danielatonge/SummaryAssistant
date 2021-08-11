@@ -61,7 +61,7 @@ export default {
     getTranscription() {
       this.$store.dispatch("getTranscription", this.confId).then((data) => {
         let doc = jsPDF();
-        doc.text(50, 20, JSON.stringify(data));
+        doc.text(10, 10, JSON.stringify(data));
         doc.save(`Transcription_.pdf`);
         this.$router.push({ path: "/conference" });
       });

@@ -32,8 +32,9 @@
                     rounded
                     v-bind="attrs"
                     v-on="on"
-                    >Загрузить файл</v-btn
                   >
+                    Загрузить файл
+                  </v-btn>
                 </template>
                 <v-card>
                   <v-card-title class="justify-center">
@@ -135,6 +136,8 @@
                   </v-card-text>
                   <v-card-actions class="px-9 pb-7">
                     <v-btn
+                      :disabled="loadDialog"
+                      :loading="loadDialog"
                       elevation="0"
                       dark
                       color="blue darken-1"
@@ -144,6 +147,23 @@
                     >
                       Расшифровать
                     </v-btn>
+                    <v-dialog
+                      v-model="loadDialog"
+                      hide-overlay
+                      persistent
+                      width="300"
+                    >
+                      <v-card color="primary" dark>
+                        <v-card-text class="pt-4">
+                          Подождите, пожалуйста
+                          <v-progress-linear
+                            indeterminate
+                            color="white"
+                            class="my-4"
+                          ></v-progress-linear>
+                        </v-card-text>
+                      </v-card>
+                    </v-dialog>
                     <v-spacer></v-spacer>
                     <v-btn
                       color="blue darken-1"
@@ -354,6 +374,7 @@
 export default {
   data() {
     return {
+      loadDialog: false,
       link: "",
       file_upload: "",
       dialog: false,
@@ -370,27 +391,32 @@ export default {
   },
   methods: {
     goToDecodeVideo() {
+      this.loadDialog = true;
       this.$store
         .dispatch("getStorageLink", this.select.service)
         .then((response) => {
+          // https://cors-anywhere.herokuapp.com/
           this.$store
             .dispatch("uploadMediaToStorage", {
               file: this.file_upload,
-              url: "https://cors-anywhere.herokuapp.com/" + response.storageUrl,
-            })
-            .then(() => {
-              const transId = this.$store.getters.transcribeId;
-              this.$store.dispatch("beginTranscription", transId);
-            })
-            .then((response) => {
-              this.$store.dispatch("verifyTranscriptionStatus", response);
+              url: response.storageUrl,
             })
             .then(() => {
               const transId = this.$store.getters.transcribeId;
               this.$store
-                .dispatch("getDecodedTranscription", transId)
-                .then(() => {
-                  this.$router.push({ path: "decode/video" });
+                .dispatch("beginTranscription", transId)
+                .then((response) => {
+                  this.$store
+                    .dispatch("verifyTranscriptionStatus", response)
+                    .then((state) => {
+                      console.log(state)
+                      const transId = this.$store.getters.transcribeId;
+                      this.$store
+                        .dispatch("getDecodedTranscription", transId)
+                        .then(() => {
+                          this.$router.push({ path: "decode/video" });
+                        });
+                    });
                 });
             });
         });
