@@ -13,13 +13,21 @@
           <audio ref="audio"></audio>
           <v-spacer></v-spacer>
           <div class="d-block d-sm-flex">
-            <v-btn class="px-4 mr-3 primary-fill" dark outlined rounded>
+            <v-btn
+              class="px-4 mr-3 primary-fill"
+              :disabled="recording"
+              dark
+              outlined
+              rounded
+              @click="getTranscription"
+            >
               Получить расшифровку
             </v-btn>
             <v-btn
               @click="endConference"
               class="px-4 primary-fill"
               dark
+              :disabled="recording"
               outlined
               rounded
             >
@@ -64,23 +72,7 @@
               </v-navigation-drawer>
             </v-col>
             <v-col cols="6" md="8" lg="10">
-              <editor
-                v-model="editorText"
-                apiKey="06j1sdk82snkig4i7v5u03ne6nrs1dabbh9ftqntbcutrvv6"
-                :init="{
-                  height: 500,
-                  menubar: false,
-                  plugins: [
-                    'advlist autolink lists link image charmap print preview anchor',
-                    'searchreplace visualblocks code fullscreen',
-                    'insertdatetime media table paste code help wordcount',
-                  ],
-                  toolbar:
-                    'undo redo | formatselect | bold italic backcolor | \
-           alignleft aligncenter alignright alignjustify | \
-           bullist numlist outdent indent | removeformat | help',
-                }"
-              />
+              <tiny-editor :text="editorText"></tiny-editor>
             </v-col>
           </v-row>
         </v-col>
@@ -108,23 +100,7 @@
           <v-img width="80%" :src="require('../assets/signal.png')"></v-img>
         </v-col>
         <v-col cols="12">
-          <editor
-            v-model="editorText"
-            apiKey="06j1sdk82snkig4i7v5u03ne6nrs1dabbh9ftqntbcutrvv6"
-            :init="{
-              height: 500,
-              menubar: false,
-              plugins: [
-                'advlist autolink lists link image charmap print preview anchor',
-                'searchreplace visualblocks code fullscreen',
-                'insertdatetime media table paste code help wordcount',
-              ],
-              toolbar:
-                'undo redo | formatselect | bold italic backcolor | \
-           alignleft aligncenter alignright alignjustify | \
-           bullist numlist outdent indent | removeformat | help',
-            }"
-          />
+          <tiny-editor :text="editorText"></tiny-editor>
         </v-col>
         <v-col cols="12" class="voice-border">
           <v-navigation-drawer
@@ -181,19 +157,19 @@
 </template>
 
 <script>
-import Editor from "@tinymce/tinymce-vue";
+import TinyEditor from "@/components/TinyEditor.vue";
 import { mapState } from "vuex";
+import { jsPDF } from "jspdf";
 // import axios from "axios";
 const RecordRTC = require("recordrtc");
 
 export default {
-  components: { Editor },
+  components: { TinyEditor },
   mounted() {
     const confId = this.$route.params.id;
     console.log(this.part.id);
     this.confId = confId;
     this.participants = this.$store.getters.participantsById(confId);
-    this.token = this.$store.getters.token;
   },
   watch: {
     recording(val) {
@@ -210,12 +186,10 @@ export default {
   },
   data() {
     return {
-      token: "",
       participants: null,
       individual: null,
       confId: "",
       recording: false,
-      partInfo: null,
       editorText: "",
       blobs: [],
     };
@@ -317,6 +291,13 @@ export default {
     },
     download() {
       this.recordRTC.save("audio.wav");
+    },
+    getTranscription() {
+      this.$store.dispatch("getTranscription", this.confId).then((data) => {
+        let doc = jsPDF();
+        doc.text(50, 20, JSON.stringify(data));
+        doc.save(`Transcription_.pdf`);
+      });
     },
   },
 };

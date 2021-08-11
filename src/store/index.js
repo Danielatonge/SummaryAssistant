@@ -30,6 +30,7 @@ export default new Vuex.Store({
     decode_upload: null,
     participants: [],
     current_participant: null,
+    archives: [],
   },
   getters: {
     loggedIn(state) {
@@ -49,7 +50,10 @@ export default new Vuex.Store({
     },
     token(state) {
       return state.token;
-    }
+    },
+    archives(state) {
+      return state.archives;
+    },
   },
   mutations: {
     retrieveToken(state, token) {
@@ -71,6 +75,10 @@ export default new Vuex.Store({
       state.conferenceInfo = confInfo;
       state.participants = parts;
     },
+    destroyParticipantInfo(state, partId) {
+      const parts = state.participants.filter((x) => x.id !== partId);
+      state.participants = parts;
+    },
     saveUploadInfo(state, uploadInfo) {
       state.decode_upload = uploadInfo;
     },
@@ -79,11 +87,10 @@ export default new Vuex.Store({
       state.participants.push(payload);
     },
     setCurrentParticipant(state, part) {
-      state.current_participant = part
+      state.current_participant = part;
     },
   },
   actions: {
-    
     modifySettings(context, param) {
       const key = param.key;
       const option = param.description;
@@ -147,19 +154,19 @@ export default new Vuex.Store({
         context.commit("setSettings", settings);
       });
     },
-    getTranscription(context, param) {
+    getTranscription(context, confId) {
       axios.defaults.headers.common["Authorization"] =
         "Bearer " + context.state.token;
       return new Promise((resolve, reject) => {
         axios
           .post(
-            `/1/conference/download?conference_id=${param.confId}&format=json`
+            `/1/conference/download?conference_id=${confId}&format=json`
           )
           .then((response) => {
             if (response.data.success) {
               const data = response.data;
               console.log(data);
-              resolve(response);
+              resolve(data);
             } else {
               throw new Error(response.data.errorMessage);
             }
@@ -267,6 +274,9 @@ export default new Vuex.Store({
             reject(err);
           });
       });
+    },
+    exitConference(context, partId) {
+      context.commit("destroyParticipantInfo", partId);
     },
     destroyToken(context) {
       axios.defaults.headers.common["Authorization"] =

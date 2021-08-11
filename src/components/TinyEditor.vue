@@ -25,12 +25,13 @@ import Editor from "@tinymce/tinymce-vue";
 
 export default {
   name: "TinyEditor",
+  props: ["editorText"],
   components: {
     editor: Editor,
   },
   data() {
     return {
-      editorText: "",
+      
     };
   },
 };

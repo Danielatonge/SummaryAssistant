@@ -12,10 +12,15 @@
           </v-icon>
           <v-spacer></v-spacer>
           <div class="d-block d-sm-flex">
-            <v-btn class="px-4 primary-fill" dark outlined rounded>
-              <router-link to="/conference" class="reset-link">
-                Выйти
-              </router-link>
+            <v-btn
+              class="px-4 primary-fill"
+              :disabled="recording"
+              @click="exitConference"
+              dark
+              outlined
+              rounded
+            >
+              Выйти
             </v-btn>
           </div>
         </v-col>
@@ -58,24 +63,7 @@
               </v-navigation-drawer>
             </v-col>
             <v-col cols="6" md="8" lg="10">
-              <editor
-                v-model="editorText"
-                apiKey="06j1sdk82snkig4i7v5u03ne6nrs1dabbh9ftqntbcutrvv6"
-                :disabled="false"
-                :init="{
-                  height: 500,
-                  menubar: false,
-                  plugins: [
-                    'advlist autolink lists link image charmap print preview anchor',
-                    'searchreplace visualblocks code fullscreen',
-                    'insertdatetime media table paste code help wordcount',
-                  ],
-                  toolbar:
-                    'undo redo | formatselect | bold italic backcolor | \
-           alignleft aligncenter alignright alignjustify | \
-           bullist numlist outdent indent | removeformat | help',
-                }"
-              />
+              <tiny-editor :text="editorText"></tiny-editor>
             </v-col>
           </v-row>
         </v-col>
@@ -100,33 +88,13 @@
           >
             {{ recording ? "mdi-stop" : "mdi-microphone-outline" }}
           </v-icon>
-          <v-img
-            width="80%"
-            :src="require('../assets/signal.png')"
-          ></v-img>
+          <v-img width="80%" :src="require('../assets/signal.png')"></v-img>
         </v-col>
       </v-row>
       <v-row class="my-8">
         <v-col cols="12" class="voice-border">
           <v-sheet height="500px">
-            <editor
-              v-model="editorText"
-              apiKey="06j1sdk82snkig4i7v5u03ne6nrs1dabbh9ftqntbcutrvv6"
-              :disabled="false"
-              :init="{
-                height: 500,
-                menubar: false,
-                plugins: [
-                  'advlist autolink lists link image charmap print preview anchor',
-                  'searchreplace visualblocks code fullscreen',
-                  'insertdatetime media table paste code help wordcount',
-                ],
-                toolbar:
-                  'undo redo | formatselect | bold italic backcolor | \
-           alignleft aligncenter alignright alignjustify | \
-           bullist numlist outdent indent | removeformat | help',
-              }"
-            />
+            <tiny-editor :text="editorText"></tiny-editor>
           </v-sheet>
         </v-col>
       </v-row>
@@ -179,11 +147,12 @@
 </template>
 
 <script>
-import Editor from "@tinymce/tinymce-vue";
+import TinyEditor from "@/components/TinyEditor.vue";
 import { mapState } from "vuex";
+const RecordRTC = require("recordrtc");
 
 export default {
-  components: { Editor },
+  components: { TinyEditor },
   watch: {
     recording(val) {
       console.log(val);
@@ -201,22 +170,114 @@ export default {
     const confId = this.$route.params.id;
     this.confId = confId;
     this.participants = this.$store.getters.participantsById(confId);
+    this.token = this.$store.getters.token;
   },
   data() {
     return {
-      confId: null,
-      recording: false,
+      token: "",
       participants: null,
       individual: null,
+      confId: null,
+      recording: false,
       partInfo: null,
+      editorText: "",
       blobs: [],
-      editorText: [],
     };
   },
   methods: {
-    startRecording() {},
-    stopRecording() {},
-    download() {},
+    exitConference() {
+      this.download();
+      this.$store.dispatch("exitConference", this.part.id).then(() => {
+        this.$router.push({ path: "/conference" });
+      });
+    },
+    successCallback(stream) {
+      const That = this;
+      var options = {
+        mimeType: "audio/wav;codecs=vp9",
+        audioBitsPerSecond: 128000,
+        videoBitsPerSecond: 128000,
+        timeSlice: 500,
+        bitsPerSecond: 128000,
+        ondataavailable: function (blob) {
+          That.blobs.push(blob);
+          // let fBlob = new Blob(That.blobs);
+          // console.log(blob, That.recordRTC.state);
+
+          let request = new XMLHttpRequest();
+          request.onreadystatechange = function () {
+            if (
+              this.readyState === XMLHttpRequest.DONE &&
+              this.status === 200
+            ) {
+              That.editorText += JSON.stringify(this.responseText);
+            }
+          };
+          request.open(
+            "POST",
+            `https://cors-anywhere.herokuapp.com/https://dpforge.com/1/conference/chunk?conference_id=${That.confId}&participant_id=${That.part.id}`,
+            true
+          );
+          request.setRequestHeader("Authorization", "Bearer " + That.token);
+          request.send(blob);
+
+          // const config = {
+          //   headers: {
+          //     "content-type": blob.type,
+          //   },
+          // };
+
+          // const objectURL = URL.createObjectURL(fBlob);
+          // console.log(objectURL);
+          // axios.defaults.headers.common["Authorization"] =
+          //   "Bearer " + That.token;
+          // axios
+          //   .post(
+          //     `/1/conference/chunk?conference_id=${That.confId}&participant_id=${That.part.id}`,
+          //     objectURL,
+          //     config
+          //   )
+          //   .then((res) => {
+          //     console.log(res);
+          //     That.editorText +=
+          //       `<strong>${That.part.name}:</strong>` +
+          //       JSON.stringify(res.data);
+          //   });
+        },
+      };
+      this.stream = stream;
+      this.recordRTC = RecordRTC(stream, options);
+      this.recordRTC.startRecording();
+      let audio = this.$refs.audio;
+      audio.src = URL.createObjectURL(stream);
+    },
+    errorCallback() {
+      //handle error here
+    },
+    processAudio(audioWebMURL) {
+      let audio = this.$refs.audio;
+      let recordRTC = this.recordRTC;
+      audio.src = audioWebMURL;
+      var recordedBlob = recordRTC.getBlob();
+      console.log("processAudio: ", recordedBlob);
+    },
+    startRecording() {
+      let mediaConstraints = {
+        audio: true,
+      };
+      navigator.mediaDevices
+        .getUserMedia(mediaConstraints)
+        .then(this.successCallback.bind(this), this.errorCallback.bind(this));
+    },
+    stopRecording() {
+      let recordRTC = this.recordRTC;
+      recordRTC.stopRecording(this.processAudio.bind(this));
+      let stream = this.stream;
+      stream.getAudioTracks().forEach((track) => track.stop());
+    },
+    download() {
+      this.recordRTC.save("audio.wav");
+    },
   },
 };
 </script>

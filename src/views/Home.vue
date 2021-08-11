@@ -73,7 +73,7 @@
           </v-card>
         </v-col>
       </v-row>
-      <vue-glide perView="1" class="hidden-md-and-up pa-0">
+      <vue-glide :perView="1" class="hidden-md-and-up pa-0">
         <vue-glide-slide class="pa-0 ml-6" v-for="(item, i) in items" :key="i">
           <div class="border-main max-content rounded-xl pa-10">
             <div class="px-0 text-color text-center">
@@ -127,7 +127,9 @@ import { Glide, GlideSlide } from "vue-glide-js";
 
 export default {
   name: "Home",
-
+  mounted() {
+    
+  },
   components: {
     [Glide.name]: Glide,
     [GlideSlide.name]: GlideSlide,

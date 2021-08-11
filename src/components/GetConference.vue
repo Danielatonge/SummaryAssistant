@@ -46,6 +46,8 @@
 </template>
 
 <script>
+import { jsPDF } from "jspdf";
+
 export default {
   data() {
     return {
@@ -57,15 +59,14 @@ export default {
       this.$router.push("/conference");
     },
     getTranscription() {
-      this.$store
-        .dispatch("getTranscription", {
-          confId: this.confId,
-        })
-        .then(() => {
-          this.$router.push({ path: "/conference" });
-        });
-    }
-  }
+      this.$store.dispatch("getTranscription", this.confId).then((data) => {
+        let doc = jsPDF();
+        doc.text(50, 20, JSON.stringify(data));
+        doc.save(`Transcription_.pdf`);
+        this.$router.push({ path: "/conference" });
+      });
+    },
+  },
 };
 </script>
 

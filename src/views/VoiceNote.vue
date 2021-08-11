@@ -3,15 +3,19 @@
     <v-container class="py-10 mhide">
       <v-row>
         <v-col cols="12">
-          <v-icon dark class="orange pa-3 rounded-xl">
-            mdi-microphone-outline
+          <v-icon
+            dark
+            class="orange pa-3 rounded-xl"
+            @click="recording = !recording"
+          >
+            {{ recording ? "mdi-stop" : "mdi-microphone-outline" }}
           </v-icon>
+          <audio ref="audio"></audio>
         </v-col>
-        </v-row
-      >
+      </v-row>
 
       <v-row class="voice-border">
-        <v-col  md="4" lg="2">
+        <v-col md="4" lg="2">
           <v-navigation-drawer
             permanent
             height="500px"
@@ -42,7 +46,7 @@
           </v-navigation-drawer>
         </v-col>
         <v-col md="8" lg="10">
-          <tiny-editor></tiny-editor>
+          <tiny-editor :text="editorText"></tiny-editor>
         </v-col>
       </v-row>
       <v-row class="mt-10">
@@ -61,7 +65,7 @@
         </v-col>
         <v-col cols="12" class="voice-border my-8">
           <v-sheet height="500px">
-            <tiny-editor></tiny-editor>
+            <tiny-editor :text="editorText"></tiny-editor>
           </v-sheet>
         </v-col>
         <v-col cols="12" class="voice-border">
@@ -102,19 +106,126 @@
 
 <script>
 import TinyEditor from "@/components/TinyEditor.vue";
+import { mapState } from "vuex";
+const RecordRTC = require("recordrtc");
 
 export default {
   components: { TinyEditor },
+  mounted() {
+    const partId = this.part.id;
+    console.log(partId);
+  },
+  computed: {
+    ...mapState({ part: "current_participant" }),
+    ...mapState(["archives", "token"]),
+  },
+  watch: {
+    recording(val) {
+      if (val) {
+        this.startRecording();
+      } else {
+        this.stopRecording();
+      }
+    },
+  },
   data() {
     return {
-      archives: null,
+      recording: false,
       items: [
         { title: "#803762003" },
         { title: "#797518030" },
         { title: "#752856189" },
       ],
+      editorText: "",
+      blobs: [],
     };
   },
+  methods: {
+    successCallback(stream) {
+      const That = this;
+      var options = {
+        mimeType: "audio/wav;codecs=vp9",
+        audioBitsPerSecond: 128000,
+        videoBitsPerSecond: 128000,
+        timeSlice: 500,
+        bitsPerSecond: 128000,
+        ondataavailable: function (blob) {
+          That.blobs.push(blob);
+          // let fBlob = new Blob(That.blobs);
+          // console.log(blob, That.recordRTC.state);
+
+          let request = new XMLHttpRequest();
+          request.onreadystatechange = function () {
+            if (
+              this.readyState === XMLHttpRequest.DONE &&
+              this.status === 200
+            ) {
+              That.editorText += JSON.stringify(this.responseText);
+            }
+          };
+          request.open(
+            "POST",
+            `https://cors-anywhere.herokuapp.com/https://dpforge.com/1/conference/chunk?conference_id=${That.confId}&participant_id=${That.part.id}`,
+            true
+          );
+          request.setRequestHeader("Authorization", "Bearer " + That.token);
+          request.send(blob);
+
+          // const config = {
+          //   headers: {
+          //     "content-type": blob.type,
+          //   },
+          // };
+
+          // const objectURL = URL.createObjectURL(fBlob);
+          // console.log(objectURL);
+          // axios.defaults.headers.common["Authorization"] =
+          //   "Bearer " + That.token;
+          // axios
+          //   .post(
+          //     `/1/conference/chunk?conference_id=${That.confId}&participant_id=${That.part.id}`,
+          //     objectURL,
+          //     config
+          //   )
+          //   .then((res) => {
+          //     console.log(res);
+          //     That.editorText +=
+          //       `<strong>${That.part.name}:</strong>` +
+          //       JSON.stringify(res.data);
+          //   });
+        },
+      };
+      this.stream = stream;
+      this.recordRTC = RecordRTC(stream, options);
+      this.recordRTC.startRecording();
+      let audio = this.$refs.audio;
+      audio.src = URL.createObjectURL(stream);
+    },
+    processAudio(audioWebMURL) {
+      let audio = this.$refs.audio;
+      let recordRTC = this.recordRTC;
+      audio.src = audioWebMURL;
+      var recordedBlob = recordRTC.getBlob();
+      console.log("processAudio: ", recordedBlob);
+    },
+    startRecording() {
+      let mediaConstraints = {
+        audio: true,
+      };
+      navigator.mediaDevices
+        .getUserMedia(mediaConstraints)
+        .then(this.successCallback.bind(this), this.errorCallback.bind(this));
+    },
+    stopRecording() {
+      let recordRTC = this.recordRTC;
+      recordRTC.stopRecording(this.processAudio.bind(this));
+      let stream = this.stream;
+      stream.getAudioTracks().forEach((track) => track.stop());
+    },
+    download() {
+      this.recordRTC.save("audio.wav");
+    },
+  }
 };
 </script>
 
