@@ -481,7 +481,28 @@ export default new Vuex.Store({
     },
     addToArchive(context, text) {
       context.commit("addArchive", text);
-    }
+    },
+    createSpeechPad(context) {
+      axios.defaults.headers.common["Authorization"] =
+        "Bearer " + context.state.token;
+      return new Promise((resolve, reject) => {
+        axios
+          .post(
+            `/1/speechpad/create?model=default`
+          )
+          .then((response) => {
+            if (response.data.success) {
+              resolve(response.data.speechpadId);
+            } else {
+              throw new Error(response.data.errorMessage);
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+            reject(err);
+          });
+      });
+    },
   },
   modules: {},
   plugins: [vuexLocal.plugin],

@@ -106,10 +106,7 @@ const RecordRTC = require("recordrtc");
 
 export default {
   components: { TinyEditor },
-  mounted() {
-    const partId = this.part.id;
-    console.log(partId);
-  },
+  mounted() {},
   computed: {
     ...mapState({ part: "current_participant" }),
     ...mapState(["archives", "token"]),
@@ -126,6 +123,7 @@ export default {
   data() {
     return {
       recording: false,
+      speechId: "",
       items: [
         { title: "#803762003" },
         { title: "#797518030" },
@@ -160,7 +158,7 @@ export default {
           };
           request.open(
             "POST",
-            `https://cors-anywhere.herokuapp.com/https://dpforge.com/1/conference/chunk?conference_id=${That.confId}&participant_id=${That.part.id}`,
+            `https://cors-anywhere.herokuapp.com/https://dpforge.com/1/speechpad/chunk?speechpad_id=${That.speechId}`,
             true
           );
           request.setRequestHeader("Authorization", "Bearer " + That.token);
@@ -204,12 +202,16 @@ export default {
       console.log("processAudio: ", recordedBlob);
     },
     startRecording() {
+      this.$store.dispatch("createSpeechPad").then((response) => {
+        console.log("SpeechId: ",response);
+        this.speechId = response;
+      });
       let mediaConstraints = {
         audio: true,
       };
       navigator.mediaDevices
         .getUserMedia(mediaConstraints)
-        .then(this.successCallback.bind(this), this.errorCallback.bind(this));
+        .then(this.successCallback.bind(this));
     },
     stopRecording() {
       let recordRTC = this.recordRTC;
