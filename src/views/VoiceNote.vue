@@ -41,7 +41,7 @@
           </v-navigation-drawer>
         </v-col>
         <v-col md="8" lg="10">
-          <tiny-editor :text="editorText"></tiny-editor>
+          <tiny-editor :editorText="editorText"></tiny-editor>
         </v-col>
       </v-row>
       <v-row class="mt-10">
@@ -102,7 +102,7 @@
 <script>
 import TinyEditor from "@/components/TinyEditor.vue";
 import { mapState } from "vuex";
-const RecordRTC = require("recordrtc");
+import RecordRTC, { StereoAudioRecorder } from "recordrtc";
 
 export default {
   components: { TinyEditor },
@@ -134,18 +134,29 @@ export default {
     };
   },
   methods: {
+    renderResponse(response) {
+      let finalText = "";
+      response.results.forEach((r) => {
+        if (r.isFinal) {
+          finalText += " " + r.transcript;
+          this.editorText = finalText;
+        } else {
+          this.editorText = finalText + " <" + r.transcript + ">";
+        }
+      });
+    },
     successCallback(stream) {
       const That = this;
       var options = {
-        mimeType: "audio/wav;codecs=vp9",
-        audioBitsPerSecond: 128000,
-        videoBitsPerSecond: 128000,
+        type: "audio",
+        mimeType: "audio/wav",
+        recorderType: StereoAudioRecorder,
         timeSlice: 500,
-        bitsPerSecond: 128000,
+        desiredSampRate: 16000,
+        bufferSize: 8192,
+        numberOfAudioChannels: 1,
         ondataavailable: function (blob) {
           That.blobs.push(blob);
-          // let fBlob = new Blob(That.blobs);
-          // console.log(blob, That.recordRTC.state);
 
           let request = new XMLHttpRequest();
           request.onreadystatechange = function () {
@@ -153,39 +164,18 @@ export default {
               this.readyState === XMLHttpRequest.DONE &&
               this.status === 200
             ) {
-              That.editorText += JSON.stringify(this.responseText);
+              console.log(this.responseText);
+              That.renderResponse(JSON.parse(this.responseText));
             }
           };
+          // https://cors-anywhere.herokuapp.com/
           request.open(
             "POST",
-            `https://cors-anywhere.herokuapp.com/https://dpforge.com/1/speechpad/chunk?speechpad_id=${That.speechId}`,
+            `https://dpforge.com/1/speechpad/chunk?speechpad_id=${That.speechId}`,
             true
           );
           request.setRequestHeader("Authorization", "Bearer " + That.token);
           request.send(blob);
-
-          // const config = {
-          //   headers: {
-          //     "content-type": blob.type,
-          //   },
-          // };
-
-          // const objectURL = URL.createObjectURL(fBlob);
-          // console.log(objectURL);
-          // axios.defaults.headers.common["Authorization"] =
-          //   "Bearer " + That.token;
-          // axios
-          //   .post(
-          //     `/1/conference/chunk?conference_id=${That.confId}&participant_id=${That.part.id}`,
-          //     objectURL,
-          //     config
-          //   )
-          //   .then((res) => {
-          //     console.log(res);
-          //     That.editorText +=
-          //       `<strong>${That.part.name}:</strong>` +
-          //       JSON.stringify(res.data);
-          //   });
         },
       };
       this.stream = stream;
@@ -203,7 +193,7 @@ export default {
     },
     startRecording() {
       this.$store.dispatch("createSpeechPad").then((response) => {
-        console.log("SpeechId: ",response);
+        console.log("SpeechId: ", response);
         this.speechId = response;
       });
       let mediaConstraints = {

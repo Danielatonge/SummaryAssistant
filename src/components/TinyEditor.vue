@@ -3,6 +3,7 @@
     <editor
       v-model="editorText"
       apiKey="06j1sdk82snkig4i7v5u03ne6nrs1dabbh9ftqntbcutrvv6"
+      :disabled="true"
       :init="{
         height: 500,
         menubar: false,
@@ -25,13 +26,20 @@ import Editor from "@tinymce/tinymce-vue";
 
 export default {
   name: "TinyEditor",
-  props: ["editorText"],
+  props: {
+    editorText: {
+      type: String,
+    },
+  },
   components: {
     editor: Editor,
   },
+  mounted() {
+    this.text = this.editorText;
+  },
   data() {
     return {
-      
+      text: "",
     };
   },
 };

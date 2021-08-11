@@ -63,7 +63,7 @@
               </v-navigation-drawer>
             </v-col>
             <v-col cols="6" md="8" lg="10">
-              <tiny-editor :text="editorText"></tiny-editor>
+              <tiny-editor :editorText="editorText"></tiny-editor>
             </v-col>
           </v-row>
         </v-col>
@@ -149,7 +149,7 @@
 <script>
 import TinyEditor from "@/components/TinyEditor.vue";
 import { mapState } from "vuex";
-const RecordRTC = require("recordrtc");
+import RecordRTC, { StereoAudioRecorder } from "recordrtc";
 
 export default {
   components: { TinyEditor },
@@ -165,16 +165,15 @@ export default {
   },
   computed: {
     ...mapState({ part: "current_participant" }),
+    ...mapState(["token"]),
   },
   mounted() {
     const confId = this.$route.params.id;
     this.confId = confId;
     this.participants = this.$store.getters.participantsById(confId);
-    this.token = this.$store.getters.token;
   },
   data() {
     return {
-      token: "",
       participants: null,
       individual: null,
       confId: null,
@@ -191,18 +190,52 @@ export default {
         this.$router.push({ path: "/conference" });
       });
     },
+    renderResponse(response) {
+      let finalTranscriptList = [];
+      let interimTranscriptMap = {};
+      response.transcripts.forEach((t) => {
+        if (t.isFinal) {
+          finalTranscriptList.push(t);
+          delete interimTranscriptMap[t.participantId];
+        } else {
+          interimTranscriptMap[t.participantId] = t;
+        }
+      });
+      if (finalTranscriptList.length > 10) {
+        finalTranscriptList.splice(0, finalTranscriptList.length - 10);
+      }
+
+      finalTranscriptList.forEach((t) => {
+        this.editorText +=
+          "<p style='color:green'><b>" +
+          t.participantName +
+          ":</b> " +
+          t.value +
+          "</p>";
+      });
+
+      for (var participantId in interimTranscriptMap) {
+        var t = interimTranscriptMap[participantId];
+        this.editorText +=
+          "<p style='color:red'><b>" +
+          t.participantName +
+          ":</b> " +
+          t.value +
+          "</p>";
+      }
+    },
     successCallback(stream) {
       const That = this;
       var options = {
-        mimeType: "audio/wav;codecs=vp9",
-        audioBitsPerSecond: 128000,
-        videoBitsPerSecond: 128000,
+        type: "audio",
+        mimeType: "audio/wav",
+        recorderType: StereoAudioRecorder,
         timeSlice: 500,
-        bitsPerSecond: 128000,
+        desiredSampRate: 16000,
+        bufferSize: 8192,
+        numberOfAudioChannels: 1,
         ondataavailable: function (blob) {
           That.blobs.push(blob);
-          // let fBlob = new Blob(That.blobs);
-          // console.log(blob, That.recordRTC.state);
 
           let request = new XMLHttpRequest();
           request.onreadystatechange = function () {
@@ -210,12 +243,13 @@ export default {
               this.readyState === XMLHttpRequest.DONE &&
               this.status === 200
             ) {
-              That.editorText += JSON.stringify(this.responseText);
+              console.log(this.responseText);
+              That.renderResponse(JSON.parse(this.responseText));
             }
           };
           request.open(
             "POST",
-            `https://cors-anywhere.herokuapp.com/https://dpforge.com/1/conference/chunk?conference_id=${That.confId}&participant_id=${That.part.id}`,
+            `https://dpforge.com/1/conference/chunk?conference_id=${That.confId}&participant_id=${That.part.id}`,
             true
           );
           request.setRequestHeader("Authorization", "Bearer " + That.token);
@@ -251,9 +285,6 @@ export default {
       let audio = this.$refs.audio;
       audio.src = URL.createObjectURL(stream);
     },
-    errorCallback() {
-      //handle error here
-    },
     processAudio(audioWebMURL) {
       let audio = this.$refs.audio;
       let recordRTC = this.recordRTC;
@@ -267,7 +298,7 @@ export default {
       };
       navigator.mediaDevices
         .getUserMedia(mediaConstraints)
-        .then(this.successCallback.bind(this), this.errorCallback.bind(this));
+        .then(this.successCallback.bind(this));
     },
     stopRecording() {
       let recordRTC = this.recordRTC;
