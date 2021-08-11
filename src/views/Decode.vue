@@ -328,7 +328,7 @@
       <div class="main-text text-left mb-0">Введите адрес:</div>
       <div class="mt-4 mb-0">
         <v-text-field
-          class="rounded-lg "
+          class="rounded-lg"
           v-model="link"
           label="URL"
           dense
@@ -373,13 +373,26 @@ export default {
       this.$store
         .dispatch("getStorageLink", this.select.service)
         .then((response) => {
-          this.$store.dispatch("uploadMediaToStorage", {
-            file: this.file_upload,
-            url: "https://cors-anywhere.herokuapp.com/" + response.storageUrl,
-          });
-        })
-        .then(() => {
-          this.$router.push({ path: "decode/video" });
+          this.$store
+            .dispatch("uploadMediaToStorage", {
+              file: this.file_upload,
+              url: "https://cors-anywhere.herokuapp.com/" + response.storageUrl,
+            })
+            .then(() => {
+              const transId = this.$store.getters.transcribeId;
+              this.$store.dispatch("beginTranscription", transId);
+            })
+            .then((response) => {
+              this.$store.dispatch("verifyTranscriptionStatus", response);
+            })
+            .then(() => {
+              const transId = this.$store.getters.transcribeId;
+              this.$store
+                .dispatch("getDecodedTranscription", transId)
+                .then(() => {
+                  this.$router.push({ path: "decode/video" });
+                });
+            });
         });
     },
   },

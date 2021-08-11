@@ -16,12 +16,7 @@
 
       <v-row class="voice-border">
         <v-col md="4" lg="2">
-          <v-navigation-drawer
-            permanent
-            height="500px"
-            color="transparent"
-            v-model="archives"
-          >
+          <v-navigation-drawer permanent height="500px" color="transparent">
             <template v-slot:prepend>
               <v-list-item>
                 <v-list-item-content class="text-center">
@@ -225,7 +220,10 @@ export default {
     download() {
       this.recordRTC.save("audio.wav");
     },
-  }
+    addToArchive() {
+      this.$store.dispatch("addToArchive", this.editorText);
+    },
+  },
 };
 </script>
 

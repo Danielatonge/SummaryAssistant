@@ -4,7 +4,7 @@
       <v-row>
         <v-col cols="12" class="voice-border">
           <v-sheet height="500px">
-            <tiny-editor :text="editorText"></tiny-editor>
+            <tiny-editor :text="decoded_sample"></tiny-editor>
           </v-sheet>
         </v-col>
       </v-row>
@@ -64,10 +64,22 @@
 import TinyEditor from "./TinyEditor.vue";
 export default {
   components: { TinyEditor },
+  mounted() {
+    this.editorText = JSON.stringify(this.$store.getters.decodedSample);
+  },
   data() {
     return {
       editorText: "",
     };
+  },
+  methods: {
+    editTranscript() {
+      const req = {
+        text: JSON.parse(this.editorText),
+        transId: this.$store.getters.transcribeId
+      }
+      this.$store.dispatch("editTranscription", req);
+    },
   },
 };
 </script>

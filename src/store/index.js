@@ -31,6 +31,7 @@ export default new Vuex.Store({
     participants: [],
     current_participant: null,
     archives: [],
+    decoded_sample: [],
   },
   getters: {
     loggedIn(state) {
@@ -53,6 +54,12 @@ export default new Vuex.Store({
     },
     archives(state) {
       return state.archives;
+    },
+    transcribeId(state) {
+      return state.decode_upload.transcribeId;
+    },
+    decodedSample(state) {
+      return state.decoded_sample;
     },
   },
   mutations: {
@@ -89,6 +96,12 @@ export default new Vuex.Store({
     setCurrentParticipant(state, part) {
       state.current_participant = part;
     },
+    saveDecodeTranscript(state, payload) {
+      state.decoded_sample = payload;
+    },
+    addArchive(state, payload) {
+      state.archives.push(payload);
+    }
   },
   actions: {
     modifySettings(context, param) {
@@ -159,9 +172,7 @@ export default new Vuex.Store({
         "Bearer " + context.state.token;
       return new Promise((resolve, reject) => {
         axios
-          .post(
-            `/1/conference/download?conference_id=${confId}&format=json`
-          )
+          .post(`/1/conference/download?conference_id=${confId}&format=json`)
           .then((response) => {
             if (response.data.success) {
               const data = response.data;
@@ -325,18 +336,25 @@ export default new Vuex.Store({
       });
     },
     uploadMediaToStorage(context, { file, url }) {
-      // axios.defaults.headers.common["Authorization"] =
-      //   "Bearer " + context.state.token;
       console.log("PUT REQUEST: " + url);
-
-      axios
-        .put(`${url}`, file)
-        .then((response) => {
-          console.log(response);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      return new Promise((resolve, reject) => {
+        axios
+          .put(`${url}`, file)
+          .then((response) => {
+            if (response.status === 200) {
+              console.log(
+                "File Successfully Uploaded to Google Cloud Storage. "
+              );
+              resolve(response);
+            } else {
+              console.log("Something went wrong while Uploading File.");
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+            reject(err);
+          });
+      });
     },
     retrieveToken(context, credentials) {
       return new Promise((resolve, reject) => {
@@ -381,6 +399,89 @@ export default new Vuex.Store({
           });
       });
     },
+    beginTranscription(context, transId) {
+      axios.defaults.headers.common["Authorization"] =
+        "Bearer " + context.state.token;
+
+      axios
+        .post(`/2/transcribe/start?transcribe_id=${transId}`)
+        .then((response) => {
+          if (response.data.success) {
+            console.log(response.data.success);
+          } else {
+            throw new Error(response.data.errorMessage);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    verifyTranscriptionStatus(context, transId) {
+      axios.defaults.headers.common["Authorization"] =
+        "Bearer " + context.state.token;
+      return new Promise((resolve, reject) => {
+        axios
+          .post(`/2/transcribe/check_state?transcribe_id=${transId}`)
+          .then((response) => {
+            if (response.data.success) {
+              while (response.data.state != "READY");
+              // waiting
+              resolve(response.data.state);
+            } else {
+              throw new Error(response.data.errorMessage);
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+            reject(err);
+          });
+      });
+    },
+    getDecodedTranscription(context, transId) {
+      axios.defaults.headers.common["Authorization"] =
+        "Bearer " + context.state.token;
+      return new Promise((resolve, reject) => {
+        axios
+          .post(`/2/transcribe/get?transcribe_id=${transId}`)
+          .then((response) => {
+            if (response.data.success) {
+              context.commit("saveDecodeTranscript", response.data);
+              resolve(response.data);
+            } else {
+              throw new Error(response.data.errorMessage);
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+            reject(err);
+          });
+      });
+    },
+    editTranscription(context, payload) {
+      axios.defaults.headers.common["Authorization"] =
+        "Bearer " + context.state.token;
+      return new Promise((resolve, reject) => {
+        axios
+          .post(
+            `/2/transcribe/edit?transcribe_id=${payload.transId}`,
+            payload.text
+          )
+          .then((response) => {
+            if (response.data.success) {
+              resolve(response.data);
+            } else {
+              throw new Error(response.data.errorMessage);
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+            reject(err);
+          });
+      });
+    },
+    addToArchive(context, text) {
+      context.commit("addArchive", text);
+    }
   },
   modules: {},
   plugins: [vuexLocal.plugin],
