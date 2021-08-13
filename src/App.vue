@@ -2,7 +2,14 @@
   <v-app class="background">
     <Navbar @sidebar-changed="drawer = !drawer" />
     <v-main>
-      <v-navigation-drawer v-show="drawer" class="hidden-lg-and-up" right v-model="drawer" absolute temporary>
+      <v-navigation-drawer
+        v-show="drawer"
+        class="hidden-lg-and-up"
+        right
+        v-model="drawer"
+        absolute
+        temporary
+      >
         <v-list nav dense class="text-right">
           <div v-if="loggedIn">
             <v-list-item
@@ -14,7 +21,7 @@
               <v-list-item-title>{{ item.text }}</v-list-item-title>
             </v-list-item>
 
-            <v-list-item router to="/settings">
+            <v-list-item class="mhide" router to="/settings">
               <v-list-item-title> настройки </v-list-item-title>
             </v-list-item>
           </div>
@@ -35,7 +42,7 @@
 <script>
 import Footer from "./components/Footer.vue";
 import Navbar from "./components/Navbar.vue";
-import 'vue-glide-js/dist/vue-glide.css'
+import "vue-glide-js/dist/vue-glide.css";
 export default {
   components: { Navbar, Footer },
   name: "App",
@@ -58,6 +65,19 @@ export default {
 </script>
 
 <style>
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Oswald:wght@300&display=swap');
+
+.v-application,
+.v-application .text-h3,
+.v-application .body-1,
+.v-application .body-2,
+.v-application .text-h5,
+.v-application .text-h4,
+.v-application .text-h6 {
+  font-family: "Montserrat", "Roboto", sans-serif !important;
+}
+
 div[data-app="true"] {
   background: url("./assets/background.svg") no-repeat center center !important;
   background-size: cover !important;
@@ -68,5 +88,11 @@ div[data-app="true"] {
 .reset-link {
   text-decoration: none;
   color: unset !important;
+}
+.v-btn {
+  text-transform: none !important;
+}
+.bold-button {
+  font-weight: 700 !important;
 }
 </style>

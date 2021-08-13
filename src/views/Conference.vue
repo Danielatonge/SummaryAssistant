@@ -31,6 +31,7 @@
                     class="text-h5 font-weight-bold px-10 py-7"
                     dark
                     width="500px"
+                    height="57px"
                     outlined
                     rounded
                     :class="item.blue ? 'primary-fill' : 'orange-fill'"

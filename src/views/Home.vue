@@ -2,27 +2,34 @@
   <div>
     <v-container class="pb-16">
       <v-row class="my-15 d-flex justify-space-between">
-        <div class="px-0 text-color mtext-center contain-width">
-          <div class="mb-4 main-heading">Summary – your personal assistant</div>
+        <div class="px-0 text-color mtext-center my-auto contain-width">
+          <div class="mt-md-8 mb-4 main-heading mhide">
+            Summary – your personal assistant
+          </div>
+          <div class="mt-md-8 bold-button mb-4 text-h4 d-md-none">
+            <div style="font-weight:800; font-size: 43px"> Summary </div> your personal assistant
+          </div>
+          
           <v-avatar
             class="ma-3 d-md-none d-lg-none d-xl-none mb-6"
             color="transparent"
-            size="250"
+            size="300"
             tile
           >
             <v-img :src="require('../assets/record.png')"></v-img>
           </v-avatar>
-          <div class="main-text mb-10 text-left px-6 px-md-0">
+          <div class="main-text mb-md-10 text-left px-6 px-md-0">
             Summary позволяет расшифровать конференции в реальном врменени,
             аудио и видео файлы, приложив к этому минимум усилий.
           </div>
 
-          <div>
+          <div class="mt-10">
             <v-btn
               class="px-10 py-6 text-h5 font-weight-bold yellow-fill text-color"
               outlined
               rounded
-              width="350px"
+              width="322px"
+              height="57px"
             >
               <router-link class="reset-link" to="/decode">
                 Начать работу
@@ -30,7 +37,7 @@
             </v-btn>
           </div>
         </div>
-        <v-avatar class="ma-3 mhide" color="transparent" size="250" tile>
+        <v-avatar class="ma-3 mhide" color="transparent" size="300" tile>
           <v-img :src="require('../assets/record.png')"></v-img>
         </v-avatar>
       </v-row>
@@ -56,6 +63,7 @@
                     rounded
                     dark
                     width="350px"
+                    height="57px"
                   >
                     <router-link class="reset-link" :to="item.button_link">
                       {{ item.button_text }}
@@ -115,7 +123,9 @@
           outlined
           rounded
         >
-          Начать работу
+          <router-link class="reset-link" to="/decode">
+            Начать работу
+          </router-link>
         </v-btn>
       </div>
     </v-card>
@@ -127,9 +137,7 @@ import { Glide, GlideSlide } from "vue-glide-js";
 
 export default {
   name: "Home",
-  mounted() {
-    
-  },
+  mounted() {},
   components: {
     [Glide.name]: Glide,
     [GlideSlide.name]: GlideSlide,
@@ -187,7 +195,7 @@ export default {
   border: unset;
 }
 .contain-width {
-  max-width: 65%;
+  max-width: 60%;
 }
 @media only screen and (max-width: 960px) {
   .contain-width {

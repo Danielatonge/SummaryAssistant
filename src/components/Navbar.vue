@@ -1,10 +1,10 @@
 <template>
-  <div class="top-nav py-4">
+  <nav class="top-nav py-4">
     <v-container class="px-6 px-lg-0">
-      <v-row class="d-flex justify-space-between">
+      <v-row class="d-flex justify-space-between mx-2">
         <router-link class="reset-link text-color" to="/">
-          <p class="text-h3 font-weight-bold mb-0">Summary</p>
-          <p class="body-2 text-center mb-0">Your personal assistent</p>
+          <p class="text-h4 font-weight-bold mb-0">Summary</p>
+          <p class="oswald-font text-center mt-n2 mb-0">Your personal assistent</p>
         </router-link>
 
         <div class="my-auto hidden-lg-and-up">
@@ -27,7 +27,7 @@
             class="mr-4"
             background-color="transparent"
           >
-            <v-tabs-slider class="text-color"></v-tabs-slider>
+            <v-tabs-slider class="#117DEC"></v-tabs-slider>
             <!-- <v-tab class="pa-0 ma-0" style="min-width:0px" key="fallback"></v-tab> -->
             <v-tab
               v-for="item in links"
@@ -39,34 +39,39 @@
               {{ item.text }}
             </v-tab>
             <v-tab router to="/settings" key="Настройки">
-              <v-icon class="text-color">mdi-cog-outline</v-icon>
+              <v-icon class="text-color" style="font-size:28px">mdi-cog-outline</v-icon>
             </v-tab>
           </v-tabs>
         </div>
-
+        
         <v-btn
           rounded
           outlined
           class="my-auto d-lg-flex hidden-md-and-down size-tab text-color"
           v-if="!loggedIn"
+          width="155px"
+          height="48px"
         >
-          <router-link class="reset-link text-color" to="/login">
+          <router-link class="reset-link text-color bold" to="/login">
             Войти
           </router-link>
         </v-btn>
         <v-btn
           rounded
           outlined
+          width="155px"
+          height="48px"
           class="my-auto d-lg-flex hidden-md-and-down size-tab text-color"
           v-else
         >
-          <router-link class="reset-link text-color" to="/logout">
+          <router-link class="reset-link text-color bold" to="/logout">
             Выйти
           </router-link>
         </v-btn>
+        
       </v-row>
     </v-container>
-  </div>
+  </nav>
 </template>
 
 <script>
@@ -99,9 +104,20 @@ export default {
 .text-color {
   color: #14396a !important;
 }
+.bold {
+  font-weight: 600 !important;
+}
+
+.oswald-font {
+  font-family: "Oswald", "Roboto", sans-serif !important;
+  font-weight: 600 !important;
+}
 .size-tab {
   font-size: 1.125rem !important;
-  font-weight: 400 !important;
+  font-weight: 500 !important;
+}
+.v-tab, .v-btn {
+  text-transform: none !important;
 }
 
 @media only screen and (max-width: 1260px) {

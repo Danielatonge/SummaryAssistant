@@ -78,6 +78,7 @@ export default new Vuex.Store({
       state.decoded_sample = null;
     },
     setConferenceInfo(state, data) {
+      console.log(data)
       state.conferenceInfo.push(data);
     },
     setSettings(state, data) {

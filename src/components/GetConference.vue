@@ -29,7 +29,7 @@
               <v-col cols="6" class="text-center">
                 <v-btn
                   @click="getTranscription"
-                  class="px-10 primary-fill"
+                  class="px-10 bold-button primary-fill"
                   dark
                   outlined
                   rounded

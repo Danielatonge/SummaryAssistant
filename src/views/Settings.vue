@@ -17,13 +17,11 @@
                 <div>Плей/Пауза</div>
               </v-col>
               <v-col cols="6">
-                <v-text-field
-                  v-model="settings.play_pause"
-                  @change="play_pauseChanged"
-                  outlined
-                  background-color="grey lighten-2"
-                  hide-details="auto"
-                ></v-text-field>
+                <settings-text-field
+                  :text="settings.play_pause"
+                  :change="play_pauseChanged"
+                >
+                </settings-text-field>
               </v-col>
             </v-row>
             <v-row>
@@ -31,13 +29,10 @@
                 <div>Предыдуший период</div>
               </v-col>
               <v-col cols="6">
-                <v-text-field
-                  v-model="settings.previous_period"
-                  @change="previous_periodChanged"
-                  outlined
-                  background-color="grey lighten-2"
-                  hide-details="auto"
-                ></v-text-field>
+                <settings-text-field
+                  :text="settings.previous_period"
+                  :change="previous_periodChanged"
+                ></settings-text-field>
               </v-col>
             </v-row>
             <v-row>
@@ -45,13 +40,10 @@
                 <div>Следующий период</div>
               </v-col>
               <v-col cols="6">
-                <v-text-field
-                  v-model="settings.next_period"
-                  @change="next_periodChanged"
-                  outlined
-                  background-color="grey lighten-2"
-                  hide-details="auto"
-                ></v-text-field>
+                <settings-text-field
+                  :text="settings.next_period"
+                  :change="next_periodChanged"
+                ></settings-text-field>
               </v-col>
             </v-row>
             <v-row>
@@ -59,13 +51,10 @@
                 <div>Снизить скорость</div>
               </v-col>
               <v-col cols="6">
-                <v-text-field
-                  v-model="settings.decrease_speed"
-                  @change="decrease_speedChanged"
-                  outlined
-                  background-color="grey lighten-2"
-                  hide-details="auto"
-                ></v-text-field>
+                <settings-text-field
+                  :text="settings.decrease_speed"
+                  :change="decrease_speedChanged"
+                ></settings-text-field>
               </v-col>
             </v-row>
             <v-row>
@@ -73,13 +62,10 @@
                 <div>Увеличить скорость</div>
               </v-col>
               <v-col cols="6">
-                <v-text-field
-                  v-model="settings.increase_speed"
-                  @change="increase_speedChanged"
-                  outlined
-                  background-color="grey lighten-2"
-                  hide-details="auto"
-                ></v-text-field>
+                <settings-text-field
+                  :text="settings.increase_speed"
+                  :change="increase_speedChanged"
+                ></settings-text-field>
               </v-col>
             </v-row>
             <v-row>
@@ -87,13 +73,13 @@
                 <div>Начать сначала</div>
               </v-col>
               <v-col cols="6">
-                <v-text-field
-                  v-model="settings.restart"
-                  @change="restartChanged"
+                <settings-text-field
+                  :text="settings.restart"
+                  :change="restartChanged"
                   outlined
                   background-color="grey lighten-2"
                   hide-details="auto"
-                ></v-text-field>
+                ></settings-text-field>
               </v-col>
             </v-row>
           </div>
@@ -108,13 +94,10 @@
                 <div>Добавить метку</div>
               </v-col>
               <v-col cols="6">
-                <v-text-field
-                  v-model="settings.add_label"
-                  @change="add_labelChanged"
-                  outlined
-                  background-color="grey lighten-2"
-                  hide-details="auto"
-                ></v-text-field>
+                <settings-text-field
+                  :text="settings.add_label"
+                  :change="add_labelChanged"
+                ></settings-text-field>
               </v-col>
             </v-row>
             <v-row>
@@ -122,13 +105,11 @@
                 <div>Скопировать</div>
               </v-col>
               <v-col cols="6">
-                <v-text-field
-                  v-model="settings.copy"
-                  @change="copyChanged"
-                  outlined
-                  background-color="grey lighten-2"
-                  hide-details="auto"
-                ></v-text-field>
+                <settings-text-field
+                  :text="settings.copy"
+                  :change="copyChanged"
+                >
+                </settings-text-field>
               </v-col>
             </v-row>
           </div>
@@ -140,8 +121,10 @@
 
 <script>
 import { mapGetters } from "vuex";
+import SettingsTextField from "@/components/SettingsTextField.vue";
 
 export default {
+  components: { SettingsTextField },
   name: "Settings",
   created() {
     this.$store.dispatch("getSettingKeys");
