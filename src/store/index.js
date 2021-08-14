@@ -331,7 +331,10 @@ export default new Vuex.Store({
               const transcribeId = response.data.transcribeId;
               const storageUrl = response.data.url;
               context.commit("saveUploadInfo", { transcribeId, storageUrl });
-              console.log({ transcribeId, storageUrl });
+              console.log("getStorageLink Successfull: ", {
+                transcribeId,
+                storageUrl,
+              });
               resolve({ transcribeId, storageUrl });
             } else {
               throw new Error(response.data.errorMessage);
@@ -345,20 +348,28 @@ export default new Vuex.Store({
     },
     uploadMediaToStorage(context, { file, url }) {
       console.log("PUT REQUEST(uploadMediaToStorage): " + url + " -:-" + file);
+      console.log("uploadMediaToStorage Started");
       return new Promise((resolve) => {
         let request = new XMLHttpRequest();
         request.onreadystatechange = function () {
           if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
             console.log(this.responseText);
             resolve(this.responseText);
+            console.log("uploadMediaToStorage Ended");
           }
         };
-        const binary = file.getAsBinary;
-        console.log(binary);
+        
+        let freader = new FileReader();
+        freader.loadend = function (data) {
+          console.log(data);
+        };
+        freader.readAsArrayBuffer(file);
+
+        request.open("PUT", `https://cors-anywhere.herokuapp.com/${url}`, true);
+        request.send(freader.readAsArrayBuffer(file));
+        
         // const blob = new Blob(file, {type: 'audio/wav'});
         // https://cors-anywhere.herokuapp.com/
-        request.open("PUT", `https://cors-anywhere.herokuapp.com/${url}`, true);
-        request.send(binary);
 
         // axios
         //   .put(`https://cors-anywhere.herokuapp.com/${url}`, formData)

@@ -83,7 +83,7 @@
         </v-col>
       </v-row>
       <vue-glide :perView="1" class="hidden-md-and-up pa-0">
-        <vue-glide-slide class="pa-0 ml-6" v-for="(item, i) in items" :key="i">
+        <vue-glide-slide class="pa-0 ml-3" v-for="(item, i) in items" :key="i">
           <div class="border-main max-content rounded-xl pa-10">
             <div class="px-0 text-color text-center">
               <div class="mb-2 main-heading" v-text="item.title"></div>
