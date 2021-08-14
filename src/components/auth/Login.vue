@@ -2,7 +2,19 @@
   <div>
     <v-container class="py-10">
       <v-row class="justify-center">
-        <v-col cols="12" lg="6">
+        <v-col cols="12" lg="8">
+          <v-dialog v-model="loading" hide-overlay persistent width="300">
+            <v-card color="primary" dark>
+              <v-card-text class="pt-4">
+                Подождите, пожалуйста
+                <v-progress-linear
+                  indeterminate
+                  color="white"
+                  class="my-4"
+                ></v-progress-linear>
+              </v-card-text>
+            </v-card>
+          </v-dialog>
           <div class="setting-column">
             <v-row class="justify-center text-color">
               <v-col cols="12" class="d-flex">
@@ -41,15 +53,19 @@
                 ></v-text-field>
               </v-col>
             </v-row>
-            <!-- <div v-if="true" class="mt-n4 mb-4 error--text text-center">
-              Error on Login: {{ feedback }}
-            </div> -->
+            <div
+              v-if="errors.length !== 0"
+              class="mt-n4 mb-4 error--text text-center"
+            >
+              Ошибка входа: {{ errors ? errors[0] : "" }}
+            </div>
 
             <v-row class="justify-center">
-              <v-col cols="6" class="text-center">
+              <v-col cols="12" md="6" class="text-center">
                 <v-btn
-                  class="px-10 primary-fill"
+                  class="text-h6 bold-button primary-fill"
                   dark
+                  style="width: 213px; height: 40px"
                   outlined
                   rounded
                   @click.prevent="login"
@@ -73,12 +89,14 @@ export default {
       username: "",
       password: "",
       showPassword: false,
-      feedback: "",
+      errors: [],
+      loading: false,
     };
   },
   methods: {
     login() {
-      const This = this;
+      this.errors = [];
+      this.loading = true;
       this.$store
         .dispatch("retrieveToken", {
           username: this.username,
@@ -88,8 +106,12 @@ export default {
           this.$router.push({ name: "Home" });
         })
         .catch((err) => {
-          This.feeback = err.message;
-          console.log("EEr", err.message)
+          this.loading = false;
+          const feedback = err.response
+            ? err.response.data.errorMessage
+            : err.message;
+          this.errors.push(feedback);
+          console.log("EEr", err.message);
         });
     },
   },

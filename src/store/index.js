@@ -391,7 +391,7 @@ export default new Vuex.Store({
               context.commit("retrieveToken", token);
               resolve(response);
             } else {
-              reject(response.data);
+              throw new Error(response.data.errorMessage);
             }
           })
           .catch((err) => {
