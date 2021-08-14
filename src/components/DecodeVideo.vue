@@ -65,7 +65,7 @@ import TinyEditor from "./TinyEditor.vue";
 export default {
   components: { TinyEditor },
   mounted() {
-    const decoded = JSON.parse(this.$store.getters.decodedSample);
+    const decoded = this.$store.getters.decodedSample;
     let display = `<h4>AudioUrl: ${decoded.audioUrl}</h4>`;
     display += `<p><strong>Configurations:</strong></p>`;
     display += `<p>service:${decoded.config.service}, 
@@ -87,7 +87,7 @@ export default {
   methods: {
     editTranscript() {
       const req = {
-        text: JSON.parse(this.editorText),
+        text: this.editorText,
         transId: this.$store.getters.transcribeId,
       };
       this.$store.dispatch("editTranscription", req);

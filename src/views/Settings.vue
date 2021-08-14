@@ -18,7 +18,7 @@
               </v-col>
               <v-col cols="6">
                 <settings-text-field
-                  :editorText="settings.play_pause"
+                  :text="settings.play_pause"
                   :change="play_pauseChanged"
                 >
                 </settings-text-field>
@@ -30,7 +30,7 @@
               </v-col>
               <v-col cols="6">
                 <settings-text-field
-                  :editorText="settings.previous_period"
+                  :text="settings.previous_period"
                   :change="previous_periodChanged"
                 ></settings-text-field>
               </v-col>
@@ -41,7 +41,7 @@
               </v-col>
               <v-col cols="6">
                 <settings-text-field
-                  :editorText="settings.next_period"
+                  :text="settings.next_period"
                   :change="next_periodChanged"
                 ></settings-text-field>
               </v-col>
@@ -52,7 +52,7 @@
               </v-col>
               <v-col cols="6">
                 <settings-text-field
-                  :editorText="settings.decrease_speed"
+                  :text="settings.decrease_speed"
                   :change="decrease_speedChanged"
                 ></settings-text-field>
               </v-col>
@@ -63,7 +63,7 @@
               </v-col>
               <v-col cols="6">
                 <settings-text-field
-                  :editorText="settings.increase_speed"
+                  :text="settings.increase_speed"
                   :change="increase_speedChanged"
                 ></settings-text-field>
               </v-col>
@@ -74,7 +74,7 @@
               </v-col>
               <v-col cols="6">
                 <settings-text-field
-                  :editorText="settings.restart"
+                  :text="settings.restart"
                   :change="restartChanged"
                   outlined
                   background-color="grey lighten-2"
@@ -95,7 +95,7 @@
               </v-col>
               <v-col cols="6">
                 <settings-text-field
-                  :editorText="settings.add_label"
+                  :text="settings.add_label"
                   :change="add_labelChanged"
                 ></settings-text-field>
               </v-col>
@@ -106,7 +106,7 @@
               </v-col>
               <v-col cols="6">
                 <settings-text-field
-                  :editorText="settings.copy"
+                  :text="settings.copy"
                   :change="copyChanged"
                 >
                 </settings-text-field>
