@@ -358,35 +358,14 @@ export default new Vuex.Store({
             console.log("uploadMediaToStorage Ended");
           }
         };
-        
+
         let freader = new FileReader();
-        freader.loadend = function (data) {
-          console.log(data);
+        freader.onload = function () {
+          request.open("PUT", `https://cors-anywhere.herokuapp.com/${url}`, true);
+          request.send(freader.result);
+          console.log("Loading .... ")
         };
         freader.readAsArrayBuffer(file);
-
-        request.open("PUT", `https://cors-anywhere.herokuapp.com/${url}`, true);
-        request.send(freader.readAsArrayBuffer(file));
-        
-        // const blob = new Blob(file, {type: 'audio/wav'});
-        // https://cors-anywhere.herokuapp.com/
-
-        // axios
-        //   .put(`https://cors-anywhere.herokuapp.com/${url}`, formData)
-        //   .then((response) => {
-        //     if (response.status === 200) {
-        //       console.log(
-        //         "File Successfully Uploaded to Google Cloud Storage. "
-        //       );
-        //       resolve(response);
-        //     }
-        //     reject(response.data);
-        //   })
-        //   .catch((err) => {
-        //     console.log("Something went wrong while Uploading File.");
-        //     console.log(err);
-        //     reject(err);
-        //   });
       });
     },
     retrieveToken(context, credentials) {

@@ -9,7 +9,7 @@
           <v-spacer></v-spacer>
         </v-col>
         <v-col cols="12" lg="7">
-          <div class="text-h5 setting-column" ref="form">
+          <div class="text-h5 setting-column">
             <v-row class="justify-center">
               <v-col cols="12" class="d-flex">
                 <v-icon class="text-color mhide" large @click="RouteConference">
@@ -24,7 +24,6 @@
             <v-row class="justify-center mt-12">
               <v-col cols="10" md="6">
                 <v-text-field
-                ref="name"
                   :rules="[rules.required]"
                   v-model="conferenceName"
                   label="Hазвание конференции"
@@ -37,7 +36,6 @@
             <v-row class="justify-center mb-12">
               <v-col cols="10" md="6">
                 <v-text-field
-                ref="orgname"
                   :rules="[rules.required]"
                   v-model="organizerName"
                   label="Имя организатора"
@@ -78,37 +76,19 @@ export default {
       rules: {
         required: (value) => !!value || "нужное поле",
       },
-      formHasErrors: false,
     };
   },
-  computed: {
-    form() {
-      return {
-        name: this.conferenceName,
-        orgname: this.organizerName,
-      };
-    },
-  },
+  computed: {},
   methods: {
     createConference() {
-      this.formHasErrors = false;
-
-      Object.keys(this.form).forEach((f) => {
-        if (!this.form[f]) {
-          this.formHasErrors = true;
-          return null;
-        }
-        this.$refs[f].validate(true);
-      });
-
-      // this.$store
-      //   .dispatch("createConference", {
-      //     conferenceName: this.conferenceName,
-      //     organizerName: this.organizerName,
-      //   })
-      //   .then((confId) => {
-      //     this.$router.push({ path: `/conference/created/${confId}` });
-      //   });
+      this.$store
+        .dispatch("createConference", {
+          conferenceName: this.conferenceName,
+          organizerName: this.organizerName,
+        })
+        .then((confId) => {
+          this.$router.push({ path: `/conference/created/${confId}` });
+        });
     },
     RouteConference() {
       this.$router.push("/conference");
