@@ -361,9 +361,13 @@ export default new Vuex.Store({
 
         let freader = new FileReader();
         freader.onload = function () {
-          request.open("PUT", `https://cors-anywhere.herokuapp.com/${url}`, true);
+          request.open(
+            "PUT",
+            `https://cors-anywhere.herokuapp.com/${url}`,
+            true
+          );
           request.send(freader.result);
-          console.log("Loading .... ")
+          console.log("Loading .... ");
         };
         freader.readAsArrayBuffer(file);
       });
@@ -436,22 +440,24 @@ export default new Vuex.Store({
         "Bearer " + context.state.token;
       console.log("verifyTranscriptionStatus");
       return new Promise((resolve, reject) => {
-        axios
-          .get(`/2/transcribe/check_state?transcribe_id=${transId}`)
-          .then((response) => {
-            if (response.data.success) {
-              if (response.data.state === "READY") {
+        setInterval(() => {
+          axios
+            .get(`/2/transcribe/check_state?transcribe_id=${transId}`)
+            .then((response) => {
+              if (response.data.success) {
                 console.log(response.data.state);
-                resolve(response.data.state);
+                if (response.data.state === "READY") {
+                  resolve(response.data.state);
+                }
+              } else {
+                throw new Error(response.data.errorMessage);
               }
-            } else {
-              throw new Error(response.data.errorMessage);
-            }
-          })
-          .catch((err) => {
-            console.log(err);
-            reject(err);
-          });
+            })
+            .catch((err) => {
+              console.log(err);
+              reject(err);
+            });
+        }, 5000);
       });
     },
     getDecodedTranscription(context, transId) {

@@ -65,7 +65,19 @@ import TinyEditor from "./TinyEditor.vue";
 export default {
   components: { TinyEditor },
   mounted() {
-    this.editorText = JSON.stringify(this.$store.getters.decodedSample);
+    const decoded = JSON.parse(this.$store.getters.decodedSample);
+    let display = `<h4>AudioUrl: ${decoded.audioUrl}</h4>`;
+    display += `<p><strong>Configurations:</strong></p>`;
+    display += `<p>service:${decoded.config.service}, 
+    diarizationEnabled:${decoded.config.diarizationEnabled}, 
+    minSpeakerCount:${decoded.config.minSpeakerCount}, 
+    maxSpeakerCount:${decoded.config.maxSpeakerCount}</p>`;
+    display += `<p><strong>Entries:</strong></p>`;
+    decoded.entries.forEach((entry) => {
+      display += `<p>time:${entry.time}, speakerId:${entry.speakerId}, speakerTag:${entry.speakerTag},</p>`;
+      display += `<p>text:&lt;${entry.text}&gt;</p>`;
+    });
+    this.editorText = display;
   },
   data() {
     return {
@@ -76,8 +88,8 @@ export default {
     editTranscript() {
       const req = {
         text: JSON.parse(this.editorText),
-        transId: this.$store.getters.transcribeId
-      }
+        transId: this.$store.getters.transcribeId,
+      };
       this.$store.dispatch("editTranscription", req);
     },
   },

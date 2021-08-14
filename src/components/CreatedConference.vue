@@ -139,12 +139,19 @@
         </v-col>
       </v-row>
       <v-row class="mt-10 d-flex justify-center">
-        <v-btn width="250px" height="50px" class="bold-button text-wrap mb-3 mr-2 primary-fill" dark outlined rounded>
+        <v-btn
+          width="250px"
+          height="50px"
+          class="bold-button text-wrap mb-3 mr-2 primary-fill"
+          dark
+          outlined
+          rounded
+        >
           Получить расшифровку
         </v-btn>
         <v-btn
-        width="250px"
-        height="50px"
+          width="250px"
+          height="50px"
           @click="endConference"
           class="bold-button orange text-wrap"
           dark
@@ -198,7 +205,7 @@ export default {
   },
   methods: {
     endConference() {
-      this.download();
+      // this.download();
       this.$store
         .dispatch("endConference", {
           conferenceId: this.confId,
@@ -326,9 +333,9 @@ export default {
       let stream = this.stream;
       stream.getAudioTracks().forEach((track) => track.stop());
     },
-    download() {
-      this.recordRTC ? this.recordRTC.save("audio.wav"): null;
-    },
+    // download() {
+    //   this.recordRTC ? this.recordRTC.save("audio.wav"): null;
+    // },
     getTranscription() {
       this.$store.dispatch("getTranscription", this.confId).then((data) => {
         let doc = jsPDF();
@@ -341,8 +348,8 @@ export default {
 </script>
 
 <style scoped>
-  .v-btn__content {
-    width: 100% !important;
-    white-space: normal !important;
-  }
+.v-btn__content {
+  width: 100% !important;
+  white-space: normal !important;
+}
 </style>

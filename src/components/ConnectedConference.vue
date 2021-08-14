@@ -189,7 +189,7 @@ export default {
   },
   methods: {
     exitConference() {
-      this.download();
+      // this.download();
       this.$store.dispatch("exitConference", this.part.id).then(() => {
         this.$router.push({ path: "/conference" });
       });
@@ -310,9 +310,9 @@ export default {
       let stream = this.stream;
       stream.getAudioTracks().forEach((track) => track.stop());
     },
-    download() {
-      this.recordRTC ? this.recordRTC.save("audio.wav") : null;
-    },
+    // download() {
+    //   this.recordRTC ? this.recordRTC.save("audio.wav") : null;
+    // },
   },
 };
 </script>

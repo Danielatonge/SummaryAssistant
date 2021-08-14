@@ -213,9 +213,7 @@ export default {
       let stream = this.stream;
       stream.getAudioTracks().forEach((track) => track.stop());
     },
-    download() {
-      this.recordRTC.save("audio.wav");
-    },
+
     addToArchive() {
       this.$store.dispatch("addToArchive", this.editorText);
     },
