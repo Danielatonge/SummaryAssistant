@@ -103,7 +103,7 @@
                   width="100%"
                 >
                   <router-link class="reset-link" :to="item.button_link">
-                    {{ item.button_text }}
+                    Подробнее
                   </router-link>
                 </v-btn>
               </div>
@@ -113,7 +113,7 @@
       </vue-glide>
     </v-container>
     <v-card
-      class="d-flex align-center justify-center banner-bottom"
+      class="px-2 d-flex align-center justify-center banner-bottom"
       height="356px"
       dark
     >
@@ -206,7 +206,7 @@ export default {
     text-align: center;
   }
   .mhide {
-    display: none;
+    display: none !important;
   }
   .mshow {
     display: block;

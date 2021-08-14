@@ -53,14 +53,18 @@
     <v-container class="py-10 hidden-md-and-up">
       <v-row>
         <v-col cols="12" class="d-flex">
-          <v-icon dark class="orange pa-3 mr-5 rounded-xl">
-            mdi-microphone-outline
+          <v-icon
+            dark
+            class="orange pa-3 mr-5 rounded-xl"
+            @click="recording = !recording"
+          >
+            {{ recording ? "mdi-stop" : "mdi-microphone-outline" }}
           </v-icon>
           <v-img width="80%" :src="require('../assets/signal.png')"></v-img>
         </v-col>
         <v-col cols="12" class="voice-border my-8">
           <v-sheet height="500px">
-            <tiny-editor :text="editorText"></tiny-editor>
+            <tiny-editor :editorText="editorText"></tiny-editor>
           </v-sheet>
         </v-col>
         <v-col cols="12" class="voice-border">

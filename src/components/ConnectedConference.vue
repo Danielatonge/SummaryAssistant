@@ -94,7 +94,7 @@
       <v-row class="my-8">
         <v-col cols="12" class="voice-border">
           <v-sheet height="500px">
-            <tiny-editor :text="editorText"></tiny-editor>
+            <tiny-editor :editorText="editorText"></tiny-editor>
           </v-sheet>
         </v-col>
       </v-row>
@@ -110,9 +110,7 @@
             <template v-slot:prepend>
               <v-list-item>
                 <v-list-item-content class="text-center">
-                  <v-list-item-title>
-                    Обсуждение проекта
-                  </v-list-item-title>
+                  <v-list-item-title> Участники </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
             </template>
@@ -138,7 +136,13 @@
         </v-col>
       </v-row>
       <div class="text-center">
-        <v-btn class="px-10 primary-fill" dark outlined rounded>
+        <v-btn
+          class="text-h5 bold-button normalize px-10 primary-fill"
+          style="width: 100%; height: 57px"
+          dark
+          outlined
+          rounded
+        >
           <router-link to="/conference" class="reset-link"> Выйти </router-link>
         </v-btn>
       </div>
@@ -307,7 +311,7 @@ export default {
       stream.getAudioTracks().forEach((track) => track.stop());
     },
     download() {
-      this.recordRTC ? this.recordRTC.save("audio.wav"): null;
+      this.recordRTC ? this.recordRTC.save("audio.wav") : null;
     },
   },
 };

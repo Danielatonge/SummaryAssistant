@@ -85,7 +85,7 @@
     </v-container>
     <v-container class="py-10 hidden-md-and-up">
       <p class="text-h4 text-color font-weight-bold mb-7 text-left">
-        Конференция №11111111
+        Конференция № {{ confId }}
       </p>
       <v-row>
         <v-col cols="12" class="d-flex">
@@ -100,7 +100,7 @@
           <v-img width="80%" :src="require('../assets/signal.png')"></v-img>
         </v-col>
         <v-col cols="12">
-          <tiny-editor :text="editorText"></tiny-editor>
+          <tiny-editor :editorText="editorText"></tiny-editor>
         </v-col>
         <v-col cols="12" class="voice-border">
           <v-navigation-drawer
@@ -139,12 +139,14 @@
         </v-col>
       </v-row>
       <v-row class="mt-10 d-flex justify-center">
-        <v-btn class="text-wrap mb-3 mr-2 primary-fill" dark outlined rounded>
+        <v-btn width="250px" height="50px" class="bold-button text-wrap mb-3 mr-2 primary-fill" dark outlined rounded>
           Получить расшифровку
         </v-btn>
         <v-btn
+        width="250px"
+        height="50px"
           @click="endConference"
-          class="orange text-wrap"
+          class="bold-button orange text-wrap"
           dark
           outlined
           rounded
@@ -338,5 +340,9 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
+  .v-btn__content {
+    width: 100% !important;
+    white-space: normal !important;
+  }
 </style>
