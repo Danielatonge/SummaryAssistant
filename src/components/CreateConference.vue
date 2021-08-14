@@ -45,7 +45,12 @@
                 ></v-text-field>
               </v-col>
             </v-row>
-
+            <div
+              v-if="errors.length !== 0"
+              class="mt-n8 mb-4 body-2 error--text text-center"
+            >
+              Ошибка: {{ errors ? errors[0] : "" }}
+            </div>
             <v-row class="justify-center">
               <v-col cols="12" md="6" class="text-center">
                 <v-btn
@@ -60,6 +65,18 @@
                 </v-btn>
               </v-col>
             </v-row>
+            <v-dialog v-model="loading" hide-overlay persistent width="300">
+              <v-card color="primary" dark>
+                <v-card-text class="pt-4">
+                  Подождите, пожалуйста
+                  <v-progress-linear
+                    indeterminate
+                    color="white"
+                    class="my-4"
+                  ></v-progress-linear>
+                </v-card-text>
+              </v-card>
+            </v-dialog>
           </div>
         </v-col>
       </v-row>
@@ -76,19 +93,39 @@ export default {
       rules: {
         required: (value) => !!value || "нужное поле",
       },
+      errors: [],
+      loading: false,
     };
   },
-  computed: {},
+  computed: {
+    errorFeedback() {
+      return this.conferenceName.length !== 0 && this.organizerName.length != 0;
+    },
+  },
   methods: {
     createConference() {
-      this.$store
-        .dispatch("createConference", {
-          conferenceName: this.conferenceName,
-          organizerName: this.organizerName,
-        })
-        .then((confId) => {
-          this.$router.push({ path: `/conference/created/${confId}` });
-        });
+      this.errors = []
+      this.loading = true;
+      if (this.errorFeedback) {
+        this.$store
+          .dispatch("createConference", {
+            conferenceName: this.conferenceName,
+            organizerName: this.organizerName,
+          })
+          .then((confId) => {
+            this.$router.push({ path: `/conference/created/${confId}` });
+          })
+          .catch((err) => {
+            this.loading = false;
+            const feedback = err.response
+              ? err.response.data.errorMessage
+              : err.message;
+            this.errors.push(feedback);
+          });
+      } else {
+        this.loading = false;
+        this.errors.push("обязательные поля");
+      }
     },
     RouteConference() {
       this.$router.push("/conference");
