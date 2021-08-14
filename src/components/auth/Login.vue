@@ -41,9 +41,9 @@
                 ></v-text-field>
               </v-col>
             </v-row>
-            <div v-if="true" class="mt-n4 mb-4 error--text text-center">
+            <!-- <div v-if="true" class="mt-n4 mb-4 error--text text-center">
               Error on Login: {{ feedback }}
-            </div>
+            </div> -->
 
             <v-row class="justify-center">
               <v-col cols="6" class="text-center">
