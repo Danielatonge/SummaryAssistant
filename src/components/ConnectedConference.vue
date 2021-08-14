@@ -76,7 +76,7 @@
     </v-container>
     <v-container class="py-10 hidden-md-and-up">
       <p class="text-h4 text-color font-weight-bold mb-7 text-left">
-        Конференция №11111111
+        Конференция № {{ confId }}
       </p>
 
       <v-row>
@@ -111,7 +111,7 @@
               <v-list-item>
                 <v-list-item-content class="text-center">
                   <v-list-item-title>
-                    Обсуждение проекта {{ participants }}
+                    Обсуждение проекта
                   </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>

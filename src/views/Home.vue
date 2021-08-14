@@ -7,9 +7,10 @@
             Summary – your personal assistant
           </div>
           <div class="mt-md-8 bold-button mb-4 text-h4 d-md-none">
-            <div style="font-weight:800; font-size: 43px"> Summary </div> your personal assistant
+            <div style="font-weight: 800; font-size: 43px">Summary</div>
+            your personal assistant
           </div>
-          
+
           <v-avatar
             class="ma-3 d-md-none d-lg-none d-xl-none mb-6"
             color="transparent"
@@ -99,7 +100,7 @@
                   outlined
                   rounded
                   dark
-                  width="350px"
+                  width="100%"
                 >
                   <router-link class="reset-link" :to="item.button_link">
                     {{ item.button_text }}

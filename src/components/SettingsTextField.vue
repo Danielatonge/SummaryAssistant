@@ -3,8 +3,8 @@
     clearable
     v-model="value"
     @change="change"
-    @keyup="handleKey"
-    @keydown="handleKey"
+    @keyup="handleKeyUp"
+    @keydown="handleKeyDown"
     outlined
     background-color="grey lighten-2"
     hide-details="auto"
@@ -25,26 +25,27 @@ export default {
     };
   },
   methods: {
-    handleKey(e) {
-      // Indicate key pressed
+    handleKeyDown(e) {
+      this.value = "";
       if (e.type == "keydown") {
         this.keys[e.key] = true;
-      } else {
-        this.keys[e.key] = false;
       }
-
-      // Run on all keys and determine which are pressed
+    let i = 0;
       for (const [key, value] of Object.entries(this.keys)) {
         if (value) {
-          this.keyPressed += key.toUpperCase();
+          this.value += (i ? " + " : "") + key.toUpperCase();
+          i++;
         }
       }
-      if (this.keyPressed) {
-        this.value = this.keyPressed;
-      }
+      e.preventDefault();
+      // console.log("Down Value:", this.value);
+      // console.log("Down Keys:", this.keys);
+    },
 
-      console.log("Value:", this.value);
-      console.log("Keys:", this.keys);
+    handleKeyUp(e) {
+      if (e.type == "keyup") {
+        this.keys[e.key] = false;
+      }
     },
   },
 };

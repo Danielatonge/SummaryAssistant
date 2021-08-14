@@ -222,12 +222,14 @@
         <v-dialog v-model="dialog" persistent max-width="600px">
           <template v-slot:activator="{ on, attrs }">
             <v-btn
-              class="px-6 primary-fill"
+              class="px-6 text-h6 bold-button primary-fill"
               dark
               outlined
               rounded
               v-bind="attrs"
               v-on="on"
+              width="335px"
+                    height="50px"
             >
               Загрузить файл
             </v-btn>
@@ -358,10 +360,12 @@
       </div>
       <div>
         <v-btn
-          class="px-6 primary-fill"
+          class="px-6 bold-button text-h6 primary-fill"
           dark
           outlined
           rounded
+          width="280px"
+                    height="50px"
           @click="dialog = true"
           >Расшифровать
         </v-btn>

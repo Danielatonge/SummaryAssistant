@@ -78,7 +78,7 @@ export default new Vuex.Store({
       state.decoded_sample = null;
     },
     setConferenceInfo(state, data) {
-      console.log(data)
+      console.log(data);
       state.conferenceInfo.push(data);
     },
     setSettings(state, data) {
@@ -354,7 +354,7 @@ export default new Vuex.Store({
           }
         };
         const binary = file.getAsBinary;
-        console.log(binary)
+        console.log(binary);
         // const blob = new Blob(file, {type: 'audio/wav'});
         // https://cors-anywhere.herokuapp.com/
         request.open("PUT", `https://cors-anywhere.herokuapp.com/${url}`, true);
@@ -391,11 +391,11 @@ export default new Vuex.Store({
               context.commit("retrieveToken", token);
               resolve(response);
             } else {
-              throw new Error(response.data.errorMessage);
+              reject(response.data);
             }
           })
           .catch((err) => {
-            console.log(err);
+            console.log("Ring", err);
             reject(err);
           });
       });

@@ -18,7 +18,7 @@
         </v-col>
       </v-row>
       <v-row class="d-flex justify-center">
-        <v-col cols="8">
+        <v-col cols="12" md="8">
           <v-sheet
             class="rounded-lg mx-auto d-flex flex-wrap justify-center"
             color="transparent"
@@ -28,10 +28,9 @@
               <div class="mb-6" v-for="(item, index) in functions" :key="index">
                 <router-link :to="item.link" class="reset-link">
                   <v-btn
-                    class="text-h5 font-weight-bold px-10 py-7"
+                    class="text-h5 normalize font-weight-bold px-10 py-7"
                     dark
-                    width="500px"
-                    height="57px"
+                    style="width: 500px; height: 57px"
                     outlined
                     rounded
                     :class="item.blue ? 'primary-fill' : 'orange-fill'"
@@ -72,5 +71,16 @@ export default {
 .orange-fill {
   background-color: #fb6337;
   border: unset;
+}
+
+@media only screen and (max-width: 600px) {
+  .normalize {
+    width: 100% !important;
+    height: 70px !important;
+  }
+  .v-btn__content {
+    width: 100% !important;
+    white-space: normal !important;
+  }
 }
 </style>

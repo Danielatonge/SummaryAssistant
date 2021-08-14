@@ -10,14 +10,13 @@
                   <p class="text-h6">Login</p>
                   <span>
                     Eсли у вас нет учетной записи, вы можете зарегистрироваться
-                    <router-link to="/register">здесь</router-link></span
-                  >
+                    <router-link to="/register">здесь</router-link>
+                  </span>
                 </div>
               </v-col>
             </v-row>
-
             <v-row class="justify-center mt-6">
-              <v-col cols="6">
+              <v-col cols="10" sm="8" md="6">
                 <v-text-field
                   v-model="username"
                   label="ФИО"
@@ -28,7 +27,7 @@
               </v-col>
             </v-row>
             <v-row class="justify-center mb-4">
-              <v-col cols="6">
+              <v-col cols="10" sm="8" md="6">
                 <v-text-field
                   label="Пароль"
                   v-model="password"
@@ -42,6 +41,9 @@
                 ></v-text-field>
               </v-col>
             </v-row>
+            <div v-if="true" class="mt-n4 mb-4 error--text text-center">
+              Error on Login: {{ feedback }}
+            </div>
 
             <v-row class="justify-center">
               <v-col cols="6" class="text-center">
@@ -71,16 +73,24 @@ export default {
       username: "",
       password: "",
       showPassword: false,
+      feedback: "",
     };
   },
   methods: {
     login() {
-      this.$store.dispatch("retrieveToken", {
-        username: this.username,
-        password: this.password,
-      }).then( () => {
-        this.$router.push({ name: 'Home'})
-      });
+      const This = this;
+      this.$store
+        .dispatch("retrieveToken", {
+          username: this.username,
+          password: this.password,
+        })
+        .then(() => {
+          this.$router.push({ name: "Home" });
+        })
+        .catch((err) => {
+          This.feeback = err.message;
+          console.log("EEr", err.message)
+        });
     },
   },
 };
