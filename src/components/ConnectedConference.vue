@@ -142,8 +142,9 @@
           dark
           outlined
           rounded
+          @click="exitConference"
         >
-          <router-link to="/conference" class="reset-link"> Выйти </router-link>
+           Выйти 
         </v-btn>
       </div>
     </v-container>

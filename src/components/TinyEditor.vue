@@ -3,7 +3,6 @@
     <editor
       v-model="editorText"
       apiKey="06j1sdk82snkig4i7v5u03ne6nrs1dabbh9ftqntbcutrvv6"
-      :disabled="true"
       :init="{
         height: 500,
         menubar: false,
@@ -42,6 +41,9 @@ export default {
       text: "",
     };
   },
+  methods: {
+
+  }
 };
 </script>
 

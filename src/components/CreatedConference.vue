@@ -146,6 +146,7 @@
           dark
           outlined
           rounded
+          @click="getTranscription"
         >
           Получить расшифровку
         </v-btn>

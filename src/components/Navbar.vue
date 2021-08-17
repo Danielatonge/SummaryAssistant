@@ -4,7 +4,9 @@
       <v-row class="d-flex justify-space-between mx-2">
         <router-link class="reset-link text-color" to="/">
           <p class="text-h4 font-weight-bold mb-0">Summary</p>
-          <p class="oswald-font text-center mt-n2 mb-0">Your personal assistent</p>
+          <p class="oswald-font text-center mt-n2 mb-0">
+            Your personal assistent
+          </p>
         </router-link>
 
         <div class="my-auto hidden-lg-and-up">
@@ -39,22 +41,23 @@
               {{ item.text }}
             </v-tab>
             <v-tab router to="/settings" key="Настройки">
-              <v-icon class="text-color" style="font-size:28px">mdi-cog-outline</v-icon>
+              <v-icon class="text-color" style="font-size: 28px"
+                >mdi-cog-outline</v-icon
+              >
             </v-tab>
           </v-tabs>
         </div>
-        
+
         <v-btn
           rounded
           outlined
-          class="my-auto d-lg-flex hidden-md-and-down size-tab text-color"
+          class="my-auto d-lg-flex hidden-md-and-down size-tab text-color bold"
           v-if="!loggedIn"
           width="155px"
           height="48px"
+          @click="$router.push({ path: '/login' })"
         >
-          <router-link class="reset-link text-color bold" to="/login">
-            Войти
-          </router-link>
+          Войти
         </v-btn>
         <v-btn
           rounded
@@ -63,12 +66,10 @@
           height="48px"
           class="my-auto d-lg-flex hidden-md-and-down size-tab text-color"
           v-else
+          @click="$router.push({ path: '/logout' })"
         >
-          <router-link class="reset-link text-color bold" to="/logout">
-            Выйти
-          </router-link>
+          Выйти
         </v-btn>
-        
       </v-row>
     </v-container>
   </nav>
@@ -116,7 +117,8 @@ export default {
   font-size: 1.125rem !important;
   font-weight: 500 !important;
 }
-.v-tab, .v-btn {
+.v-tab,
+.v-btn {
   text-transform: none !important;
 }
 

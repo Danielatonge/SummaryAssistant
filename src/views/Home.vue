@@ -31,10 +31,9 @@
               rounded
               width="322px"
               height="57px"
+              @click="$router.push({ path: '/decode' })"
             >
-              <router-link class="reset-link" to="/decode">
-                Начать работу
-              </router-link>
+              Начать работу
             </v-btn>
           </div>
         </div>
@@ -65,10 +64,9 @@
                     dark
                     width="350px"
                     height="57px"
+                    @click="$router.push({ path: `${item.button_link}` })"
                   >
-                    <router-link class="reset-link" :to="item.button_link">
-                      {{ item.button_text }}
-                    </router-link>
+                    {{ item.button_text }}
                   </v-btn>
                 </v-card-actions>
               </v-col>
@@ -101,10 +99,9 @@
                   rounded
                   dark
                   width="100%"
+                  @click="$router.push({ path: `${item.button_link}` })"
                 >
-                  <router-link class="reset-link" :to="item.button_link">
-                    Подробнее
-                  </router-link>
+                  Подробнее
                 </v-btn>
               </div>
             </div>
@@ -123,10 +120,9 @@
           class="px-10 py-6 text-h5 font-weight-bold yellow-fill"
           outlined
           rounded
+          @click="$router.push({ path: '/decode' })"
         >
-          <router-link class="reset-link" to="/decode">
             Начать работу
-          </router-link>
         </v-btn>
       </div>
     </v-card>

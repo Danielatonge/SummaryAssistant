@@ -13,29 +13,29 @@
             height="400"
           >
             <div class="my-auto text-color justify-center">
-              <div class="mx-auto">
+              <div class="justify-center">
+                <v-icon class="icon-file">mdi-file-move</v-icon>
                 <v-file-input
                   v-model="file_upload"
-                  class="pb-10 icon-file"
+                  class=""
+                  ref="file"
                   prepend-icon="mdi-file-move"
                   hide-input
+                  style="visibility: hidden; width: 1px; height: 1px"
                   truncate-length="1"
                 ></v-file-input>
               </div>
               <p>Пертащите или загрузите файл</p>
+              <v-btn
+                class="px-6 primary-fill"
+                dark
+                outlined
+                rounded
+                @click="uploadFile"
+              >
+                Загрузить файл
+              </v-btn>
               <v-dialog v-model="dialog" persistent max-width="600px">
-                <template v-slot:activator="{ on, attrs }">
-                  <v-btn
-                    class="px-6 primary-fill"
-                    dark
-                    outlined
-                    rounded
-                    v-bind="attrs"
-                    v-on="on"
-                  >
-                    Загрузить файл
-                  </v-btn>
-                </template>
                 <v-card>
                   <v-card-title class="justify-center">
                     <span class="text-h5">Введите данные о файле</span>
@@ -208,32 +208,31 @@
         видео файлы, приложив к этому минимум усилий.
       </div>
       <div class="d-flex text-color justify-center">
-        <div class="">
+        <div class="justify-center">
           <v-file-input
             v-model="file_upload"
-            class="pb-10 icon-file"
+            class=""
+            ref="file"
             prepend-icon="mdi-file-move"
             hide-input
+            style="visibility: hidden; width: 1px; height: 1px"
             truncate-length="1"
           ></v-file-input>
         </div>
       </div>
       <div class="text-center mb-6">
+        <v-btn
+          class="px-6 text-h6 bold-button primary-fill"
+          dark
+          outlined
+          rounded
+          width="335px"
+          height="50px"
+          @click="uploadFile"
+        >
+          Загрузить файл
+        </v-btn>
         <v-dialog v-model="dialog" persistent max-width="600px">
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              class="px-6 text-h6 bold-button primary-fill"
-              dark
-              outlined
-              rounded
-              v-bind="attrs"
-              v-on="on"
-              width="335px"
-                    height="50px"
-            >
-              Загрузить файл
-            </v-btn>
-          </template>
           <v-card>
             <v-card-title class="justify-center">
               <span class="text-h5">Введите данные о файле</span>
@@ -365,7 +364,7 @@
           outlined
           rounded
           width="280px"
-                    height="50px"
+          height="50px"
           @click="dialog = true"
           >Расшифровать
         </v-btn>
@@ -413,7 +412,7 @@ export default {
                   this.$store
                     .dispatch("verifyTranscriptionStatus", response)
                     .then((state) => {
-                      console.log(state)
+                      console.log(state);
                       const transId = this.$store.getters.transcribeId;
                       this.$store
                         .dispatch("getDecodedTranscription", transId)
@@ -425,19 +424,17 @@ export default {
             });
         });
     },
+    uploadFile() {
+      this.$refs.file.$refs.input.click();
+      this.dialog = true;
+    },
   },
 };
 </script>
 
 <style>
-.icon-file .v-icon.v-icon--link.mdi.mdi-file-move.theme--light {
+.icon-file.v-icon.v-icon {
   font-size: 6rem !important;
   color: #14396a !important;
-  margin-left: 13rem;
-}
-@media only screen and (max-width: 960px) {
-  .icon-file .v-icon.v-icon--link.mdi.mdi-file-move.theme--light {
-    margin: 0;
-  }
 }
 </style>
