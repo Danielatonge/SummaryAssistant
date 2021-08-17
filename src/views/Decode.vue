@@ -375,6 +375,13 @@
 
 <script>
 export default {
+  watch: {
+    file_upload(val) {
+      if (val) {
+        this.dialog = true;
+      }
+    },
+  },
   data() {
     return {
       loadDialog: false,
@@ -426,7 +433,6 @@ export default {
     },
     uploadFile() {
       this.$refs.file.$refs.input.click();
-      this.dialog = true;
     },
   },
 };
