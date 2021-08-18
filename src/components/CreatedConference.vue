@@ -208,9 +208,7 @@ export default {
     endConference() {
       // this.download();
       this.$store
-        .dispatch("endConference", {
-          conferenceId: this.confId,
-        })
+        .dispatch("endConference", this.confId)
         .then(() => {
           this.$router.push({ path: "/conference" });
         });

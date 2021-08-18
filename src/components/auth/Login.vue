@@ -59,6 +59,12 @@
             >
               Ошибка входа: {{ errors ? errors[0] : "" }}
             </div>
+            <div
+              v-else-if="response && loading==false"
+              class="mt-n4 mb-4 success--text text-center"
+            >
+              успешный вход в систему
+            </div>
 
             <v-row class="justify-center">
               <v-col cols="12" md="6" class="text-center">
@@ -90,7 +96,8 @@ export default {
       password: "",
       showPassword: false,
       errors: [],
-      loading: false,
+      loading: null,
+      response: null,
     };
   },
   methods: {
@@ -102,7 +109,8 @@ export default {
           username: this.username,
           password: this.password,
         })
-        .then(() => {
+        .then((response) => {
+          this.response = response
           this.$router.push({ name: "Home" });
         })
         .catch((err) => {

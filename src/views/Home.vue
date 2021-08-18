@@ -17,7 +17,7 @@
             size="300"
             tile
           >
-            <v-img :src="require('../assets/record.png')"></v-img>
+            <v-img contain :src="require('../assets/record.png')"></v-img>
           </v-avatar>
           <div class="main-text mb-md-10 text-left px-6 px-md-0">
             Summary позволяет расшифровать конференции в реальном врменени,
@@ -37,8 +37,8 @@
             </v-btn>
           </div>
         </div>
-        <v-avatar class="ma-3 mhide" color="transparent" size="300" tile>
-          <v-img :src="require('../assets/record.png')"></v-img>
+        <v-avatar class=" mhide" color="transparent" size="340" tile>
+          <v-img contain :src="require('../assets/record.png')"></v-img>
         </v-avatar>
       </v-row>
       <v-row class="d-none d-md-block">
@@ -71,7 +71,7 @@
                 </v-card-actions>
               </v-col>
 
-              <v-avatar class="ma-3" size="185" tile>
+              <v-avatar class="ma-3" size="255" tile>
                 <v-img
                   :src="require('../assets' + item.picture + '.png')"
                 ></v-img>
