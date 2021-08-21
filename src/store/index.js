@@ -17,7 +17,7 @@ let settings = {
 };
 
 const vuexLocal = new VuexPersistence({
-  storage: window.localStorage,
+  storage: window.sessionStorage,
 });
 
 export default new Vuex.Store({
@@ -32,6 +32,7 @@ export default new Vuex.Store({
     current_participant: null,
     archives: [],
     decoded_sample: null,
+    file: null,
   },
   getters: {
     loggedIn(state) {
@@ -42,6 +43,13 @@ export default new Vuex.Store({
     },
     hostName(state) {
       return state.conferenceInfo ? state.conferenceInfo.hostName : null;
+    },
+    confName: (state) => (confId) => {
+      if (state.conferenceInfo.length) {
+        const conf = state.conferenceInfo.filter((x) => x.confId === confId);
+        return conf[0].confName;
+      }
+      return null;
     },
     settings(state) {
       return state.settings;
@@ -65,6 +73,9 @@ export default new Vuex.Store({
   mutations: {
     retrieveToken(state, token) {
       state.token = token;
+    },
+    saveFile(state, file) {
+      state.file = file;
     },
     destroyToken(state) {
       state.token = null;
@@ -346,9 +357,14 @@ export default new Vuex.Store({
           });
       });
     },
+    saveUploadedFile(context, payload) {
+      console.log(payload);
+      context.commit("saveFile", payload);
+    },
     uploadMediaToStorage(context, { file, url }) {
       console.log("PUT REQUEST(uploadMediaToStorage): " + url + " -:-" + file);
       console.log("uploadMediaToStorage Started");
+  
       return new Promise((resolve) => {
         let request = new XMLHttpRequest();
         request.onreadystatechange = function () {
@@ -363,7 +379,7 @@ export default new Vuex.Store({
         freader.onload = function () {
           request.open(
             "PUT",
-            `https://cors-anywhere.herokuapp.com/${url}`,
+            `https://cors-proxy-dan.herokuapp.com/${url}`,
             true
           );
           request.send(freader.result);

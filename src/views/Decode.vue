@@ -154,8 +154,10 @@
                       width="300"
                     >
                       <v-card color="primary" dark>
-                        <v-card-text class="pt-4">
-                          Подождите, пожалуйста
+                        <v-card-text
+                          class="pt-4 font-weight-bold body-2 white--text"
+                        >
+                          Подождите, пожалуйста: {{ feedback }}
                           <v-progress-linear
                             indeterminate
                             color="white"
@@ -377,6 +379,7 @@
 export default {
   watch: {
     file_upload(val) {
+      console.log("FILE UPLOAD", val);
       if (val) {
         this.dialog = true;
       }
@@ -397,30 +400,38 @@ export default {
       types: ["По умолчанию", "По умолчанию 2"],
       services: ["google", "yahoo", "bing"],
       languages: ["Русский", "English"],
+      feedback: "",
     };
   },
   methods: {
     goToDecodeVideo() {
       this.loadDialog = true;
+      this.feedback = "Создание ссылки на хранилище";
+
+      this.$store.dispatch("saveUploadedFile", this.file_upload);
       this.$store
         .dispatch("getStorageLink", this.select.service)
         .then((response) => {
-          // https://cors-anywhere.herokuapp.com/
+          // https://cors-proxy-dan.herokuapp.com/
+          this.feedback = "Загрузка медиа";
           this.$store
             .dispatch("uploadMediaToStorage", {
               file: this.file_upload,
               url: response.storageUrl,
             })
             .then(() => {
+              this.feedback = "Начать расшифровка";
               const transId = this.$store.getters.transcribeId;
               this.$store
                 .dispatch("beginTranscription", transId)
                 .then((response) => {
+                  this.feedback = "Расшифровка в процессе";
                   this.$store
                     .dispatch("verifyTranscriptionStatus", response)
                     .then((state) => {
                       console.log(state);
                       const transId = this.$store.getters.transcribeId;
+                      this.feedback = "Расшифровка завершена";
                       this.$store
                         .dispatch("getDecodedTranscription", transId)
                         .then(() => {

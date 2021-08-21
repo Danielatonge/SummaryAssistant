@@ -60,17 +60,23 @@
             >
               Ошибка регистрации: {{ errors ? errors[0] : "" }}
             </div>
+            <div
+              v-if="success.length !== 0"
+              class="mt-n4 mb-4 success--text text-center"
+            >
+              {{ success }}
+            </div>
             <v-row class="justify-center">
               <v-col cols="12" md="6" class="text-center">
                 <v-btn
                   class="text-h6 bold-button primary-fill"
-                  style="width: 260px; height: 40px"
+                  style="width: 290px; height: 40px"
                   dark
                   outlined
                   rounded
                   @click="registerUser"
                 >
-                  зарегистрироваться
+                  Зарегистрироваться
                 </v-btn>
               </v-col>
             </v-row>
@@ -90,6 +96,7 @@ export default {
       showPassword: false,
       errors: [],
       loading: false,
+      success: "",
     };
   },
   methods: {
@@ -102,7 +109,11 @@ export default {
           password: this.password,
         })
         .then(() => {
-          this.$router.push({ name: "Login" });
+          this.loading = false;
+          this.success = "Регистрация прошла успешно";
+          setTimeout(() =>{
+            this.$router.push({ name: "Login" });
+          }, 1500);
         })
         .catch((err) => {
           this.loading = false;

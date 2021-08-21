@@ -47,7 +47,12 @@
                 <template v-slot:prepend>
                   <v-list-item>
                     <v-list-item-content class="text-center">
-                      <v-list-item-title> № {{ confId }} </v-list-item-title>
+                      <v-list-item-title>
+                        <div class="font-weight-bold mb-1">
+                          {{ confName.toUpperCase() }}
+                        </div>
+                        <div>№ {{ confId }}</div>
+                      </v-list-item-title>
                     </v-list-item-content>
                   </v-list-item>
                 </template>
@@ -113,7 +118,12 @@
             <template v-slot:prepend>
               <v-list-item>
                 <v-list-item-content class="text-center">
-                  <v-list-item-title> № {{ confId }} </v-list-item-title>
+                  <v-list-item-title>
+                    <div class="font-weight-bold mb-1">
+                      {{ confName.toUpperCase() }}
+                    </div>
+                    <div>№ {{ confId }}</div>
+                  </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
             </template>
@@ -175,11 +185,12 @@ import RecordRTC, { StereoAudioRecorder } from "recordrtc";
 
 export default {
   components: { TinyEditor },
-  mounted() {
+  created() {
     const confId = this.$route.params.id;
     console.log(this.part.id);
     this.confId = confId;
     this.participants = this.$store.getters.participantsById(confId);
+    this.confName = this.$store.getters.confName(confId);
   },
   watch: {
     recording(val) {
@@ -199,54 +210,58 @@ export default {
       participants: null,
       individual: null,
       confId: "",
+      confName: "",
       recording: false,
       editorText: "",
       blobs: [],
+      transcriptList: [],
     };
   },
   methods: {
     endConference() {
       // this.download();
-      this.$store
-        .dispatch("endConference", this.confId)
-        .then(() => {
-          this.$router.push({ path: "/conference" });
-        });
+      this.$store.dispatch("endConference", this.confId).then(() => {
+        this.$router.push({ path: "/conference" });
+      });
     },
     renderResponse(response) {
-      let finalTranscriptList = [];
-      let interimTranscriptMap = {};
       response.transcripts.forEach((t) => {
-        if (t.isFinal) {
-          finalTranscriptList.push(t);
-          delete interimTranscriptMap[t.participantId];
-        } else {
-          interimTranscriptMap[t.participantId] = t;
+        const len = this.transcriptList.length;
+        let modify = false;
+        for (let i = 0; i < len; i++) {
+          if (!this.transcriptList[i].isFinal) {
+            this.transcriptList[i] = t;
+            modify = true;
+          }
+        }
+        if (!modify) {
+          this.transcriptList.push(t);
         }
       });
-      if (finalTranscriptList.length > 10) {
-        finalTranscriptList.splice(0, finalTranscriptList.length - 10);
-      }
 
-      finalTranscriptList.forEach((t) => {
-        this.editorText +=
-          "<p style='color:green'><b>" +
-          t.participantName +
-          ":</b> " +
-          t.value +
-          "</p>";
-      });
-
-      for (var participantId in interimTranscriptMap) {
-        var t = interimTranscriptMap[participantId];
-        this.editorText +=
-          "<p style='color:red'><b>" +
-          t.participantName +
-          ":</b> " +
-          t.value +
-          "</p>";
-      }
+      this.displayResult();
     },
+    displayResult() {
+      this.editorText = "";
+      this.transcriptList.forEach((t) => {
+        if (t.isFinal) {
+          this.editorText +=
+            "<p style='color:green'><b>" +
+            t.participantName +
+            ":</b> " +
+            t.value +
+            "</p>";
+        } else {
+          this.editorText +=
+            "<p style='color:red'><b>" +
+            t.participantName +
+            ":</b> " +
+            t.value +
+            "</p>";
+        }
+      });
+    },
+
     successCallback(stream) {
       const That = this;
       var options = {
@@ -338,8 +353,22 @@ export default {
     getTranscription() {
       this.$store.dispatch("getTranscription", this.confId).then((data) => {
         let doc = jsPDF();
-        doc.text(50, 20, JSON.stringify(data));
+        doc.text(10, 10, data);
         doc.save(`Transcription_.pdf`);
+
+        console.log(JSON.stringify(data, null, 2));
+
+        // const format = {
+        //   conferenceName: "2243",
+        //   entries: [
+        //     {
+        //       participantName: "Thes",
+        //       text: "я",
+        //     },
+        //   ],
+        //   success: true,
+        //   text: "2243\nThes: я\n",
+        // };
       });
     },
   },

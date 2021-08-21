@@ -26,7 +26,7 @@
         </v-col>
         <v-col cols="12" class="voice-border">
           <v-row>
-            <v-col cols="6" md="4" lg="2">
+            <v-col cols="6" md="4" lg="3">
               <v-navigation-drawer
                 permanent
                 height="500px"
@@ -37,7 +37,10 @@
                   <v-list-item>
                     <v-list-item-content class="text-center">
                       <v-list-item-title>
-                        Обсуждение проекта : {{ confId }}
+                        <div class="font-weight-bold mb-1">
+                          Обсуждение проекта {{ confName }}
+                        </div>
+                        <div>№ {{ confId }}</div>
                       </v-list-item-title>
                     </v-list-item-content>
                   </v-list-item>
@@ -62,7 +65,7 @@
                 </v-list>
               </v-navigation-drawer>
             </v-col>
-            <v-col cols="6" md="8" lg="10">
+            <v-col cols="6" md="8" lg="9">
               <tiny-editor :editorText="editorText"></tiny-editor>
             </v-col>
           </v-row>
@@ -110,7 +113,10 @@
             <template v-slot:prepend>
               <v-list-item>
                 <v-list-item-content class="text-center">
-                  <v-list-item-title> Участники </v-list-item-title>
+                  <v-list-item-title>
+                    <div class="font-weight-bold mb-1"></div>
+                    <div>№ {{ confId }}</div>
+                  </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
             </template>
@@ -144,7 +150,7 @@
           rounded
           @click="exitConference"
         >
-           Выйти 
+          Выйти
         </v-btn>
       </div>
     </v-container>
@@ -172,20 +178,23 @@ export default {
     ...mapState({ part: "current_participant" }),
     ...mapState(["token"]),
   },
-  mounted() {
+  created() {
     const confId = this.$route.params.id;
     this.confId = confId;
     this.participants = this.$store.getters.participantsById(confId);
+    this.confName = this.$store.getters.confName(confId);
   },
   data() {
     return {
       participants: null,
       individual: null,
       confId: null,
+      confName: null,
       recording: false,
       partInfo: null,
       editorText: "",
       blobs: [],
+      transcriptList: [],
     };
   },
   methods: {
@@ -196,38 +205,41 @@ export default {
       });
     },
     renderResponse(response) {
-      let finalTranscriptList = [];
-      let interimTranscriptMap = {};
       response.transcripts.forEach((t) => {
-        if (t.isFinal) {
-          finalTranscriptList.push(t);
-          delete interimTranscriptMap[t.participantId];
-        } else {
-          interimTranscriptMap[t.participantId] = t;
+        const len = this.transcriptList.length;
+        let modify = false;
+        for (let i = 0; i < len; i++) {
+          if (!this.transcriptList[i].isFinal) {
+            this.transcriptList[i] = t;
+            modify = true;
+          }
+        }
+        if (!modify) {
+          this.transcriptList.push(t);
         }
       });
-      if (finalTranscriptList.length > 10) {
-        finalTranscriptList.splice(0, finalTranscriptList.length - 10);
-      }
 
-      finalTranscriptList.forEach((t) => {
-        this.editorText +=
-          "<p style='color:green'><b>" +
-          t.participantName +
-          ":</b> " +
-          t.value +
-          "</p>";
+      this.displayResult();
+    },
+    displayResult() {
+      this.editorText = "";
+      this.transcriptList.forEach((t) => {
+        if (t.isFinal) {
+          this.editorText +=
+            "<p style='color:green'><b>" +
+            t.participantName +
+            ":</b> " +
+            t.value +
+            "</p>";
+        } else {
+          this.editorText +=
+            "<p style='color:red'><b>" +
+            t.participantName +
+            ":</b> " +
+            t.value +
+            "</p>";
+        }
       });
-
-      for (var participantId in interimTranscriptMap) {
-        var t = interimTranscriptMap[participantId];
-        this.editorText +=
-          "<p style='color:red'><b>" +
-          t.participantName +
-          ":</b> " +
-          t.value +
-          "</p>";
-      }
     },
     successCallback(stream) {
       const That = this;

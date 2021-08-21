@@ -135,17 +135,41 @@ export default {
       ],
       editorText: "",
       blobs: [],
+      transcriptList: [],
     };
   },
   methods: {
     renderResponse(response) {
-      let finalText = "";
       response.results.forEach((r) => {
+        const len = this.transcriptList.length;
+        let modify = false;
+        for (let i = 0; i < len; i++) {
+          if (!this.transcriptList[i].isFinal) {
+            this.transcriptList[i] = r;
+            modify = true;
+          }
+        }
+        if (!modify) {
+          this.transcriptList.push(r);
+        }
+
+        // if (r.isFinal) {
+        //   finalText += " " + r.transcript;
+        //   this.editorText = finalText;
+        // } else {
+        //   this.editorText = finalText + " <" + r.transcript + ">";
+        // }
+      });
+
+      this.displayResult();
+    },
+    displayResult() {
+      this.editorText = "";
+      this.transcriptList.forEach((r) => {
         if (r.isFinal) {
-          finalText += " " + r.transcript;
-          this.editorText = finalText;
+          this.editorText += " < " + r.transcript + " > <br>";
         } else {
-          this.editorText = finalText + " <" + r.transcript + ">";
+          this.editorText += " < " + r.transcript + " >";
         }
       });
     },

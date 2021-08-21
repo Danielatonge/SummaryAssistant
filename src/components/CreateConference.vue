@@ -51,6 +51,12 @@
             >
               Ошибка: {{ errors ? errors[0] : "" }}
             </div>
+            <div
+              v-if="success.length !== 0"
+              class="mt-n4 mb-4 success--text text-center"
+            >
+              {{ success }}
+            </div>
             <v-row class="justify-center">
               <v-col cols="12" md="6" class="text-center">
                 <v-btn
@@ -95,6 +101,7 @@ export default {
       },
       errors: [],
       loading: false,
+      success: "",
     };
   },
   computed: {
@@ -113,7 +120,11 @@ export default {
             organizerName: this.organizerName,
           })
           .then((confId) => {
+            this.loading = false;
+            this.success = "Успешно созданная конференция";
+            setTimeout(() =>{
             this.$router.push({ path: `/conference/created/${confId}` });
+            }, 1500);
           })
           .catch((err) => {
             this.loading = false;

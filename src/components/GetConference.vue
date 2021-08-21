@@ -39,6 +39,12 @@
             >
               Ошибка: {{ errors ? errors[0] : "" }}
             </div>
+            <div
+              v-if="success.length !== 0"
+              class="mt-n4 mb-4 success--text text-center"
+            >
+              {{ success }}
+            </div>
             <v-row class="justify-center">
               <v-col cols="12" md="6" class="text-center">
                 <v-btn
@@ -73,7 +79,10 @@
 </template>
 
 <script>
-import { jsPDF } from "jspdf";
+// import { jsPDF } from "jspdf";
+let pdfMake = require("pdfmake/build/pdfmake.js");
+let pdfFonts = require("pdfmake/build/vfs_fonts.js");
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 export default {
   data() {
@@ -84,6 +93,7 @@ export default {
       },
       errors: [],
       loading: false,
+      success: "",
     };
   },
   computed: {
@@ -102,10 +112,26 @@ export default {
         this.$store
           .dispatch("getTranscription", this.confId)
           .then((data) => {
-            let doc = jsPDF();
-            doc.text(10, 10, JSON.stringify(data));
-            doc.save(`Transcription_.pdf`);
-            this.$router.push({ path: "/conference" });
+            console.log(data);
+            let content = [
+                `Conference: ${data.conferenceName}`
+              ];
+            
+            const len = data.entries.length;
+            for (var i = 0; i < len; i++) {
+             content.push( `${data.entries[i].participantName} :- ${data.entries[i].text}` )
+            }
+
+            var docDefinition = {
+              content: content
+            };
+            pdfMake.createPdf(docDefinition).download(`Транскрипция_${data.conferenceName}.pdf`);
+
+            this.loading = false;
+            this.success = "получена транскрипция успешно";
+            setTimeout(() => {
+              this.$router.push({ path: "/conference" });
+            }, 1500);
           })
           .catch((err) => {
             this.loading = false;

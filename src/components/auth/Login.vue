@@ -60,10 +60,10 @@
               Ошибка входа: {{ errors ? errors[0] : "" }}
             </div>
             <div
-              v-else-if="response && loading==false"
+              v-if="success.length !== 0"
               class="mt-n4 mb-4 success--text text-center"
             >
-              успешный вход в систему
+              {{ success }}
             </div>
 
             <v-row class="justify-center">
@@ -97,7 +97,7 @@ export default {
       showPassword: false,
       errors: [],
       loading: null,
-      response: null,
+      success: "",
     };
   },
   methods: {
@@ -109,9 +109,12 @@ export default {
           username: this.username,
           password: this.password,
         })
-        .then((response) => {
-          this.response = response
+        .then(() => {
+          this.loading = false
+          this.success = "Вход выполнен успешно";
+          setTimeout(() =>{
           this.$router.push({ name: "Home" });
+          }, 1500);
         })
         .catch((err) => {
           this.loading = false;
