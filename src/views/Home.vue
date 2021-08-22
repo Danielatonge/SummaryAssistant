@@ -37,7 +37,7 @@
             </v-btn>
           </div>
         </div>
-        <v-avatar class=" mhide" color="transparent" size="340" tile>
+        <v-avatar class="mhide" color="transparent" size="340" tile>
           <v-img contain :src="require('../assets/record.png')"></v-img>
         </v-avatar>
       </v-row>
@@ -45,7 +45,7 @@
         <v-col class="mt-15 px-0" cols="12" v-for="(item, i) in items" :key="i">
           <v-card flat color="transparent">
             <v-row class="justify-space-between">
-              <v-col cols="8" md="6" class="px-0 text-color">
+              <v-col cols="8" md="6" class="px-0 text-color my-auto">
                 <v-card-title
                   class="mb-4 main-heading"
                   v-text="item.title"
@@ -116,13 +116,16 @@
     >
       <div class="text-center">
         <p class="text-h4 font-weight-bold mb-10">Готовы к удобой работе?</p>
+
         <v-btn
           class="px-10 py-6 text-h5 font-weight-bold yellow-fill"
           outlined
           rounded
+          width="322px"
+          height="57px"
           @click="$router.push({ path: '/decode' })"
         >
-            Начать работу
+          Начать работу
         </v-btn>
       </div>
     </v-card>

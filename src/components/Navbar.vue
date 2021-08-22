@@ -41,9 +41,9 @@
               {{ item.text }}
             </v-tab>
             <v-tab router to="/settings" key="Настройки">
-              <v-icon class="text-color" style="font-size: 28px"
-                >mdi-cog-outline</v-icon
-              >
+              <v-icon class="text-color" style="font-size: 28px">
+                mdi-cog-outline
+              </v-icon>
             </v-tab>
           </v-tabs>
         </div>
@@ -51,7 +51,8 @@
         <v-btn
           rounded
           outlined
-          class="my-auto d-lg-flex hidden-md-and-down size-tab text-color bold"
+          class="my-auto d-lg-flex hidden-md-and-down text-color bold"
+          style="border: 3px solid #14396a"
           v-if="!loggedIn"
           width="155px"
           height="48px"
@@ -62,9 +63,10 @@
         <v-btn
           rounded
           outlined
+          style="border: 3px solid #14396a"
           width="155px"
           height="48px"
-          class="my-auto d-lg-flex hidden-md-and-down size-tab text-color"
+          class="my-auto d-lg-flex hidden-md-and-down text-color bold"
           v-else
           @click="$router.push({ path: '/logout' })"
         >
@@ -106,7 +108,8 @@ export default {
   color: #14396a !important;
 }
 .bold {
-  font-weight: 600 !important;
+  font-size: 1.125rem !important;
+  font-weight: 700 !important;
 }
 
 .oswald-font {
