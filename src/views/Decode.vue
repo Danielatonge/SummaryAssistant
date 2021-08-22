@@ -5,7 +5,9 @@
         Расшифровка аудио и видео файлов
       </p>
       <v-row class="d-flex justify-center">
-        <v-col cols="8">
+                <!-- <v-col cols="8" class="bg-gray-100" @dragover="dragover" @dragleave="dragleave" @drop="drop"> -->
+
+        <v-col cols="8" class="bg-gray-100">
           <v-sheet
             class="rounded-lg mx-auto d-flex flex-wrap justify-center"
             outlined
@@ -20,6 +22,7 @@
                   class=""
                   ref="file"
                   prepend-icon="mdi-file-move"
+                  accept="audio/*, video/*"
                   hide-input
                   style="visibility: hidden; width: 1px; height: 1px"
                   truncate-length="1"
@@ -215,6 +218,7 @@
             v-model="file_upload"
             class=""
             ref="file"
+            accept="audio/*, video/*"
             prepend-icon="mdi-file-move"
             hide-input
             style="visibility: hidden; width: 1px; height: 1px"
@@ -445,6 +449,28 @@ export default {
     uploadFile() {
       this.$refs.file.$refs.input.click();
     },
+    // onChange() {
+    //   this.filelist = [...this.$refs.file.files];
+    // },
+    // dragover(event) {
+    //   event.preventDefault();
+    //   if (!event.currentTarget.classList.contains('bg-green-300')) {
+    //     event.currentTarget.classList.remove('bg-gray-100');
+    //     event.currentTarget.classList.add('bg-green-300');
+    //   }
+    // },
+    // dragleave(event) {
+    //   event.currentTarget.classList.add('bg-gray-100');
+    //   event.currentTarget.classList.remove('bg-green-300');
+    // },
+    // drop(event) {
+    //   event.preventDefault();
+    //   this.$refs.file = event.dataTransfer.files;
+    //   this.onChange(); // Trigger the onChange event manually
+    //   // Clean up
+    //   event.currentTarget.classList.add('bg-gray-100');
+    //   event.currentTarget.classList.remove('bg-green-300');
+    // }
   },
 };
 </script>
@@ -454,4 +480,6 @@ export default {
   font-size: 6rem !important;
   color: #14396a !important;
 }
+.bg-green-300 { background-color: #9ae6b4; }
+.bg-gray-100 { background-color: #f7fafc; }
 </style>

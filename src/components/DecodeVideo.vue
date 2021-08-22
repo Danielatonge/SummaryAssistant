@@ -66,16 +66,10 @@ export default {
   components: { TinyEditor },
   mounted() {
     const decoded = this.$store.getters.decodedSample;
-    let display = `<h4>AudioUrl: ${decoded.audioUrl}</h4>`;
-    display += `<p><strong>Configurations:</strong></p>`;
-    display += `<p>service:${decoded.config.service}, 
-    diarizationEnabled:${decoded.config.diarizationEnabled}, 
-    minSpeakerCount:${decoded.config.minSpeakerCount}, 
-    maxSpeakerCount:${decoded.config.maxSpeakerCount}</p>`;
-    display += `<p><strong>Entries:</strong></p>`;
+    let display = "";
     decoded.entries.forEach((entry) => {
-      display += `<p>time:${entry.time}, speakerId:${entry.speakerId}, speakerTag:${entry.speakerTag},</p>`;
-      display += `<p>text:&lt;${entry.text}&gt;</p>`;
+      display += `<p>Время: ${entry.time}</p>`;
+      display += `<p>&lt;${entry.text}&gt;</p><br>`;
     });
     this.editorText = display;
   },
