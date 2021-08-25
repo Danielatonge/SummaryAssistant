@@ -37,7 +37,7 @@
             </v-btn>
           </div>
         </div>
-        <v-avatar class=" mhide" color="transparent" size="340" tile>
+        <v-avatar class="mhide" color="transparent" size="340" tile>
           <v-img contain :src="require('../assets/record.png')"></v-img>
         </v-avatar>
       </v-row>
@@ -122,7 +122,7 @@
           rounded
           @click="$router.push({ path: '/decode' })"
         >
-            Начать работу
+          Начать работу
         </v-btn>
       </div>
     </v-card>

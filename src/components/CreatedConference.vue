@@ -58,19 +58,18 @@
                 </template>
 
                 <v-divider></v-divider>
-
                 <v-list dense class="ml-n2">
                   <v-list-item
                     v-for="(item, index) in participants"
                     :key="index"
                     link
                   >
-                    <v-list-item-icon class="mr-2" v-show="item.host">
+                    <!-- <v-list-item-icon class="mr-2" v-show="item.host">
                       <v-icon>mdi-account</v-icon>
-                    </v-list-item-icon>
+                    </v-list-item-icon> -->
 
                     <v-list-item-content>
-                      <v-list-item-title>{{ item.name }}</v-list-item-title>
+                      <v-list-item-title> {{item.name}}  </v-list-item-title>
                     </v-list-item-content>
                   </v-list-item>
                 </v-list>
@@ -189,7 +188,8 @@ export default {
     const confId = this.$route.params.id;
     console.log(this.part.id);
     this.confId = confId;
-    this.participants = this.$store.getters.participantsById(confId);
+     this.$store.dispatch("getParticipants", confId);
+    // this.participants = this.$store.getters.participantsById(confId);
     this.confName = this.$store.getters.confName(confId);
   },
   watch: {
@@ -203,11 +203,11 @@ export default {
   },
   computed: {
     ...mapState({ part: "current_participant" }),
-    ...mapState(["token"]),
+    ...mapState(["token", "participants"]),
   },
   data() {
     return {
-      participants: null,
+      // participants: null,
       individual: null,
       confId: "",
       confName: "",

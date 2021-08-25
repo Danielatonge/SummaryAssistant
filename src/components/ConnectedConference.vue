@@ -176,17 +176,18 @@ export default {
   },
   computed: {
     ...mapState({ part: "current_participant" }),
-    ...mapState(["token"]),
+    ...mapState(["token", "participants"]),
   },
   created() {
     const confId = this.$route.params.id;
     this.confId = confId;
-    this.participants = this.$store.getters.participantsById(confId);
+    this.$store.dispatch("getParticipants", confId);
+    // this.participants = this.$store.getters.participantsById(confId);
     this.confName = this.$store.getters.confName(confId);
   },
   data() {
     return {
-      participants: null,
+      // participants: null,
       individual: null,
       confId: null,
       confName: null,

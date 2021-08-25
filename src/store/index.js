@@ -122,6 +122,9 @@ export default new Vuex.Store({
     addArchive(state, payload) {
       state.archives.push(payload);
     },
+    saveParticipants(state, parts) {
+      state.participants = parts;
+    }
   },
   actions: {
     modifySettings(context, param) {
@@ -542,6 +545,29 @@ export default new Vuex.Store({
           });
       });
     },
+    getParticipants(context, confId) {
+      axios.defaults.headers.common["Authorization"] =
+        "Bearer " + context.state.token;
+      return new Promise((resolve, reject) => {
+        axios
+          .get(`/1/conference/get_participants?conference_id=${confId}`)
+          .then((response) => {
+            console.log(response.data)
+            if (response.status === 200) {
+              const parts = response.data.participants;
+              context.commit("saveParticipants", parts);
+              console.log("New Participants Added Successfully");
+              resolve();
+            } else {
+              throw new Error(response.statusText);
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+            reject(err);
+          });
+      });
+    }
   },
   modules: {},
   plugins: [vuexLocal.plugin],
