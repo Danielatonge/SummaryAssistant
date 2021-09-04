@@ -69,7 +69,7 @@
                     </v-list-item-icon> -->
 
                     <v-list-item-content>
-                      <v-list-item-title> {{item.name}}  </v-list-item-title>
+                      <v-list-item-title> {{ item.name }} </v-list-item-title>
                     </v-list-item-content>
                   </v-list-item>
                 </v-list>
@@ -135,9 +135,9 @@
                 :key="index"
                 link
               >
-                <v-list-item-icon class="mr-2" v-show="item.host">
+                <!-- <v-list-item-icon class="mr-2" v-show="item.host">
                   <v-icon>mdi-account</v-icon>
-                </v-list-item-icon>
+                </v-list-item-icon> -->
 
                 <v-list-item-content>
                   <v-list-item-title>{{ item.name }}</v-list-item-title>
@@ -188,9 +188,17 @@ export default {
     const confId = this.$route.params.id;
     console.log(this.part.id);
     this.confId = confId;
-     this.$store.dispatch("getParticipants", confId);
-    // this.participants = this.$store.getters.participantsById(confId);
     this.confName = this.$store.getters.confName(confId);
+  },
+  mounted() {
+    this.intervalId = setInterval(() => {
+      if (!this.recording) {
+        this.sendEmptyChunks();
+      }
+    }, 2000);
+  },
+  beforeDestroy() {
+    clearInterval(this.intervalId);
   },
   watch: {
     recording(val) {
@@ -203,11 +211,12 @@ export default {
   },
   computed: {
     ...mapState({ part: "current_participant" }),
-    ...mapState(["token", "participants"]),
+    ...mapState(["token"]),
   },
   data() {
     return {
-      // participants: null,
+      intervalId: null,
+      participants: [],
       individual: null,
       confId: "",
       confName: "",
@@ -225,6 +234,7 @@ export default {
       });
     },
     renderResponse(response) {
+      this.participants = response.participants;
       response.transcripts.forEach((t) => {
         const len = this.transcriptList.length;
         let modify = false;
@@ -287,34 +297,11 @@ export default {
           };
           request.open(
             "POST",
-            `https://dpforge.com/1/conference/chunk?conference_id=${That.confId}&participant_id=${That.part.id}`,
+            `https://dpforge.com/1/conference/chunk?conference_id=${That.confId}&include_participants=True`,
             true
           );
           request.setRequestHeader("Authorization", "Bearer " + That.token);
           request.send(blob);
-
-          // const config = {
-          //   headers: {
-          //     "content-type": blob.type,
-          //   },
-          // };
-
-          // const objectURL = URL.createObjectURL(fBlob);
-          // console.log(objectURL);
-          // axios.defaults.headers.common["Authorization"] =
-          //   "Bearer " + That.token;
-          // axios
-          //   .post(
-          //     `/1/conference/chunk?conference_id=${That.confId}&participant_id=${That.part.id}`,
-          //     objectURL,
-          //     config
-          //   )
-          //   .then((res) => {
-          //     console.log(res);
-          //     That.editorText +=
-          //       `<strong>${That.part.name}:</strong>` +
-          //       JSON.stringify(res.data);
-          //   });
         },
       };
       this.stream = stream;
@@ -333,7 +320,26 @@ export default {
       var recordedBlob = recordRTC.getBlob();
       console.log("processAudio: ", recordedBlob);
     },
+    sendEmptyChunks() {
+      const That = this;
+      const blob = [];
+      let request = new XMLHttpRequest();
+      request.onreadystatechange = function () {
+        if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+          console.log("Empty:", this.responseText);
+          That.renderResponse(JSON.parse(this.responseText));
+        }
+      };
+      request.open(
+        "POST",
+        `https://dpforge.com/1/conference/chunk?conference_id=${this.confId}&include_participants=True`,
+        true
+      );
+      request.setRequestHeader("Authorization", "Bearer " + this.token);
+      request.send(blob);
+    },
     startRecording() {
+      this.recording = true;
       let mediaConstraints = {
         audio: true,
       };
@@ -342,6 +348,7 @@ export default {
         .then(this.successCallback.bind(this), this.errorCallback.bind(this));
     },
     stopRecording() {
+      this.recording = false;
       let recordRTC = this.recordRTC;
       recordRTC.stopRecording(this.processAudio.bind(this));
       let stream = this.stream;

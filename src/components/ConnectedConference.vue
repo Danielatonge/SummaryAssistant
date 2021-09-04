@@ -166,7 +166,6 @@ export default {
   components: { TinyEditor },
   watch: {
     recording(val) {
-      console.log(val);
       if (val) {
         this.startRecording();
       } else {
@@ -174,20 +173,29 @@ export default {
       }
     },
   },
+  mounted() {
+    this.intervalId = setInterval(() => {
+      if (!this.recording) {
+        this.sendEmptyChunks();
+      }
+    }, 2000);
+  },
+  beforeDestroy() {
+    clearInterval(this.intervalId);
+  },
   computed: {
     ...mapState({ part: "current_participant" }),
-    ...mapState(["token", "participants"]),
+    ...mapState(["token"]),
   },
   created() {
     const confId = this.$route.params.id;
     this.confId = confId;
-    this.$store.dispatch("getParticipants", confId);
-    // this.participants = this.$store.getters.participantsById(confId);
     this.confName = this.$store.getters.confName(confId);
   },
   data() {
     return {
-      // participants: null,
+      intervalId: null,
+      participants: [],
       individual: null,
       confId: null,
       confName: null,
@@ -206,6 +214,7 @@ export default {
       });
     },
     renderResponse(response) {
+      this.participants = response.participants;
       response.transcripts.forEach((t) => {
         const len = this.transcriptList.length;
         let modify = false;
@@ -261,40 +270,16 @@ export default {
               this.readyState === XMLHttpRequest.DONE &&
               this.status === 200
             ) {
-              console.log(this.responseText);
               That.renderResponse(JSON.parse(this.responseText));
             }
           };
           request.open(
             "POST",
-            `https://dpforge.com/1/conference/chunk?conference_id=${That.confId}&participant_id=${That.part.id}`,
+            `https://dpforge.com/1/conference/chunk?conference_id=${That.confId}&include_participants=True`,
             true
           );
           request.setRequestHeader("Authorization", "Bearer " + That.token);
           request.send(blob);
-
-          // const config = {
-          //   headers: {
-          //     "content-type": blob.type,
-          //   },
-          // };
-
-          // const objectURL = URL.createObjectURL(fBlob);
-          // console.log(objectURL);
-          // axios.defaults.headers.common["Authorization"] =
-          //   "Bearer " + That.token;
-          // axios
-          //   .post(
-          //     `/1/conference/chunk?conference_id=${That.confId}&participant_id=${That.part.id}`,
-          //     objectURL,
-          //     config
-          //   )
-          //   .then((res) => {
-          //     console.log(res);
-          //     That.editorText +=
-          //       `<strong>${That.part.name}:</strong>` +
-          //       JSON.stringify(res.data);
-          //   });
         },
       };
       this.stream = stream;
@@ -323,6 +308,24 @@ export default {
       recordRTC.stopRecording(this.processAudio.bind(this));
       let stream = this.stream;
       stream.getAudioTracks().forEach((track) => track.stop());
+    },
+    sendEmptyChunks() {
+      const That = this;
+      const blob = [];
+      let request = new XMLHttpRequest();
+      request.onreadystatechange = function () {
+        if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+          console.log("Empty:", this.responseText);
+          That.renderResponse(JSON.parse(this.responseText));
+        }
+      };
+      request.open(
+        "POST",
+        `https://dpforge.com/1/conference/chunk?conference_id=${this.confId}&include_participants=True`,
+        true
+      );
+      request.setRequestHeader("Authorization", "Bearer " + this.token);
+      request.send(blob);
     },
     // download() {
     //   this.recordRTC ? this.recordRTC.save("audio.wav") : null;

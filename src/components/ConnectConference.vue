@@ -123,10 +123,10 @@ export default {
             partName: this.participantName,
           })
           .then((confId) => {
-             this.loading = false;
+            this.loading = false;
             this.success = "Успешно присоединился к конференции";
-            setTimeout(() =>{
-            this.$router.push({ path: `/conference/connected/${confId}` });
+            setTimeout(() => {
+              this.$router.push({ path: `/conference/connected/${confId}` });
             }, 1500);
           })
           .catch((err) => {

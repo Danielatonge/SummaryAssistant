@@ -261,6 +261,7 @@ export default new Vuex.Store({
           .then((response) => {
             if (response.data.success) {
               const data = response.data;
+              console.log(data)
               const part = {
                 confId: data.conferenceId,
                 id: data.participantId,
@@ -545,29 +546,6 @@ export default new Vuex.Store({
           });
       });
     },
-    getParticipants(context, confId) {
-      axios.defaults.headers.common["Authorization"] =
-        "Bearer " + context.state.token;
-      return new Promise((resolve, reject) => {
-        axios
-          .get(`/1/conference/get_participants?conference_id=${confId}`)
-          .then((response) => {
-            console.log(response.data)
-            if (response.status === 200) {
-              const parts = response.data.participants;
-              context.commit("saveParticipants", parts);
-              console.log("New Participants Added Successfully");
-              resolve();
-            } else {
-              throw new Error(response.statusText);
-            }
-          })
-          .catch((err) => {
-            console.log(err);
-            reject(err);
-          });
-      });
-    }
   },
   modules: {},
   plugins: [vuexLocal.plugin],
