@@ -90,6 +90,11 @@
 <script>
 export default {
   name: "Login",
+  computed: {
+    errorFeedback() {
+      return this.username.length !== 0 && this.password.length !== 0;
+    }
+  },
   data() {
     return {
       username: "",
@@ -101,29 +106,35 @@ export default {
     };
   },
   methods: {
+    
     login() {
       this.errors = [];
       this.loading = true;
-      this.$store
-        .dispatch("retrieveToken", {
-          username: this.username,
-          password: this.password,
-        })
-        .then(() => {
-          this.loading = false
-          this.success = "Вход выполнен успешно";
-          setTimeout(() =>{
-          this.$router.push({ name: "Home" });
-          }, 1500);
-        })
-        .catch((err) => {
-          this.loading = false;
-          const feedback = err.response
-            ? err.response.data.errorMessage
-            : err.message;
-          this.errors.push(feedback);
-          console.log("EEr", err.message);
-        });
+      if (this.errorFeedback) {
+        this.$store
+          .dispatch("retrieveToken", {
+            username: this.username,
+            password: this.password,
+          })
+          .then(() => {
+            this.loading = false;
+            this.success = "Вход выполнен успешно";
+            setTimeout(() => {
+              this.$router.push({ name: "Home" });
+            }, 1500);
+          })
+          .catch((err) => {
+            this.loading = false;
+            const feedback = err.response
+              ? err.response.data.errorMessage
+              : err.message;
+            this.errors.push(feedback);
+            console.log("EEr", err.message);
+          });
+      } else {
+        this.loading = false;
+        this.errors.push("обязательные поля");
+      }
     },
   },
 };

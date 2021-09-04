@@ -89,6 +89,11 @@
 
 <script>
 export default {
+  computed: {
+    errorFeedback() {
+      return this.username.length !== 0 && this.password.length !== 0;
+    }
+  },
   data() {
     return {
       username: "",
@@ -103,6 +108,7 @@ export default {
     registerUser() {
       this.errors = [];
       this.loading = true;
+      if (this.errorFeedback) {
       this.$store
         .dispatch("registerUser", {
           username: this.username,
@@ -122,6 +128,10 @@ export default {
             : err.message;
           this.errors.push(feedback);
         });
+      } else {
+        this.loading = false;
+        this.errors.push("обязательные поля");
+      }
     },
   },
 };
