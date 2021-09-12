@@ -3,6 +3,8 @@
     <editor
       v-model="editorText"
       apiKey="06j1sdk82snkig4i7v5u03ne6nrs1dabbh9ftqntbcutrvv6"
+      output-format="text"
+      @onChange="scrollToBottom"
       :init="{
         height: 500,
         menubar: false,
@@ -42,10 +44,12 @@ export default {
     };
   },
   methods: {
-
-  }
+    scrollToBottom(event, editor) {
+      console.log(event);
+      editor.getWin().scrollTo(500, 500);
+    },
+  },
 };
 </script>
 
-<style>
-</style>
+<style></style>
