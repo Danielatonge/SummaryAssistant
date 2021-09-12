@@ -4,6 +4,7 @@
       <v-row>
         <v-col cols="12" class="d-flex justify-space-between">
           <v-icon
+            :disabled="activeId === null"
             dark
             class="orange pa-3 rounded-xl"
             @click="recording = !recording"
@@ -13,7 +14,9 @@
           <audio ref="audio"></audio>
           <v-spacer></v-spacer>
           <v-btn class="pa-6" text icon color="orange">
-            <v-icon large @click="createDialog()">mdi-note-plus-outline</v-icon>
+            <v-icon large @click="addDialog = true"
+              >mdi-note-plus-outline
+            </v-icon>
           </v-btn>
         </v-col>
       </v-row>
@@ -32,40 +35,38 @@
             <v-divider></v-divider>
 
             <v-list dense light>
-              <div class="py-2" v-for="item in archive_items" :key="item.title">
-                <!--                <v-list-item-icon>-->
-                <!--                  <v-icon>mdi-folder</v-icon>-->
-                <!--                </v-list-item-icon>-->
-                <div class="d-flex justify-space-around">
-                  <div>
-                    <v-btn text>
-                      {{ item.title }}
-                    </v-btn>
-                  </div>
-                  <div class="my-auto">
-                    <v-icon @click.prevent="openEditDialog(item.id)">
-                      mdi-square-edit-outline
-                    </v-icon>
-                    <v-icon
-                      class="ml-1"
-                      @click.stop="openDeleteDialog(item.id)"
-                    >
-                      mdi-delete-forever-outline
-                    </v-icon>
-                  </div>
-                </div>
+              <div class="py-2" v-for="item in archive_items" :key="item.id">
+                <ArchiveNav
+                  :item="item"
+                  :activeId="activeId"
+                  @saveEditedVoiceNote="saveEditedVoiceNote"
+                  @openEditDialog="openEditDialog"
+                  @openDeleteDialog="openDeleteDialog"
+                  @setActiveNav="setActiveNav"
+                />
               </div>
             </v-list>
           </v-navigation-drawer>
         </v-col>
         <v-col md="8" lg="9">
-          <v-dialog v-model="deleteDialog" persistent max-width="600px">
+          <v-dialog v-model="addDialog" persistent max-width="600px">
             <v-card>
               <v-card-title class="justify-center">
-                <span class="text-h5">Delete</span>
+                <span class="text-h5">Add Voice Note</span>
               </v-card-title>
               <v-card-text class="pb-0">
-                <v-container> Are you sure you want to delete</v-container>
+                <v-container>
+                  <v-row>
+                    <v-col cols="12">
+                      <v-text-field
+                        class="rounded-lg"
+                        label="Name"
+                        v-model="new_voice_note"
+                        outlined
+                      ></v-text-field>
+                    </v-col>
+                  </v-row>
+                </v-container>
               </v-card-text>
               <v-card-actions class="px-9 pb-7">
                 <v-btn
@@ -74,7 +75,85 @@
                   color="blue darken-1"
                   class="px-5"
                   rounded
-                  @click="deleteChoice = true"
+                  @click="addVoiceNote"
+                >
+                  Yes
+                </v-btn>
+
+                <v-spacer></v-spacer>
+                <v-btn
+                  color="blue darken-1"
+                  rounded
+                  text
+                  @click="addDialog = false"
+                >
+                  No
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+          <v-dialog v-model="editDialog" persistent max-width="600px">
+            <v-card>
+              <v-card-title class="justify-center">
+                <span class="text-h5">Edit Voice Note</span>
+              </v-card-title>
+              <v-card-text class="pb-0">
+                <v-container>
+                  <v-row>
+                    <v-col cols="12">
+                      <v-text-field
+                        class="rounded-lg"
+                        label="Name"
+                        v-model="edit_voice_title"
+                        outlined
+                      ></v-text-field>
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-card-text>
+              <v-card-actions class="px-9 pb-7">
+                <v-btn
+                  elevation="0"
+                  dark
+                  color="blue darken-1"
+                  class="px-5"
+                  rounded
+                  @click="saveEditedVoiceNote"
+                >
+                  Yes
+                </v-btn>
+
+                <v-spacer></v-spacer>
+                <v-btn
+                  color="blue darken-1"
+                  rounded
+                  text
+                  @click="editDialog = false"
+                >
+                  No
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+          <v-dialog v-model="deleteDialog" persistent max-width="600px">
+            <v-card>
+              <v-card-title class="justify-center">
+                <span class="text-h5">Delete</span>
+              </v-card-title>
+              <v-card-text class="pb-0">
+                <v-container>
+                  Are you sure you want to delete
+                  {{ deletingItem.title }}
+                </v-container>
+              </v-card-text>
+              <v-card-actions class="px-9 pb-7">
+                <v-btn
+                  elevation="0"
+                  dark
+                  color="blue darken-1"
+                  class="px-5"
+                  rounded
+                  @click="deleteConfirmed"
                 >
                   Yes
                 </v-btn>
@@ -104,6 +183,7 @@
       <v-row>
         <v-col cols="12" class="d-flex">
           <v-icon
+            :disabled="activeId !== null"
             dark
             class="orange pa-3 mr-5 rounded-xl"
             @click="recording = !recording"
@@ -123,7 +203,6 @@
             width="100%"
             height="200px"
             color="transparent"
-            v-model="archives"
           >
             <template v-slot:prepend>
               <v-list-item>
@@ -157,13 +236,14 @@
 import TinyEditor from "@/components/TinyEditor.vue";
 import { mapState } from "vuex";
 import RecordRTC, { StereoAudioRecorder } from "recordrtc";
+import ArchiveNav from "@/components/ArchiveNav.vue";
 
 export default {
-  components: { TinyEditor },
+  components: { ArchiveNav, TinyEditor },
   mounted() {},
   computed: {
     ...mapState({ part: "current_participant" }),
-    ...mapState(["archives", "token"]),
+    ...mapState(["token"]),
   },
   watch: {
     recording(val) {
@@ -177,42 +257,93 @@ export default {
   data() {
     return {
       recording: false,
+      activeId: null,
       speechId: "",
+      new_voice_note: "",
+      edit_voice_title: "",
+      edit_voice_note: {
+        title: "",
+        id: "",
+        text: "",
+      },
+      active_note: {
+        title: "",
+        id: "",
+        text: "",
+      },
       archive_items: [
         {
           title: "#803762003",
           id: "1",
-          text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+          text: "1 ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
         },
         {
           title: "#797518030",
           id: "2",
-          text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+          text: "2 ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
         },
         {
           title: "#752856189",
           id: "3",
-          text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+          text: "3 ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
         },
       ],
       editorText: "",
       blobs: [],
+      generateId: 4,
       transcriptList: [],
       deleteDialog: false,
+      addDialog: false,
       editDialog: false,
-      deleteChoice: 0,
+      deletingItem: {
+        title: "",
+        id: "",
+        text: "",
+      },
     };
   },
   methods: {
-    openEditDialog() {},
-    openDeleteDialog(id) {
+    setActiveNav(item) {
+      this.activeId = item.id;
+      this.editorText = item.text;
+    },
+    addVoiceNote() {
+      //  TODO: Send request to the backend to receive Id
+
+      this.archive_items.push({
+        id: this.generateId,
+        title: this.new_voice_note,
+        text: "",
+      });
+      this.generateId += 1;
+      this.addDialog = false;
+      this.new_voice_note = "";
+    },
+    openEditDialog(item) {
+      this.edit_voice_note = item;
+      this.edit_voice_title = item.title;
+      this.editDialog = true;
+    },
+    saveEditedVoiceNote() {
+      const edited_title = this.edit_voice_title;
+      this.edit_voice_note.title = edited_title;
+      // const editedId = this.edit_voice_note.id;
+      // const updatedTitle = this.edit_voice_note.title;
+
+      //  TODO: Edit from the backend
+      this.editDialog = false;
+    },
+    openDeleteDialog(item) {
+      this.deletingItem = item;
       this.deleteDialog = true;
-      if (this.deleteChoice) {
-        this.archive_items = this.archive_items.filter(
-          (item) => item.id !== id
-        );
-        //  TODO: Delete from the backend
-      }
+    },
+    deleteConfirmed() {
+      const deletingId = this.deletingItem.id;
+      this.archive_items = this.archive_items.filter(
+        (item) => item.id !== deletingId
+      );
+      //  TODO: Delete from the backend
+      this.deleteDialog = false;
     },
     renderResponse(response) {
       response.results.forEach((r) => {
@@ -227,30 +358,18 @@ export default {
         if (!modify) {
           this.transcriptList.push(r);
         }
-
-        // if (r.isFinal) {
-        //   finalText += " " + r.transcript;
-        //   this.editorText = finalText;
-        // } else {
-        //   this.editorText = finalText + " <" + r.transcript + ">";
-        // }
       });
 
       this.displayResult();
     },
     displayResult() {
-      this.editorText = "";
       this.transcriptList.forEach((r) => {
-        if (r.isFinal) {
-          this.editorText += r.transcript + "<br>";
-        } else {
-          this.editorText += r.transcript;
-        }
+        this.editorText += r.transcript;
       });
     },
     successCallback(stream) {
       const That = this;
-      var options = {
+      let options = {
         type: "audio",
         mimeType: "audio/wav",
         recorderType: StereoAudioRecorder,
@@ -291,7 +410,7 @@ export default {
       let audio = this.$refs.audio;
       let recordRTC = this.recordRTC;
       audio.src = audioWebMURL;
-      var recordedBlob = recordRTC.getBlob();
+      let recordedBlob = recordRTC.getBlob();
       console.log("processAudio: ", recordedBlob);
     },
     startRecording() {
