@@ -1,7 +1,7 @@
 <template>
   <div>
     <editor
-      v-model="editorText"
+      v-model="text"
       apiKey="06j1sdk82snkig4i7v5u03ne6nrs1dabbh9ftqntbcutrvv6"
       output-format="text"
       @onChange="scrollToBottom"
@@ -37,6 +37,11 @@ export default {
   },
   mounted() {
     this.text = this.editorText;
+  },
+  watch: {
+    editorText(val) {
+      this.text = val;
+    },
   },
   data() {
     return {
