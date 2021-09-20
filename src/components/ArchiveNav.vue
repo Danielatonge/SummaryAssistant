@@ -3,18 +3,23 @@
     <!--                <v-list-item-icon>-->
     <!--                  <v-icon>mdi-folder</v-icon>-->
     <!--                </v-list-item-icon>-->
-    <div>
-      <v-btn
-        depressed
-        @click="setActiveNav(item)"
-        :color="item.id === activeId ? '#14396a' : ''"
-        :dark="item.id === activeId"
+    <div @click="setActiveNav(item)">
+      <v-text-field
+        dense
+        outlined
+        :disabled="disabled"
+        v-model="item.title"
+        :background-color="
+          item.id === activeId ? 'transparent' : 'orange lighten-4'
+        "
+        hide-details="auto"
       >
-        {{ item.title }}
-      </v-btn>
+      </v-text-field>
     </div>
     <div class="my-auto">
-      <v-icon @click="openEditDialog(item)"> mdi-square-edit-outline</v-icon>
+      <v-icon @click="editDialog(item)">
+        {{ disabled ? "mdi-square-edit-outline" : "mdi-check-circle-outline" }}
+      </v-icon>
       <v-icon class="ml-1" @click="openDeleteDialog(item)">
         mdi-delete-forever-outline
       </v-icon>
@@ -37,20 +42,28 @@ export default {
   data() {
     return {
       active: false,
+      disabled: true,
     };
   },
   methods: {
     setActiveNav(item) {
-      this.$emit("setActiveNav", item);
-    },
-    openEditDialog(item) {
-      this.$emit("openEditDialog", item);
-    },
-    saveEditedVoiceNote() {
-      this.$emit("saveEditedVoiceNote");
+      if (this.disabled === true) {
+        this.$emit("setActiveNav", item);
+      }
     },
     openDeleteDialog(item) {
       this.$emit("openDeleteDialog", item);
+    },
+    saveEditedVoiceNote(item) {
+      this.$emit("saveEditedVoiceNote", item);
+    },
+    editDialog(item) {
+      if (this.disabled === true) {
+        this.disabled = false;
+      } else {
+        this.$emit("saveEditedVoiceNote", item);
+        this.disabled = true;
+      }
     },
   },
 };

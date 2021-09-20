@@ -13,11 +13,6 @@
           </v-icon>
           <audio ref="audio"></audio>
           <v-spacer></v-spacer>
-          <v-btn class="pa-6" text icon color="orange">
-            <v-icon large @click="addDialog = true"
-              >mdi-note-plus-outline
-            </v-icon>
-          </v-btn>
         </v-col>
       </v-row>
 
@@ -27,7 +22,14 @@
             <template v-slot:prepend>
               <v-list-item>
                 <v-list-item-content class="text-center">
-                  <v-list-item-title>Архив записей</v-list-item-title>
+                  <v-list-item-title>
+                    Архив записей
+                    <v-btn class="pa-6" text icon color="orange">
+                      <v-icon @click="addBlockNote">
+                        mdi-note-plus-outline
+                      </v-icon>
+                    </v-btn>
+                  </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
             </template>
@@ -49,92 +51,6 @@
           </v-navigation-drawer>
         </v-col>
         <v-col md="8" lg="9">
-          <v-dialog v-model="addDialog" persistent max-width="600px">
-            <v-card>
-              <v-card-title class="justify-center">
-                <span class="text-h5">Add Voice Note</span>
-              </v-card-title>
-              <v-card-text class="pb-0">
-                <v-container>
-                  <v-row>
-                    <v-col cols="12">
-                      <v-text-field
-                        class="rounded-lg"
-                        label="Name"
-                        v-model="new_voice_note"
-                        outlined
-                      ></v-text-field>
-                    </v-col>
-                  </v-row>
-                </v-container>
-              </v-card-text>
-              <v-card-actions class="px-9 pb-7">
-                <v-btn
-                  elevation="0"
-                  dark
-                  color="blue darken-1"
-                  class="px-5"
-                  rounded
-                  @click="addVoiceNote"
-                >
-                  Yes
-                </v-btn>
-
-                <v-spacer></v-spacer>
-                <v-btn
-                  color="blue darken-1"
-                  rounded
-                  text
-                  @click="addDialog = false"
-                >
-                  No
-                </v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
-          <v-dialog v-model="editDialog" persistent max-width="600px">
-            <v-card>
-              <v-card-title class="justify-center">
-                <span class="text-h5">Edit Voice Note</span>
-              </v-card-title>
-              <v-card-text class="pb-0">
-                <v-container>
-                  <v-row>
-                    <v-col cols="12">
-                      <v-text-field
-                        class="rounded-lg"
-                        label="Name"
-                        v-model="edit_voice_title"
-                        outlined
-                      ></v-text-field>
-                    </v-col>
-                  </v-row>
-                </v-container>
-              </v-card-text>
-              <v-card-actions class="px-9 pb-7">
-                <v-btn
-                  elevation="0"
-                  dark
-                  color="blue darken-1"
-                  class="px-5"
-                  rounded
-                  @click="saveEditedVoiceNote"
-                >
-                  Yes
-                </v-btn>
-
-                <v-spacer></v-spacer>
-                <v-btn
-                  color="blue darken-1"
-                  rounded
-                  text
-                  @click="editDialog = false"
-                >
-                  No
-                </v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
           <v-dialog v-model="deleteDialog" persistent max-width="600px">
             <v-card>
               <v-card-title class="justify-center">
@@ -298,8 +214,6 @@ export default {
       generateId: 4,
       transcriptList: [],
       deleteDialog: false,
-      addDialog: false,
-      editDialog: false,
       deletingItem: {
         title: "",
         id: "",
@@ -312,31 +226,35 @@ export default {
       this.activeId = item.id;
       this.editorText = item.text;
     },
-    addVoiceNote() {
+    addBlockNote() {
       //  TODO: Send request to the backend to receive Id
 
+      let defaultTitle = "NewBlockNote";
+      const count = this.archive_items.filter(
+        (x) => x.title.indexOf(defaultTitle) !== -1
+      ).length;
+      if (count !== 0) {
+        defaultTitle += count;
+      }
       this.archive_items.push({
         id: this.generateId,
-        title: this.new_voice_note,
+        title: defaultTitle,
         text: "",
       });
       this.generateId += 1;
-      this.addDialog = false;
-      this.new_voice_note = "";
     },
+
     openEditDialog(item) {
       this.edit_voice_note = item;
       this.edit_voice_title = item.title;
       this.editDialog = true;
     },
-    saveEditedVoiceNote() {
-      const edited_title = this.edit_voice_title;
-      this.edit_voice_note.title = edited_title;
+    saveEditedVoiceNote(item) {
+      const edited_title = item.title;
+      console.log(edited_title);
       // const editedId = this.edit_voice_note.id;
       // const updatedTitle = this.edit_voice_note.title;
-
       //  TODO: Edit from the backend
-      this.editDialog = false;
     },
     openDeleteDialog(item) {
       this.deletingItem = item;
@@ -369,9 +287,10 @@ export default {
     },
     displayResult() {
       this.transcriptList.forEach((r) => {
-        if (!r.done && r.isFinal) {
+        if (r.isFinal) {
           this.editorText += r.transcript;
-          r.done = true;
+        } else {
+          this.editorText += r.transcript;
         }
       });
     },

@@ -1,10 +1,10 @@
 <template>
   <div>
     <editor
+      ref="edit"
       v-model="text"
       apiKey="06j1sdk82snkig4i7v5u03ne6nrs1dabbh9ftqntbcutrvv6"
       output-format="text"
-      @onChange="scrollToBottom"
       :init="{
         height: 500,
         menubar: false,
@@ -36,24 +36,23 @@ export default {
     editor: Editor,
   },
   mounted() {
+    // this.editorObj = this.$refs.edit.editor;
     this.text = this.editorText;
   },
   watch: {
     editorText(val) {
       this.text = val;
+      const height = this.$refs.edit.editor.getBody().scrollHeight;
+      this.$refs.edit.editor.getWin().scrollTo(500, height);
     },
   },
   data() {
     return {
       text: "",
+      editorObj: null,
     };
   },
-  methods: {
-    scrollToBottom(event, editor) {
-      console.log(event);
-      editor.getWin().scrollTo(500, 500);
-    },
-  },
+  methods: {},
 };
 </script>
 
