@@ -208,8 +208,7 @@ export default {
             "3 ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
         },
       ],
-      editorText:
-        "  ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+      editorText: "",
       blobs: [],
       generateId: 4,
       transcriptList: [],
@@ -225,6 +224,15 @@ export default {
     setActiveNav(item) {
       this.activeId = item.id;
       this.editorText = item.text;
+
+      this.transcriptList = [
+        {
+          confidence: 1,
+          isFinal: true,
+          transcript: item.text,
+          done: true,
+        },
+      ];
     },
     addBlockNote() {
       //  TODO: Send request to the backend to receive Id
@@ -279,18 +287,20 @@ export default {
           }
         }
         if (!modify) {
-          this.transcriptList.push({ ...r, done: false });
+          this.transcriptList.push(r);
         }
       });
 
       this.displayResult();
     },
     displayResult() {
+      this.editorText = "";
       this.transcriptList.forEach((r) => {
         if (r.isFinal) {
           this.editorText += r.transcript;
         } else {
-          this.editorText += r.transcript;
+          this.editorText +=
+            "<span style='color:green'>" + r.transcript + "</span>";
         }
       });
     },
