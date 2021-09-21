@@ -1,27 +1,36 @@
 <template>
-  <div class="d-flex justify-space-around">
+  <div class="d-flex justify-space-between">
     <!--                <v-list-item-icon>-->
     <!--                  <v-icon>mdi-folder</v-icon>-->
     <!--                </v-list-item-icon>-->
-    <div @click="setActiveNav(item)">
+    <!--    <div class="my-auto">-->
+    <!--      <v-icon large class="mr-1"> mdi-folder</v-icon>-->
+    <!--    </div>-->
+    <span style="width: 60%" @click="setActiveNav(item)">
       <v-text-field
         dense
-        outlined
+        :outlined="!disabled"
         :disabled="disabled"
         v-model="item.title"
         :background-color="
-          item.id === activeId ? 'transparent' : 'orange lighten-4'
+          item.id === activeId ? 'grey lighten-1' : 'transparent'
         "
-        hide-details="auto"
+        color="#000"
+        class="rounded-lg"
+        hide-details=" auto"
       >
       </v-text-field>
-    </div>
+    </span>
     <div class="my-auto">
-      <v-icon @click="editDialog(item)">
+      <v-icon class="size-icon" color="#14396A" @click="editDialog(item)">
         {{ disabled ? "mdi-square-edit-outline" : "mdi-check-circle-outline" }}
       </v-icon>
-      <v-icon class="ml-1" @click="openDeleteDialog(item)">
-        mdi-delete-forever-outline
+      <v-icon
+        color="#14396A"
+        class="size-icon mx-1"
+        @click="openDeleteDialog(item)"
+      >
+        mdi-trash-can-outline
       </v-icon>
     </div>
   </div>
@@ -69,4 +78,23 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style>
+#voice-note
+  .v-text-field--outlined.v-input--dense.v-text-field--outlined
+  > .v-input__control
+  > .v-input__slot {
+  min-height: 20px !important;
+}
+
+#voice-note .v-text-field > .v-input__control > .v-input__slot:before {
+  content: none;
+}
+
+.size-icon {
+  font-size: 32px !important;
+}
+
+#voice-note .theme--light.v-input--is-disabled input {
+  color: #000;
+}
+</style>

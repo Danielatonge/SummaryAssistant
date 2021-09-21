@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="voice-note">
     <v-container class="py-10 mhide">
       <v-row>
         <v-col cols="12" class="d-flex justify-space-between">
@@ -20,18 +20,21 @@
         <v-col md="4" lg="3">
           <v-navigation-drawer permanent height="500px" color="transparent">
             <template v-slot:prepend>
-              <v-list-item>
-                <v-list-item-content class="text-center">
-                  <v-list-item-title>
-                    Архив записей
-                    <v-btn class="pa-6" text icon color="orange">
-                      <v-icon @click="addBlockNote">
-                        mdi-note-plus-outline
-                      </v-icon>
-                    </v-btn>
-                  </v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
+              <div>
+                <div class="text-center" style="position: relative">
+                  <div class="text-h6 mb-3 pt-2">Мои записи</div>
+
+                  <v-btn
+                    right
+                    class="pa-6 do-relative"
+                    text
+                    icon
+                    color="#14396A"
+                  >
+                    <v-icon large @click="addBlockNote"> mdi-plus</v-icon>
+                  </v-btn>
+                </div>
+              </div>
             </template>
 
             <v-divider></v-divider>
@@ -54,35 +57,31 @@
           <v-dialog v-model="deleteDialog" persistent max-width="600px">
             <v-card>
               <v-card-title class="justify-center">
-                <span class="text-h5">Delete</span>
+                <span class="text-h5">Данные будут удалены. Продолжить?</span>
               </v-card-title>
-              <v-card-text class="pb-0">
-                <v-container>
-                  Are you sure you want to delete
-                  {{ deletingItem.title }}
-                </v-container>
-              </v-card-text>
-              <v-card-actions class="px-9 pb-7">
-                <v-btn
-                  elevation="0"
-                  dark
-                  color="blue darken-1"
-                  class="px-5"
-                  rounded
-                  @click="deleteConfirmed"
-                >
-                  Yes
-                </v-btn>
-
-                <v-spacer></v-spacer>
-                <v-btn
-                  color="blue darken-1"
-                  rounded
-                  text
-                  @click="deleteDialog = false"
-                >
-                  No
-                </v-btn>
+              <v-card-actions class="px-9 pb-7 justify-center">
+                <div>
+                  <v-btn
+                    width="140px"
+                    height="45px"
+                    elevation="0"
+                    class="rounded-lg mr-3"
+                    color="#C8CFD9"
+                    @click="deleteDialog = false"
+                  >
+                    Отмена
+                  </v-btn>
+                  <v-btn
+                    width="140px"
+                    height="45px"
+                    elevation="0"
+                    class="rounded-lg ml-3"
+                    color="#BDD0FB"
+                    @click="deleteConfirmed"
+                  >
+                    Да
+                  </v-btn>
+                </div>
               </v-card-actions>
             </v-card>
           </v-dialog>
@@ -380,5 +379,16 @@ export default {
 .voice-border {
   border: 1px solid #e0e0e0;
   border-radius: 15px;
+}
+
+.do-relative {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.v-dialog {
+  position: absolute;
+  top: 250px;
 }
 </style>
