@@ -44,8 +44,7 @@
                 <ArchiveNav
                   :item="item"
                   :activeId="activeId"
-                  @saveEditedVoiceNote="saveEditedVoiceNote"
-                  @openEditDialog="openEditDialog"
+                  @saveEditedVoiceNoteName="saveEditedVoiceNoteName"
                   @openDeleteDialog="openDeleteDialog"
                   @setActiveNav="setActiveNav"
                 />
@@ -155,7 +154,11 @@ import ArchiveNav from "@/components/ArchiveNav.vue";
 
 export default {
   components: { ArchiveNav, TinyEditor },
-  mounted() {},
+  mounted() {
+    this.$store.dispatch("fetchArchives").then((response) => {
+      this.archive_items = response;
+    });
+  },
   computed: {
     ...mapState({ part: "current_participant" }),
     ...mapState(["token"]),
@@ -174,42 +177,9 @@ export default {
       recording: false,
       activeId: null,
       speechId: "",
-      new_voice_note: "",
-      edit_voice_title: "",
-      edit_voice_note: {
-        title: "",
-        id: "",
-        text: "",
-      },
-      active_note: {
-        title: "",
-        id: "",
-        text: "",
-      },
-      archive_items: [
-        {
-          title: "#803762003",
-          id: "1",
-          text: "1 ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-        },
-        {
-          title: "#797518030",
-          id: "2",
-          text: "2 ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-        },
-        {
-          title: "#752856189",
-          id: "3",
-          text:
-            "  ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." +
-            "  ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." +
-            "  ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." +
-            "3 ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-        },
-      ],
+      archive_items: [],
       editorText: "",
       blobs: [],
-      generateId: 4,
       transcriptList: [],
       deleteDialog: false,
       deletingItem: {
@@ -223,7 +193,6 @@ export default {
     setActiveNav(item) {
       this.activeId = item.id;
       this.editorText = item.text;
-
       this.transcriptList = [
         {
           confidence: 1,
@@ -234,34 +203,26 @@ export default {
       ];
     },
     addBlockNote() {
-      //  TODO: Send request to the backend to receive Id
-
-      let defaultTitle = "NewBlockNote";
+      let defaultTitle = "Запись";
       const count = this.archive_items.filter(
         (x) => x.title.indexOf(defaultTitle) !== -1
       ).length;
       if (count !== 0) {
         defaultTitle += count;
       }
-      this.archive_items.push({
-        id: this.generateId,
-        title: defaultTitle,
-        text: "",
+      this.$store.dispatch("createBlockNote", defaultTitle).then((response) => {
+        this.archive_items.push({
+          id: response.speechpadId,
+          title: response.speechPadName,
+          text: "",
+        });
       });
-      this.generateId += 1;
     },
-
-    openEditDialog(item) {
-      this.edit_voice_note = item;
-      this.edit_voice_title = item.title;
-      this.editDialog = true;
-    },
-    saveEditedVoiceNote(item) {
+    saveEditedVoiceNoteName(item) {
       const edited_title = item.title;
       console.log(edited_title);
-      // const editedId = this.edit_voice_note.id;
-      // const updatedTitle = this.edit_voice_note.title;
       //  TODO: Edit from the backend
+      this.$store.dispatch("saveModifiedBlockNoteName", item);
     },
     openDeleteDialog(item) {
       this.deletingItem = item;
@@ -269,10 +230,11 @@ export default {
     },
     deleteConfirmed() {
       const deletingId = this.deletingItem.id;
-      this.archive_items = this.archive_items.filter(
-        (item) => item.id !== deletingId
-      );
-      //  TODO: Delete from the backend
+      this.$store.dispatch("deleteBlockNote", deletingId).then(() => {
+        this.archive_items = this.archive_items.filter(
+          (item) => item.id !== deletingId
+        );
+      });
       this.deleteDialog = false;
     },
     renderResponse(response) {
@@ -289,7 +251,6 @@ export default {
           this.transcriptList.push(r);
         }
       });
-
       this.displayResult();
     },
     displayResult() {
@@ -366,10 +327,12 @@ export default {
       recordRTC.stopRecording(this.processAudio.bind(this));
       let stream = this.stream;
       stream.getAudioTracks().forEach((track) => track.stop());
-    },
 
-    addToArchive() {
-      this.$store.dispatch("addToArchive", this.editorText);
+      // const data = {
+      //   id: this.activeId,
+      //   text: this.editorText,
+      // };
+      // this.$store.dispatch("saveModifiedBlockNote", data);
     },
   },
 };

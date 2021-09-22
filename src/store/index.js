@@ -103,8 +103,7 @@ export default new Vuex.Store({
       state.participants = parts;
     },
     destroyParticipantInfo(state, partId) {
-      const parts = state.participants.filter((x) => x.id !== partId);
-      state.participants = parts;
+      state.participants = state.participants.filter((x) => x.id !== partId);
     },
     saveUploadInfo(state, uploadInfo) {
       state.decode_upload = uploadInfo;
@@ -124,7 +123,10 @@ export default new Vuex.Store({
     },
     saveParticipants(state, parts) {
       state.participants = parts;
-    }
+    },
+    SET_ARCHIVE_ITEMS(state, payload) {
+      state.archives = payload;
+    },
   },
   actions: {
     modifySettings(context, param) {
@@ -261,7 +263,7 @@ export default new Vuex.Store({
           .then((response) => {
             if (response.data.success) {
               const data = response.data;
-              console.log(data)
+              console.log(data);
               const part = {
                 confId: data.conferenceId,
                 id: data.participantId,
@@ -368,7 +370,7 @@ export default new Vuex.Store({
     uploadMediaToStorage(context, { file, url }) {
       console.log("PUT REQUEST(uploadMediaToStorage): " + url + " -:-" + file);
       console.log("uploadMediaToStorage Started");
-  
+
       return new Promise((resolve) => {
         let request = new XMLHttpRequest();
         request.onreadystatechange = function () {
@@ -536,6 +538,104 @@ export default new Vuex.Store({
           .then((response) => {
             if (response.data.success) {
               resolve(response.data.speechpadId);
+            } else {
+              throw new Error(response.data.errorMessage);
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+            reject(err);
+          });
+      });
+    },
+    createBlockNote(context, title) {
+      axios.defaults.headers.common["Authorization"] =
+        "Bearer " + context.state.token;
+      return new Promise((resolve, reject) => {
+        axios
+          .post(`/1/speechpad/create?model=default&name=${title}`)
+          .then((response) => {
+            if (response.data.success) {
+              resolve(response.data);
+            } else {
+              throw new Error(response.data.errorMessage);
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+            reject(err);
+          });
+      });
+    },
+    deleteBlockNote(context, id) {
+      axios.defaults.headers.common["Authorization"] =
+        "Bearer " + context.state.token;
+      return new Promise((resolve, reject) => {
+        axios
+          .post(`/1/speechpad/remove?speechpad_id=${id}`)
+          .then((response) => {
+            if (response.data.success) {
+              resolve();
+            } else {
+              throw new Error(response.data.errorMessage);
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+            reject(err);
+          });
+      });
+    },
+    saveModifiedBlockNoteName(context, payload) {
+      axios.defaults.headers.common["Authorization"] =
+        "Bearer " + context.state.token;
+      return new Promise((resolve, reject) => {
+        axios
+          .post(
+            `/1/speechpad/rename?speechpad_id=${payload.id}&new_name=${payload.title}`
+          )
+          .then((response) => {
+            if (response.data.success) {
+              resolve();
+            } else {
+              throw new Error(response.data.errorMessage);
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+            reject(err);
+          });
+      });
+    },
+    saveModifiedBlockNote(context, payload) {
+      axios.defaults.headers.common["Authorization"] =
+        "Bearer " + context.state.token;
+      return new Promise((resolve, reject) => {
+        axios
+          .post(`/1/speechpad/modify?speechpad_id=${payload.id}`, payload)
+          .then((response) => {
+            if (response.data.success) {
+              resolve();
+            } else {
+              throw new Error(response.data.errorMessage);
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+            reject(err);
+          });
+      });
+    },
+    fetchArchives(context) {
+      axios.defaults.headers.common["Authorization"] =
+        "Bearer " + context.state.token;
+      return new Promise((resolve, reject) => {
+        axios
+          .get(`/1/speechpad/getAll`)
+          .then((response) => {
+            if (response.data.success) {
+              context.commit("SET_ARCHIVE_ITEMS", response.data.allSpeechpad);
+              resolve(response.data.allSpeechpad);
             } else {
               throw new Error(response.data.errorMessage);
             }

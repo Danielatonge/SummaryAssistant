@@ -70,7 +70,7 @@ export default {
       if (this.disabled === true) {
         this.disabled = false;
       } else {
-        this.$emit("saveEditedVoiceNote", item);
+        this.$emit("saveEditedVoiceNoteName", item);
         this.disabled = true;
       }
     },
