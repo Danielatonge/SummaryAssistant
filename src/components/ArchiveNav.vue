@@ -1,5 +1,8 @@
 <template>
-  <div class="d-flex justify-space-between">
+  <div
+    class="d-flex py-2 pl-3 justify-space-between"
+    :class="item.id === activeId ? 'skyblue' : 'transparent'"
+  >
     <!--                <v-list-item-icon>-->
     <!--                  <v-icon>mdi-folder</v-icon>-->
     <!--                </v-list-item-icon>-->
@@ -12,9 +15,7 @@
         :outlined="!disabled"
         :disabled="disabled"
         v-model="item.title"
-        :background-color="
-          item.id === activeId ? 'grey lighten-1' : 'transparent'
-        "
+        background-color="transparent"
         color="#000"
         class="rounded-lg"
         hide-details=" auto"
@@ -79,6 +80,10 @@ export default {
 </script>
 
 <style>
+.skyblue {
+  background-color: rgba(17, 125, 236, 0.1);
+}
+
 #voice-note
   .v-text-field--outlined.v-input--dense.v-text-field--outlined
   > .v-input__control

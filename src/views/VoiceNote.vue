@@ -40,7 +40,7 @@
             <v-divider></v-divider>
 
             <v-list dense light>
-              <div class="py-2" v-for="item in archive_items" :key="item.id">
+              <div v-for="item in archive_items" :key="item.id">
                 <ArchiveNav
                   :item="item"
                   :activeId="activeId"
@@ -327,12 +327,6 @@ export default {
       recordRTC.stopRecording(this.processAudio.bind(this));
       let stream = this.stream;
       stream.getAudioTracks().forEach((track) => track.stop());
-
-      // const data = {
-      //   id: this.activeId,
-      //   text: this.editorText,
-      // };
-      // this.$store.dispatch("saveModifiedBlockNote", data);
     },
   },
 };
