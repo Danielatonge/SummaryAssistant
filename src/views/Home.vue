@@ -145,21 +145,21 @@ export default {
       {
         picture: "/music",
         title: "Расшифровка",
-        text: "Summary позволяет расшифровать конференции в реальном врменени, аудио и видео файлы, приложив к этому минимум усилий.",
+        text: "Загружайте аудио и видео форматы файлов для получения расшифровки.",
         button_text: "Загрузить файл",
         button_link: "/decode",
       },
       {
         picture: "/microphone",
         title: "Конференция",
-        text: "Summary позволяет расшифровать конференции в реальном врменени, аудио и видео файлы, приложив к этому минимум усилий.",
+        text: "Создайте свою комнату, подключите собеседников и выгрузите текстовый файл с расшифровкой сразу после завершения конференции.",
         button_text: "Начать конференцию",
         button_link: "/conference",
       },
       {
         picture: "/note",
         title: "Голосовой блокнот",
-        text: "Summary позволяет расшифровать конференции в реальном врменени, аудио и видео файлы, приложив к этому минимум усилий.",
+        text: "Создавайте заметки с помощью нашего голосового блокнота и обращайтесь к ним в любое удобное для вас время.",
         button_text: "Записать голос",
         button_link: "/voice_note",
       },
@@ -175,46 +175,58 @@ export default {
   line-height: 24.38px !important;
   font-style: normal !important;
 }
+
 .main-heading {
   font-size: 1.875rem !important;
   font-weight: 700 !important;
 }
+
 .banner-bottom {
   background: url("../assets/main_banner.svg") no-repeat center center !important;
   background-size: cover !important;
 }
+
 .yellow-fill {
   background-color: #ffc600;
   border: unset;
 }
+
 .primary-fill {
   background-color: #117dec;
   border: unset;
 }
+
 .contain-width {
   max-width: 60%;
 }
+
 @media only screen and (max-width: 960px) {
   .contain-width {
     max-width: 100%;
   }
+
   .mtext-center {
     text-align: center;
   }
+
   .mhide {
     display: none !important;
   }
+
   .mshow {
     display: block;
   }
+
   .border-main {
     border: 2px solid #14396a !important;
     background-color: #fff !important;
   }
+
   .max-content {
     max-width: 80%;
     /* margin: 0 auto; */
   }
+
   ul.glide_slides {
     padding-left: 0 !important;
   }

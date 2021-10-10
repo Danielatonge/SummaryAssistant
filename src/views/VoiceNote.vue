@@ -2,7 +2,7 @@
   <div id="voice-note">
     <v-container class="py-10 mhide">
       <v-row>
-        <v-col cols="12" class="d-flex justify-space-between">
+        <v-col cols="12" class="d-flex justify-space-between px-0">
           <v-icon
             :disabled="activeId === null"
             dark
@@ -13,16 +13,34 @@
           </v-icon>
           <audio ref="audio"></audio>
           <v-spacer></v-spacer>
+          <div class="d-block d-sm-flex">
+            <v-btn
+              class="px-4 primary-fill font-weight-bold"
+              :disabled="recording"
+              dark
+              large
+              outlined
+              rounded
+            >
+              Получить расшифровку
+            </v-btn>
+          </div>
         </v-col>
       </v-row>
 
       <v-row class="voice-border">
-        <v-col md="4" lg="3">
-          <v-navigation-drawer permanent height="500px" color="transparent">
+        <v-col md="4" lg="3" class="pa-0">
+          <v-navigation-drawer
+            permanent
+            height="500px"
+            width="100%"
+            color="rgba(17,125,236,0.05)"
+            class="drawer-border-right"
+          >
             <template v-slot:prepend>
               <div>
                 <div class="text-center" style="position: relative">
-                  <div class="text-h6 mb-3 pt-2">Мои записи</div>
+                  <div class="text-h6 mb-2 pt-2">Мои записи</div>
 
                   <v-btn
                     right
@@ -37,7 +55,7 @@
               </div>
             </template>
 
-            <v-divider></v-divider>
+            <v-divider class="voice-divider"></v-divider>
 
             <v-list dense light>
               <div v-for="item in archive_items" :key="item.id">
@@ -52,7 +70,7 @@
             </v-list>
           </v-navigation-drawer>
         </v-col>
-        <v-col md="8" lg="9">
+        <v-col md="8" lg="9" class="pa-0">
           <v-dialog v-model="deleteDialog" persistent max-width="600px">
             <v-card>
               <v-card-title class="justify-center">
@@ -84,7 +102,10 @@
               </v-card-actions>
             </v-card>
           </v-dialog>
-          <tiny-editor :editorText="editorText"></tiny-editor>
+          <tiny-editor
+            class="adapt-editor"
+            :editorText="editorText"
+          ></tiny-editor>
         </v-col>
       </v-row>
       <v-row class="mt-10">
@@ -334,14 +355,33 @@ export default {
 
 <style>
 .voice-border {
-  border: 1px solid #e0e0e0;
+  border: 5px solid rgba(20, 57, 106, 1);
   border-radius: 15px;
+}
+
+.voice-divider {
+  background-color: rgba(20, 57, 106, 1);
+  border-width: 2px;
+  border-color: rgba(20, 57, 106, 1);
+}
+
+.adapt-editor {
+  border-radius: 5px !important;
+  height: 100%;
+}
+
+.tox.tox-tinymce {
+  border-radius: 0 15px 15px 0 !important;
 }
 
 .do-relative {
   position: absolute;
   right: 0;
   top: 0;
+}
+
+.drawer-border-right {
+  border-right: 5px solid rgba(20, 57, 106, 1) !important;
 }
 
 .v-dialog {

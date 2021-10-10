@@ -41,9 +41,7 @@
               {{ item.text }}
             </v-tab>
             <v-tab router to="/settings" key="Настройки">
-              <v-icon class="text-color" style="font-size: 28px"
-                >mdi-cog-outline</v-icon
-              >
+              <Setting />
             </v-tab>
           </v-tabs>
         </div>
@@ -76,7 +74,10 @@
 </template>
 
 <script>
+import Setting from "@/components/Icons/Setting.vue";
+
 export default {
+  components: { Setting },
   data: () => ({
     dropdownActive: false,
     tab: "",
@@ -105,6 +106,7 @@ export default {
 .text-color {
   color: #14396a !important;
 }
+
 .bold {
   font-weight: 600 !important;
 }
@@ -113,10 +115,12 @@ export default {
   font-family: "Oswald", "Roboto", sans-serif !important;
   font-weight: 600 !important;
 }
+
 .size-tab {
   font-size: 1.125rem !important;
   font-weight: 500 !important;
 }
+
 .v-tab,
 .v-btn {
   text-transform: none !important;
