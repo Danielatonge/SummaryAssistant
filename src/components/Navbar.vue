@@ -2,9 +2,9 @@
   <nav class="top-nav py-4">
     <v-container class="px-6 px-lg-0">
       <v-row class="d-flex justify-space-between mx-2">
-        <router-link class="reset-link text-color" to="/">
-          <p class="text-h4 font-weight-bold mb-0">Summary</p>
-          <p class="oswald-font text-center mt-n2 mb-0">
+        <router-link class="reset-link" to="/">
+          <p class="text-h4 font-weight-bold text-color mb-0">Summary</p>
+          <p class="oswald-font text-center text-color mt-n2 mb-0">
             Your personal assistent
           </p>
         </router-link>

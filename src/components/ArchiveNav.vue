@@ -35,10 +35,6 @@
 </template>
 
 <script>
-// import Bin from "@/components/Icons/IconTrash.vue";
-// import Check from "@/components/Icons/IconCheck.vue";
-// import Edit from "@/components/Icons/IconEdit.vue";
-
 export default {
   name: "ArchiveItem",
   components: {},

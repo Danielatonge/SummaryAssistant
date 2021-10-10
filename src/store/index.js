@@ -2,9 +2,10 @@ import Vue from "vue";
 import Vuex from "vuex";
 import axios from "axios";
 import VuexPersistence from "vuex-persist";
-
+//  https://speech-to-text-demo-4k67a4hqaa-uc.a.run.app/
+//  https://dpforge.com
 Vue.use(Vuex);
-axios.defaults.baseURL = "https://dpforge.com";
+axios.defaults.baseURL = "https://speech-to-text-demo-4k67a4hqaa-uc.a.run.app/";
 let settings = {
   play_pause: "ALT + G",
   previous_period: "P",
@@ -536,6 +537,7 @@ export default new Vuex.Store({
         axios
           .post(`/1/speechpad/create?model=default`)
           .then((response) => {
+            console.log("CREATE:", response.data);
             if (response.data.success) {
               resolve(response.data.speechpadId);
             } else {
@@ -551,10 +553,12 @@ export default new Vuex.Store({
     createBlockNote(context, title) {
       axios.defaults.headers.common["Authorization"] =
         "Bearer " + context.state.token;
+      console.log("CREATE:");
       return new Promise((resolve, reject) => {
         axios
           .post(`/1/speechpad/create?model=default&name=${title}`)
           .then((response) => {
+            console.log("CREATED:", response.data);
             if (response.data.success) {
               resolve(response.data);
             } else {
@@ -629,10 +633,12 @@ export default new Vuex.Store({
     fetchArchives(context) {
       axios.defaults.headers.common["Authorization"] =
         "Bearer " + context.state.token;
+      console.log("GET ALL:");
       return new Promise((resolve, reject) => {
         axios
           .get(`/1/speechpad/getAll`)
           .then((response) => {
+            console.log(response.data);
             if (response.data.success) {
               context.commit("SET_ARCHIVE_ITEMS", response.data.allSpeechpad);
               resolve(response.data.allSpeechpad);
