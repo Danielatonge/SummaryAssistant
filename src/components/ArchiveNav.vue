@@ -3,11 +3,8 @@
     class="d-flex py-2 pl-3 justify-space-between"
     :class="item.id === activeId ? 'skyblue' : 'transparent'"
   >
-    <!--                <v-list-item-icon>-->
-    <!--                  <v-icon>mdi-folder</v-icon>-->
-    <!--                </v-list-item-icon>-->
     <!--    <div class="my-auto">-->
-    <!--      <v-icon large class="mr-1"> mdi-folder</v-icon>-->
+    <!--      <v-icon class="size-icon mr-3" color="#14396A"> mdi-folder</v-icon>-->
     <!--    </div>-->
     <span style="width: 60%" @click="setActiveNav(item)">
       <v-text-field
@@ -15,31 +12,36 @@
         :outlined="!disabled"
         :disabled="disabled"
         v-model="item.title"
-        background-color="transparent"
-        color="#000"
+        :background-color="disabled ? 'transparent' : '#E8EDF1'"
+        color="#BEC9D6"
         class="rounded-lg"
         hide-details=" auto"
       >
       </v-text-field>
     </span>
-    <div class="my-auto">
-      <v-icon class="size-icon" color="#14396A" @click="editDialog(item)">
-        {{ disabled ? "mdi-square-edit-outline" : "mdi-check-circle-outline" }}
+    <div class="my-auto mx-2">
+      <v-icon class="size-icon mr-3" color="#14396A" @click="editDialog(item)">
+        {{ disabled ? `$vuetify.icons.edit` : `$vuetify.icons.check` }}
       </v-icon>
       <v-icon
         color="#14396A"
         class="size-icon mx-1"
         @click="openDeleteDialog(item)"
       >
-        mdi-trash-can-outline
+        $vuetify.icons.trash
       </v-icon>
     </div>
   </div>
 </template>
 
 <script>
+// import Bin from "@/components/Icons/IconTrash.vue";
+// import Check from "@/components/Icons/IconCheck.vue";
+// import Edit from "@/components/Icons/IconEdit.vue";
+
 export default {
   name: "ArchiveItem",
+  components: {},
   props: {
     item: {
       type: Object,

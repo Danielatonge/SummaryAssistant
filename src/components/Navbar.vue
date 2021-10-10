@@ -30,7 +30,6 @@
             background-color="transparent"
           >
             <v-tabs-slider class="#117DEC"></v-tabs-slider>
-            <!-- <v-tab class="pa-0 ma-0" style="min-width:0px" key="fallback"></v-tab> -->
             <v-tab
               v-for="item in links"
               :key="item.text"
@@ -49,7 +48,15 @@
         <v-btn
           rounded
           outlined
-          class="my-auto d-lg-flex hidden-md-and-down size-tab text-color bold"
+          class="
+            my-auto
+            d-lg-flex
+            font-weight-bold
+            hidden-md-and-down
+            size-tab
+            text-color
+            auth-button
+          "
           v-if="!loggedIn"
           width="155px"
           height="48px"
@@ -62,7 +69,15 @@
           outlined
           width="155px"
           height="48px"
-          class="my-auto d-lg-flex hidden-md-and-down size-tab text-color"
+          class="
+            my-auto
+            d-lg-flex
+            font-weight-bold
+            hidden-md-and-down
+            size-tab
+            text-color
+            auth-button
+          "
           v-else
           @click="$router.push({ path: '/logout' })"
         >
@@ -74,7 +89,7 @@
 </template>
 
 <script>
-import Setting from "@/components/Icons/Setting.vue";
+import Setting from "@/components/Icons/IconSetting.vue";
 
 export default {
   components: { Setting },
@@ -102,13 +117,9 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .text-color {
   color: #14396a !important;
-}
-
-.bold {
-  font-weight: 600 !important;
 }
 
 .oswald-font {
@@ -131,5 +142,9 @@ export default {
     background-color: #fff !important;
     padding-bottom: 0.6rem;
   }
+}
+
+.auth-button {
+  border-width: 3px;
 }
 </style>

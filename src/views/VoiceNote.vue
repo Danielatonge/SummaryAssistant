@@ -71,10 +71,13 @@
           </v-navigation-drawer>
         </v-col>
         <v-col md="8" lg="9" class="pa-0">
-          <v-dialog v-model="deleteDialog" persistent max-width="600px">
-            <v-card>
-              <v-card-title class="justify-center">
-                <span class="text-h5">Данные будут удалены. Продолжить?</span>
+          <v-dialog v-model="deleteDialog" persistent max-width="450px">
+            <v-card color="#F5F5F5">
+              <v-card-title class="justify-center text-center">
+                <span class="text-h6 font-weight-bold">
+                  Данные будут удалены.<br />
+                  Продолжить?</span
+                >
               </v-card-title>
               <v-card-actions class="px-9 pb-7 justify-center">
                 <div>
@@ -82,7 +85,7 @@
                     width="140px"
                     height="45px"
                     elevation="0"
-                    class="rounded-lg mr-3"
+                    class="rounded-lg mr-3 text-h6"
                     color="#C8CFD9"
                     @click="deleteDialog = false"
                   >
@@ -92,7 +95,7 @@
                     width="140px"
                     height="45px"
                     elevation="0"
-                    class="rounded-lg ml-3"
+                    class="rounded-lg ml-3 text-h6"
                     color="#BDD0FB"
                     @click="deleteConfirmed"
                   >
@@ -224,7 +227,7 @@ export default {
       ];
     },
     addBlockNote() {
-      let defaultTitle = "Запись";
+      let defaultTitle = "Новая запись";
       const count = this.archive_items.filter(
         (x) => x.title.indexOf(defaultTitle) !== -1
       ).length;

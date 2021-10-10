@@ -45,15 +45,15 @@
         <v-col class="mt-15 px-0" cols="12" v-for="(item, i) in items" :key="i">
           <v-card flat color="transparent">
             <v-row class="justify-space-between">
-              <v-col cols="8" md="6" class="px-0 text-color">
+              <v-col cols="8" md="6" class="px-0 my-auto text-color">
                 <v-card-title
-                  class="mb-4 main-heading"
+                  class="mb-6 main-heading"
                   v-text="item.title"
                 ></v-card-title>
 
                 <v-card-subtitle
                   v-text="item.text"
-                  class="main-text"
+                  class="main-text mb-4"
                 ></v-card-subtitle>
 
                 <v-card-actions>
@@ -71,7 +71,7 @@
                 </v-card-actions>
               </v-col>
 
-              <v-avatar class="ma-3" size="255" tile>
+              <v-avatar class="ma-3" size="265" tile>
                 <v-img
                   :src="require('../assets' + item.picture + '.png')"
                 ></v-img>
