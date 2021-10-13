@@ -166,6 +166,7 @@
           </v-navigation-drawer>
         </v-col>
       </v-row>
+      {{ archive_items }}
     </v-container>
   </div>
 </template>
@@ -180,6 +181,7 @@ export default {
   components: { ArchiveNav, TinyEditor },
   mounted() {
     this.$store.dispatch("fetchArchives").then((response) => {
+      console.log(response);
       this.archive_items = response;
     });
   },
