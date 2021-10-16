@@ -5,7 +5,7 @@ import VuexPersistence from "vuex-persist";
 //  https://speech-to-text-demo-4k67a4hqaa-uc.a.run.app/
 //  https://dpforge.com
 Vue.use(Vuex);
-axios.defaults.baseURL = "https://speech-to-text-demo-4k67a4hqaa-uc.a.run.app/";
+axios.defaults.baseURL = "https://speech-to-text-demo-4k67a4hqaa-uc.a.run.app";
 let settings = {
   play_pause: "ALT + G",
   previous_period: "P",
@@ -638,7 +638,7 @@ export default new Vuex.Store({
         axios
           .get(`/1/speechpad/getAll`)
           .then((response) => {
-            console.log(response.data);
+            console.log(response.data.speechpads);
             if (response.data.success) {
               context.commit("SET_ARCHIVE_ITEMS", response.data.speechpads);
               resolve(response.data.speechpads);

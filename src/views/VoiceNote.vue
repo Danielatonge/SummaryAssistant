@@ -237,9 +237,10 @@ export default {
         defaultTitle += count;
       }
       this.$store.dispatch("createBlockNote", defaultTitle).then((response) => {
+        console.log("CREATEBLOCK", response.data);
         this.archive_items.push({
           id: response.speechpadId,
-          title: response.speechPadName,
+          title: response.speechpadName,
           text: "",
         });
       });
@@ -251,6 +252,7 @@ export default {
       this.$store.dispatch("saveModifiedBlockNoteName", item);
     },
     openDeleteDialog(item) {
+      console.log(item);
       this.deletingItem = item;
       this.deleteDialog = true;
     },
