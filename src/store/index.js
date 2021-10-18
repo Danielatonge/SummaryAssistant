@@ -5,7 +5,7 @@ import VuexPersistence from "vuex-persist";
 //  https://speech-to-text-demo-4k67a4hqaa-uc.a.run.app/
 //  https://dpforge.com
 Vue.use(Vuex);
-axios.defaults.baseURL = "https://speech-to-text-demo-4k67a4hqaa-uc.a.run.app";
+axios.defaults.baseURL = "https://speech-to-text-demo-zint7cdqua-uc.a.run.app";
 let settings = {
   play_pause: "ALT + G",
   previous_period: "P",
@@ -596,7 +596,7 @@ export default new Vuex.Store({
       return new Promise((resolve, reject) => {
         axios
           .post(
-            `/1/speechpad/rename?speechpad_id=${payload.id}&new_name=${payload.title}`
+            `/1/speechpad/rename?speechpad_id=${payload.speechpadId}&new_name=${payload.speechpadName}`
           )
           .then((response) => {
             if (response.data.success) {
@@ -642,6 +642,26 @@ export default new Vuex.Store({
             if (response.data.success) {
               context.commit("SET_ARCHIVE_ITEMS", response.data.speechpads);
               resolve(response.data.speechpads);
+            } else {
+              throw new Error(response.data.errorMessage);
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+            reject(err);
+          });
+      });
+    },
+    fetchArchive(context, speechpadId) {
+      axios.defaults.headers.common["Authorization"] =
+        "Bearer " + context.state.token;
+      return new Promise((resolve, reject) => {
+        axios
+          .get(`/1/speechpad/get?speechpad_id=${speechpadId}`)
+          .then((response) => {
+            if (response.data.success) {
+              context.commit("SET_ARCHIVE_ITEMS", response.data);
+              resolve(response.data.transcribeResult);
             } else {
               throw new Error(response.data.errorMessage);
             }

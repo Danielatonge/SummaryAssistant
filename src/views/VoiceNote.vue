@@ -116,6 +116,7 @@
           <v-img :src="require('../assets/signal.png')"></v-img>
         </v-col>
       </v-row>
+      {{ archive_items }}
     </v-container>
     <v-container class="py-10 hidden-md-and-up">
       <v-row>
@@ -166,7 +167,6 @@
           </v-navigation-drawer>
         </v-col>
       </v-row>
-      {{ archive_items }}
     </v-container>
   </div>
 </template>
@@ -211,27 +211,33 @@ export default {
       deletingItem: {
         title: "",
         id: "",
-        text: "",
       },
     };
   },
   methods: {
     setActiveNav(item) {
-      this.activeId = item.id;
-      this.editorText = item.text;
-      this.transcriptList = [
-        {
-          confidence: 1,
-          isFinal: true,
-          transcript: item.text,
-          done: true,
-        },
-      ];
+      this.activeId = item.speechpadId;
+
+      // this.transcriptList = [
+      //   {
+      //     confidence: 1,
+      //     isFinal: true,
+      //     transcript: item.text,
+      //     done: true,
+      //   },
+      // ];
+
+      this.$store
+        .dispatch("fetchArchive", item.speechpadId)
+        .then((response) => {
+          console.log("ARCHIVE", response);
+          // this.editorText = response;
+        });
     },
     addBlockNote() {
       let defaultTitle = "Новая запись";
       const count = this.archive_items.filter(
-        (x) => x.title.indexOf(defaultTitle) !== -1
+        (x) => x.speechpadName.indexOf(defaultTitle) !== -1
       ).length;
       if (count !== 0) {
         defaultTitle += count;
@@ -239,16 +245,15 @@ export default {
       this.$store.dispatch("createBlockNote", defaultTitle).then((response) => {
         console.log("CREATEBLOCK", response.data);
         this.archive_items.push({
-          id: response.speechpadId,
-          title: response.speechpadName,
-          text: "",
+          speechpadId: response.speechpadId,
+          speechpadName: response.speechpadName,
         });
       });
     },
     saveEditedVoiceNoteName(item) {
-      const edited_title = item.title;
+      const edited_title = item.speechpadName;
       console.log(edited_title);
-      //  TODO: Edit from the backend
+
       this.$store.dispatch("saveModifiedBlockNoteName", item);
     },
     openDeleteDialog(item) {
@@ -257,10 +262,10 @@ export default {
       this.deleteDialog = true;
     },
     deleteConfirmed() {
-      const deletingId = this.deletingItem.id;
+      const deletingId = this.deletingItem.speechpadId;
       this.$store.dispatch("deleteBlockNote", deletingId).then(() => {
         this.archive_items = this.archive_items.filter(
-          (item) => item.id !== deletingId
+          (item) => item.speechpadId !== deletingId
         );
       });
       this.deleteDialog = false;
@@ -318,7 +323,7 @@ export default {
           // https://cors-anywhere.herokuapp.com/
           request.open(
             "POST",
-            `https://dpforge.com/1/speechpad/chunk?speechpad_id=${That.speechId}`,
+            `https://speech-to-text-demo-zint7cdqua-uc.a.run.app/1/speechpad/chunk?speechpad_id=${That.speechId}`,
             true
           );
           request.setRequestHeader("Authorization", "Bearer " + That.token);
