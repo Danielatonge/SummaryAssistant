@@ -16,11 +16,12 @@
           <div class="d-block d-sm-flex">
             <v-btn
               class="px-4 primary-fill font-weight-bold"
-              :disabled="recording"
+              :disabled="recording || !activeId"
               dark
               large
               outlined
               rounded
+              @click="getTranscription"
             >
               Получить расшифровку
             </v-btn>
@@ -116,7 +117,6 @@
           <v-img :src="require('../assets/signal.png')"></v-img>
         </v-col>
       </v-row>
-      {{ archive_items }}
     </v-container>
     <v-container class="py-10 hidden-md-and-up">
       <v-row>
@@ -177,6 +177,10 @@ import { mapState } from "vuex";
 import RecordRTC, { StereoAudioRecorder } from "recordrtc";
 import ArchiveNav from "@/components/ArchiveNav.vue";
 
+let pdfMake = require("pdfmake/build/pdfmake.js");
+let pdfFonts = require("pdfmake/build/vfs_fonts.js");
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
+
 export default {
   components: { ArchiveNav, TinyEditor },
   mounted() {
@@ -231,7 +235,8 @@ export default {
         .dispatch("fetchArchive", item.speechpadId)
         .then((response) => {
           console.log("ARCHIVE", response);
-          // this.editorText = response;
+          this.transcriptList = response;
+          this.displayResult();
         });
     },
     addBlockNote() {
@@ -269,6 +274,31 @@ export default {
         );
       });
       this.deleteDialog = false;
+    },
+    getTranscription() {
+      this.$store
+        .dispatch("getTranscriptionSpeechPad", this.activeId)
+        .then((data) => {
+          console.log(data);
+          let content = [`Speech Pad: ${data.speechpadName}`];
+
+          const len = data.transcribeResult.length;
+          for (let i = 0; i < len; i++) {
+            content.push(
+              `${data.transcribeResult[i].participantName} :- ${data.transcribeResult[i].text}`
+            );
+          }
+
+          const docDefinition = {
+            content: content,
+          };
+          pdfMake
+            .createPdf(docDefinition)
+            .download(`Транскрипция_${data.speechpadName}.pdf`);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
     renderResponse(response) {
       response.results.forEach((r) => {
@@ -323,7 +353,7 @@ export default {
           // https://cors-anywhere.herokuapp.com/
           request.open(
             "POST",
-            `https://speech-to-text-demo-zint7cdqua-uc.a.run.app/1/speechpad/chunk?speechpad_id=${That.speechId}`,
+            `https://speech-to-text-demo-zint7cdqua-uc.a.run.app/1/speechpad/chunk?speechpad_id=${That.activeId}`,
             true
           );
           request.setRequestHeader("Authorization", "Bearer " + That.token);
@@ -344,10 +374,6 @@ export default {
       console.log("processAudio: ", recordedBlob);
     },
     startRecording() {
-      this.$store.dispatch("createSpeechPad").then((response) => {
-        console.log("SpeechId: ", response);
-        this.speechId = response;
-      });
       let mediaConstraints = {
         audio: true,
       };

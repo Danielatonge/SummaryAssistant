@@ -214,6 +214,27 @@ export default new Vuex.Store({
           });
       });
     },
+    getTranscriptionSpeechPad(context, speechpadId) {
+      axios.defaults.headers.common["Authorization"] =
+        "Bearer " + context.state.token;
+      return new Promise((resolve, reject) => {
+        axios
+          .get(`/1/speechpad/get?speechpad_id=${speechpadId}`)
+          .then((response) => {
+            if (response.data.success) {
+              const data = response.data;
+              console.log(data);
+              resolve(data);
+            } else {
+              throw new Error(response.data.errorMessage);
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+            reject(err);
+          });
+      });
+    },
     createConference(context, param) {
       const confN = param.conferenceName;
       const orgN = param.organizerName;
@@ -660,6 +681,7 @@ export default new Vuex.Store({
           .get(`/1/speechpad/get?speechpad_id=${speechpadId}`)
           .then((response) => {
             if (response.data.success) {
+              console.log(response.data);
               context.commit("SET_ARCHIVE_ITEMS", response.data);
               resolve(response.data.transcribeResult);
             } else {
