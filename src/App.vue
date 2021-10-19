@@ -80,7 +80,7 @@ export default {
 }
 
 div[data-app="true"] {
-  background: url("./assets/background.svg") no-repeat center center !important;
+  background: url("./assets/background.jpg") no-repeat center center !important;
   background-size: cover !important;
 }
 

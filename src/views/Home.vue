@@ -37,7 +37,7 @@
             </v-btn>
           </div>
         </div>
-        <v-avatar class="mr-n4 mhide" color="transparent" size="340" tile>
+        <v-avatar class="mr-n5 mhide" color="transparent" size="340" tile>
           <v-img contain :src="require('../assets/record.png')"></v-img>
         </v-avatar>
       </v-row>
@@ -71,7 +71,7 @@
                 </v-card-actions>
               </v-col>
 
-              <v-avatar class="mt-n3 mr-n1" size="265" tile>
+              <v-avatar class="mt-n3 mr-n2" size="265" tile>
                 <v-img
                   :src="require('../assets' + item.picture + '.png')"
                 ></v-img>

@@ -682,7 +682,10 @@ export default new Vuex.Store({
           .then((response) => {
             if (response.data.success) {
               console.log(response.data);
-              context.commit("SET_ARCHIVE_ITEMS", response.data);
+              context.commit(
+                "SET_ARCHIVE_ITEMS",
+                response.data.transcribeResult
+              );
               resolve(response.data.transcribeResult);
             } else {
               throw new Error(response.data.errorMessage);

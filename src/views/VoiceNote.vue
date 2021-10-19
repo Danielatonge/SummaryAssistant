@@ -240,15 +240,22 @@ export default {
         });
     },
     addBlockNote() {
-      let defaultTitle = "Новая запись";
-      const count = this.archive_items.filter(
-        (x) => x.speechpadName.indexOf(defaultTitle) !== -1
-      ).length;
-      if (count !== 0) {
-        defaultTitle += count;
+      let defaultTitle = "Новаязапись";
+      let maxNum = 0;
+      const x = this.archive_items;
+      const len = x.length;
+      for (let i = 0; i < len; i++) {
+        const name = x[i].speechpadName.replace(/\s+/g, "");
+        if (name.indexOf(defaultTitle) !== -1) {
+          const count = parseInt(name.slice(-1));
+          if (count > maxNum) {
+            maxNum = count;
+          }
+        }
       }
-      this.$store.dispatch("createBlockNote", defaultTitle).then((response) => {
-        console.log("CREATEBLOCK", response.data);
+      let title = `Новая запись ${maxNum + 1}`;
+      console.log(title);
+      this.$store.dispatch("createBlockNote", title).then((response) => {
         this.archive_items.push({
           speechpadId: response.speechpadId,
           speechpadName: response.speechpadName,
@@ -284,11 +291,10 @@ export default {
 
           const len = data.transcribeResult.length;
           for (let i = 0; i < len; i++) {
-            content.push(
-              `${data.transcribeResult[i].participantName} :- ${data.transcribeResult[i].text}`
-            );
+            content.push(data.transcribeResult[i].transcript);
           }
 
+          console.log(content);
           const docDefinition = {
             content: content,
           };

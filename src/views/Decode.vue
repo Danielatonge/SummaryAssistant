@@ -64,7 +64,7 @@
                     <v-container>
                       <v-row class="mx-10">
                         <v-col cols="12" sm="6">
-                          <div class="file-input-field rounded-xl pa-3">
+                          <div class="file-input-field rounded-xl">
                             <div>Выберите язык</div>
                             <v-select
                               class="pt-0"
@@ -75,49 +75,24 @@
                           </div>
                         </v-col>
                         <v-col cols="12" sm="6">
-                          <div class="file-input-field rounded-xl pa-3">
-                            <v-tooltip right>
-                              <template v-slot:activator="{ on, attrs }">
-                                <div>
-                                  Выберите сервис
-                                  <v-icon
-                                    v-bind="attrs"
-                                    v-on="on"
-                                    slot="append-outer"
-                                  >
-                                    mdi-help-circle-outline
-                                  </v-icon>
-                                </div>
-
-                                <v-select
-                                  class="pt-0"
-                                  v-model="select.service"
-                                  :items="services"
-                                  hide-details="auto"
-                                >
-                                </v-select>
-                              </template>
-                              <span>
-                                <b>Телефонный разговор</b> - расшифровка аудио
-                                во время <br />
-                                телефонного разговора. <br />
-                                <b> Командование и поиск </b> - расшифровка
-                                более
-                                <br />
-                                коротких аудиоклипов (голосовые команды или
-                                <br />
-                                голосовой поиск). <br />
-                                <b>По умолчанию </b>- расшифровка аудиосистем не
-                                <br />
-                                подходящих ни к одной из ранее описанных моделей
-                                <br />
-                                (длинные аудиозаписи).
-                              </span>
-                            </v-tooltip>
+                          <div class="file-input-field rounded-xl">
+                            <div>
+                              Выберите сервис
+                              <v-icon slot="append-outer">
+                                mdi-help-circle-outline
+                              </v-icon>
+                            </div>
+                            <v-select
+                              class="pt-0"
+                              v-model="select.service"
+                              :items="services"
+                              hide-details="auto"
+                            >
+                            </v-select>
                           </div>
                         </v-col>
                         <v-col cols="12" sm="6">
-                          <div class="file-input-field rounded-xl pa-3">
+                          <div class="file-input-field rounded-xl">
                             <div>Количество говорящих</div>
                             <v-text-field
                               class="pt-0"
@@ -128,7 +103,7 @@
                           </div>
                         </v-col>
                         <v-col cols="12" sm="6">
-                          <div class="file-input-field rounded-xl pa-3">
+                          <div class="file-input-field rounded-xl">
                             <v-tooltip right>
                               <template v-slot:activator="{ on, attrs }">
                                 <div>
@@ -432,6 +407,7 @@ export default {
 
 .file-input-field {
   border: 3px solid #14396a !important;
+  padding: 15px 15px 21px 30px;
 }
 
 .right-border {
