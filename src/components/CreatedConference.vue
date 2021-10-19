@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-container class="py-10 mhide">
+    <v-container class="py-10 mhide px-4">
       <v-row>
         <v-col cols="12" class="d-flex flex-wrap px-0">
           <v-icon

@@ -1,6 +1,6 @@
 <template>
   <div id="voice-note">
-    <v-container class="py-10 mhide">
+    <v-container class="py-10 mhide px-4">
       <v-row>
         <v-col cols="12" class="d-flex justify-space-between px-0">
           <v-icon
@@ -404,7 +404,7 @@ export default {
 }
 
 .adapt-editor {
-  border-radius: 5px !important;
+  border-radius: 15px !important;
   height: 100%;
 }
 

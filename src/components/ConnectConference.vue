@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-container class="py-10">
+    <v-container class="py-16 mt-md-10">
       <v-row class="justify-center">
         <v-col class="hidden-md-and-up" cols="12">
           <v-icon class="text-color" large @click="RouteConference">
@@ -8,7 +8,7 @@
           </v-icon>
           <v-spacer></v-spacer>
         </v-col>
-        <v-col cols="12" lg="7">
+        <v-col cols="12" md="8" lg="6">
           <div class="text-h5 setting-column">
             <v-row class="justify-center text-color">
               <v-col cols="12" class="d-flex">
@@ -16,7 +16,9 @@
                   mdi-arrow-left
                 </v-icon>
                 <div class="text-h5 mx-auto">
-                  <span> Подключение к конференции </span>
+                  <span class="font-weight-bold">
+                    Подключение к конференции
+                  </span>
                 </div>
               </v-col>
             </v-row>
@@ -28,7 +30,9 @@
                   v-model="conferenceId"
                   label="Номер конференции"
                   outlined
-                  background-color="grey lighten-2"
+                  class="rounded-lg"
+                  background-color="rgba(196, 196, 196, 0.2)"
+                  color="rgba(20, 57, 106, 0.8)"
                   hide-details="auto"
                 ></v-text-field>
               </v-col>
@@ -40,7 +44,9 @@
                   v-model="participantName"
                   label="Имя участника"
                   outlined
-                  background-color="grey lighten-2"
+                  class="rounded-lg"
+                  background-color="rgba(196, 196, 196, 0.2)"
+                  color="rgba(20, 57, 106, 0.8)"
                   hide-details="auto"
                 ></v-text-field>
               </v-col>
@@ -145,5 +151,4 @@ export default {
 };
 </script>
 
-<style>
-</style>
+<style></style>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-container class="py-10">
+    <v-container class="py-16 mt-md-10">
       <v-row class="justify-center">
         <v-col class="hidden-md-and-up" cols="12">
           <v-icon class="text-color" large @click="RouteConference">
@@ -8,7 +8,7 @@
           </v-icon>
           <v-spacer></v-spacer>
         </v-col>
-        <v-col cols="12" lg="7">
+        <v-col cols="12" md="8" lg="6">
           <div class="text-h5 setting-column">
             <v-row class="justify-center">
               <v-col cols="12" class="d-flex">
@@ -16,31 +16,37 @@
                   mdi-arrow-left
                 </v-icon>
                 <div class="text-h5 mx-auto text-color">
-                  <span class="ml-n10"> Создание конференции </span>
+                  <span class="ml-n10 font-weight-bold">
+                    Создание конференции
+                  </span>
                 </div>
               </v-col>
             </v-row>
 
             <v-row class="justify-center mt-12">
-              <v-col cols="10" md="6">
+              <v-col cols="10" md="6" xl="5">
                 <v-text-field
                   :rules="[rules.required]"
                   v-model="conferenceName"
                   label="Hазвание конференции"
                   outlined
-                  background-color="grey lighten-2"
+                  class="rounded-lg"
+                  background-color="rgba(196, 196, 196, 0.2)"
+                  color="rgba(20, 57, 106, 0.8)"
                   hide-details="auto"
                 ></v-text-field>
               </v-col>
             </v-row>
             <v-row class="justify-center mb-12">
-              <v-col cols="10" md="6">
+              <v-col cols="10" md="6" xl="5">
                 <v-text-field
                   :rules="[rules.required]"
                   v-model="organizerName"
                   label="Имя организатора"
                   outlined
-                  background-color="grey lighten-2"
+                  class="rounded-lg"
+                  background-color="rgba(196, 196, 196, 0.2)"
+                  color="rgba(20, 57, 106, 0.8)"
                   hide-details="auto"
                 ></v-text-field>
               </v-col>
@@ -111,7 +117,7 @@ export default {
   },
   methods: {
     createConference() {
-      this.errors = []
+      this.errors = [];
       this.loading = true;
       if (this.errorFeedback) {
         this.$store
@@ -122,8 +128,8 @@ export default {
           .then((confId) => {
             this.loading = false;
             this.success = "Успешно созданная конференция";
-            setTimeout(() =>{
-            this.$router.push({ path: `/conference/created/${confId}` });
+            setTimeout(() => {
+              this.$router.push({ path: `/conference/created/${confId}` });
             }, 1500);
           })
           .catch((err) => {
@@ -146,4 +152,22 @@ export default {
 </script>
 
 <style>
+.outer {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+}
+
+.theme--light.v-text-field--outlined:not(.v-input--is-focused):not(.v-input--has-state)
+  > .v-input__control
+  > .v-input__slot
+  fieldset {
+  color: rgba(20, 57, 106, 0.2);
+}
+
+.theme--light.v-text-field--outlined
+  > .v-input__control
+  > .v-input__slot:hover {
+  color: rgba(20, 57, 106, 0.8);
+}
 </style>

@@ -6,7 +6,9 @@
     @keyup="handleKeyUp"
     @keydown="handleKeyDown"
     outlined
-    background-color="grey lighten-2"
+    class="rounded-lg"
+    background-color="rgba(196, 196, 196, 0.2)"
+    color="rgba(20, 57, 106, 0.8)"
     hide-details="auto"
   ></v-text-field>
 </template>
@@ -30,7 +32,7 @@ export default {
       if (e.type == "keydown") {
         this.keys[e.key] = true;
       }
-    let i = 0;
+      let i = 0;
       for (const [key, value] of Object.entries(this.keys)) {
         if (value) {
           this.value += (i ? " + " : "") + key.toUpperCase();
@@ -51,5 +53,4 @@ export default {
 };
 </script>
 
-<style>
-</style>
+<style></style>

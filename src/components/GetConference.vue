@@ -13,10 +13,12 @@
             <v-row class="justify-center">
               <v-col cols="12" class="d-flex">
                 <v-icon class="text-color mhide" large @click="RouteConference"
-                  >mdi-arrow-left</v-icon
-                >
+                  >mdi-arrow-left
+                </v-icon>
                 <div class="text-h5 mx-auto text-color">
-                  <span class="ml-n10"> Получение расшифровки </span>
+                  <span class="ml-n4 font-weight-bold">
+                    Получение расшифровки
+                  </span>
                 </div>
               </v-col>
             </v-row>
@@ -28,7 +30,9 @@
                   v-model="confId"
                   label="Номер конференции"
                   outlined
-                  background-color="grey lighten-2"
+                  class="rounded-lg"
+                  background-color="rgba(196, 196, 196, 0.2)"
+                  color="rgba(20, 57, 106, 0.8)"
                   hide-details="auto"
                 ></v-text-field>
               </v-col>
@@ -113,19 +117,21 @@ export default {
           .dispatch("getTranscription", this.confId)
           .then((data) => {
             console.log(data);
-            let content = [
-                `Conference: ${data.conferenceName}`
-              ];
-            
+            let content = [`Conference: ${data.conferenceName}`];
+
             const len = data.entries.length;
             for (var i = 0; i < len; i++) {
-             content.push( `${data.entries[i].participantName} :- ${data.entries[i].text}` )
+              content.push(
+                `${data.entries[i].participantName} :- ${data.entries[i].text}`
+              );
             }
 
             var docDefinition = {
-              content: content
+              content: content,
             };
-            pdfMake.createPdf(docDefinition).download(`Транскрипция_${data.conferenceName}.pdf`);
+            pdfMake
+              .createPdf(docDefinition)
+              .download(`Транскрипция_${data.conferenceName}.pdf`);
 
             this.loading = false;
             this.success = "получена транскрипция успешно";
@@ -149,5 +155,4 @@ export default {
 };
 </script>
 
-<style>
-</style>
+<style></style>

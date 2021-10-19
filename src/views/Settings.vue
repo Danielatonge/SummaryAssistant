@@ -187,8 +187,9 @@ export default {
 
 <style>
 .setting-column {
-  border: 1px solid grey;
+  border: 1px solid #14396a;
   padding: 30px;
   border-radius: 15px;
+  background-color: #fff;
 }
 </style>

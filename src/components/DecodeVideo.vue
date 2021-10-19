@@ -1,18 +1,24 @@
 <template>
-  <div>
-    <v-container class="py-10 mhide">
-      <v-row>
-        <v-col cols="12" class="voice-border">
-          <v-sheet height="500px">
-            <tiny-editor :editorText="editorText"></tiny-editor>
-          </v-sheet>
+  <div id="decode">
+    <v-container class="py-10 mhide px-4">
+      <v-row class="voice-border">
+        <v-col cols="12" class="pa-0">
+          <tiny-editor
+            class="adapt-editor"
+            :editorText="editorText"
+          ></tiny-editor>
         </v-col>
       </v-row>
       <v-row class="mt-16">
-        <v-col cols="12" md="5" lg="4" xl="3" class="voice-border">
-          <v-sheet height="100px" class="d-flex align-end justify-center">
-            <v-icon>mdi-play-outline</v-icon>
-            <v-icon>mdi-pause</v-icon>
+        <v-col cols="12" md="5" lg="4" xl="3" class="voice-border pa-0">
+          <v-sheet
+            height="100px"
+            class="d-flex align-end justify-center adapt-editor"
+          >
+            <div class="mb-2">
+              <v-icon class="mr-2">mdi-play-outline</v-icon>
+              <v-icon>mdi-pause</v-icon>
+            </div>
           </v-sheet>
         </v-col>
         <v-col cols="12" md="7" lg="8" xl="9" class="pl-md-10 my-auto">
@@ -62,6 +68,7 @@
 
 <script>
 import TinyEditor from "./TinyEditor.vue";
+
 export default {
   components: { TinyEditor },
   mounted() {
@@ -91,4 +98,7 @@ export default {
 </script>
 
 <style>
+#decode .tox.tox-tinymce {
+  border-radius: 15px !important;
+}
 </style>
