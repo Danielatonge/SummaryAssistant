@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-container class="text-center mt-10 mhide">
+    <v-container class="text-center my-10 mhide">
       <p class="text-h5 font-weight-bold mb-10 text-color">
         Расшифровка аудио и видео файлов
       </p>
@@ -210,7 +210,7 @@
           </v-sheet>
         </v-col>
       </v-row>
-      <v-row class="d-flex justify-center mt-16">
+      <v-row class="d-flex justify-center my-16">
         <v-col cols="9" class="d-flex">
           <v-row class="voice-border">
             <v-col cols="2" class="pa-0 right-border">
