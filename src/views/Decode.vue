@@ -210,24 +210,18 @@
           </v-sheet>
         </v-col>
       </v-row>
-      <v-row class="d-flex justify-center mt-10">
+      <v-row class="d-flex justify-center mt-16">
         <v-col cols="9" class="d-flex">
           <v-row class="voice-border">
-            <v-col cols="3" class="pa-0 right-border">
+            <v-col cols="2" class="pa-0 right-border">
               <div
-                class="
-                  font-weight-bold
-                  text-color
-                  d-flex
-                  align-center
-                  justify-center
-                "
+                class="text-color d-flex align-center justify-center"
                 style="height: 100%; width: 100%"
               >
-                <div>URL</div>
+                <div class="download-url">URL</div>
               </div>
             </v-col>
-            <v-col cols="6" class="pa-0">
+            <v-col cols="7" class="pa-0">
               <v-text-field
                 v-model="link"
                 dense
@@ -237,7 +231,7 @@
                 style="height: 38px; width: 100%; background-color: #eee"
               ></v-text-field>
             </v-col>
-            <v-col cols="3" class="pa-0 left-border primary download-btn">
+            <v-col cols="3" class="pa-0 left-border download-btn">
               <div
                 style="height: 100%; width: 100%"
                 @click="dialog = true"
@@ -450,6 +444,11 @@ export default {
 
 .download-btn {
   border-radius: 0px 10px 10px 0px;
+  background-color: #117dec;
+}
+
+.download-url {
+  font-size: 1.5rem !important;
 }
 
 .download-text {
