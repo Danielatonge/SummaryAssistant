@@ -231,10 +231,10 @@
               <v-text-field
                 v-model="link"
                 dense
+                class="px-5 download-text"
                 placeholder="www.youtube.ru"
-                outlined
                 hide-details="auto"
-                style="height: 100%; width: 100%; background-color: #eee"
+                style="height: 38px; width: 100%; background-color: #eee"
               ></v-text-field>
             </v-col>
             <v-col cols="3" class="pa-0 left-border primary download-btn">
@@ -450,5 +450,15 @@ export default {
 
 .download-btn {
   border-radius: 0px 10px 10px 0px;
+}
+
+.download-text {
+  font-size: 1.5rem !important;
+}
+
+.download-text.theme--light.v-text-field
+  > .v-input__control
+  > .v-input__slot:before {
+  border-color: transparent;
 }
 </style>
