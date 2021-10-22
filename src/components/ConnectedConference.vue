@@ -272,7 +272,7 @@ export default {
           };
           request.open(
             "POST",
-            `https://speech-to-text-demo-zint7cdqua-uc.a.run.app/1/conference/chunk?conference_id=${That.confId}&include_participants=True`,
+            `https://speech-to-text-demo-release-beta-zint7cdqua-uc.a.run.app/1/conference/chunk?conference_id=${That.confId}&include_participants=True`,
             true
           );
           request.setRequestHeader("Authorization", "Bearer " + That.token);
@@ -318,7 +318,7 @@ export default {
       };
       request.open(
         "POST",
-        `https://speech-to-text-demo-zint7cdqua-uc.a.run.app/1/conference/chunk?conference_id=${this.confId}&include_participants=True`,
+        `https://speech-to-text-demo-release-beta-zint7cdqua-uc.a.run.app/1/conference/chunk?conference_id=${this.confId}&include_participants=True`,
         true
       );
       request.setRequestHeader("Authorization", "Bearer " + this.token);

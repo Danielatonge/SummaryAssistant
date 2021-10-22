@@ -221,21 +221,18 @@ export default {
   methods: {
     setActiveNav(item) {
       this.activeId = item.speechpadId;
-
-      // this.transcriptList = [
-      //   {
-      //     confidence: 1,
-      //     isFinal: true,
-      //     transcript: item.text,
-      //     done: true,
-      //   },
-      // ];
-
       this.$store
         .dispatch("fetchArchive", item.speechpadId)
         .then((response) => {
+          this.transcriptList = [
+            {
+              confidence: 1,
+              isFinal: true,
+              transcript: response,
+              done: true,
+            },
+          ];
           console.log("ARCHIVE", response);
-          this.transcriptList = response;
           this.displayResult();
         });
     },
@@ -280,6 +277,7 @@ export default {
           (item) => item.speechpadId !== deletingId
         );
       });
+      this.editorText = "";
       this.deleteDialog = false;
     },
     getTranscription() {
@@ -359,7 +357,7 @@ export default {
           // https://cors-anywhere.herokuapp.com/
           request.open(
             "POST",
-            `https://speech-to-text-demo-zint7cdqua-uc.a.run.app/1/speechpad/chunk?speechpad_id=${That.activeId}`,
+            `https://speech-to-text-demo-release-beta-zint7cdqua-uc.a.run.app/1/speechpad/chunk?speechpad_id=${That.activeId}`,
             true
           );
           request.setRequestHeader("Authorization", "Bearer " + That.token);

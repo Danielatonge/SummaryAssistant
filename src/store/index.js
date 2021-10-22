@@ -5,7 +5,8 @@ import VuexPersistence from "vuex-persist";
 //  https://speech-to-text-demo-4k67a4hqaa-uc.a.run.app/
 //  https://dpforge.com
 Vue.use(Vuex);
-axios.defaults.baseURL = "https://speech-to-text-demo-zint7cdqua-uc.a.run.app";
+axios.defaults.baseURL =
+  "https://speech-to-text-demo-release-beta-zint7cdqua-uc.a.run.app";
 let settings = {
   play_pause: "ALT + G",
   previous_period: "P",
