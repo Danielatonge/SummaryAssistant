@@ -191,7 +191,7 @@ export default {
   },
   computed: {
     ...mapState({ part: "current_participant" }),
-    ...mapState(["token"]),
+    ...mapState(["token"])
   },
   watch: {
     recording(val) {
@@ -200,7 +200,7 @@ export default {
       } else {
         this.stopRecording();
       }
-    },
+    }
   },
   data() {
     return {
@@ -214,8 +214,8 @@ export default {
       deleteDialog: false,
       deletingItem: {
         title: "",
-        id: "",
-      },
+        id: ""
+      }
     };
   },
   methods: {
@@ -229,8 +229,8 @@ export default {
               confidence: 1,
               isFinal: true,
               transcript: response,
-              done: true,
-            },
+              done: true
+            }
           ];
           console.log("ARCHIVE", response);
           this.displayResult();
@@ -255,7 +255,7 @@ export default {
       this.$store.dispatch("createBlockNote", title).then((response) => {
         this.archive_items.push({
           speechpadId: response.speechpadId,
-          speechpadName: response.speechpadName,
+          speechpadName: response.speechpadName
         });
       });
     },
@@ -294,7 +294,7 @@ export default {
 
           console.log(content);
           const docDefinition = {
-            content: content,
+            content: content
           };
           pdfMake
             .createPdf(docDefinition)
@@ -357,12 +357,12 @@ export default {
           // https://cors-anywhere.herokuapp.com/
           request.open(
             "POST",
-            `https://speech-to-text-demo-release-beta-zint7cdqua-uc.a.run.app/1/speechpad/chunk?speechpad_id=${That.activeId}`,
+            `https://summarytest.herokuapp.com/1/speechpad/chunk?speechpad_id=${That.activeId}`,
             true
           );
           request.setRequestHeader("Authorization", "Bearer " + That.token);
           request.send(blob);
-        },
+        }
       };
       this.stream = stream;
       this.recordRTC = RecordRTC(stream, options);
@@ -379,7 +379,7 @@ export default {
     },
     startRecording() {
       let mediaConstraints = {
-        audio: true,
+        audio: true
       };
       navigator.mediaDevices
         .getUserMedia(mediaConstraints)
@@ -390,8 +390,8 @@ export default {
       recordRTC.stopRecording(this.processAudio.bind(this));
       let stream = this.stream;
       stream.getAudioTracks().forEach((track) => track.stop());
-    },
-  },
+    }
+  }
 };
 </script>
 

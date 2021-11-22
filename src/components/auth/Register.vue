@@ -101,7 +101,7 @@ export default {
       showPassword: false,
       errors: [],
       loading: false,
-      success: "",
+      success: ""
     };
   },
   methods: {
@@ -109,33 +109,32 @@ export default {
       this.errors = [];
       this.loading = true;
       if (this.errorFeedback) {
-      this.$store
-        .dispatch("registerUser", {
-          username: this.username,
-          password: this.password,
-        })
-        .then(() => {
-          this.loading = false;
-          this.success = "Регистрация прошла успешно";
-          setTimeout(() =>{
-            this.$router.push({ name: "Login" });
-          }, 1500);
-        })
-        .catch((err) => {
-          this.loading = false;
-          const feedback = err.response
-            ? err.response.data.errorMessage
-            : err.message;
-          this.errors.push(feedback);
-        });
+        this.$store
+          .dispatch("registerUser", {
+            username: this.username,
+            password: this.password
+          })
+          .then(() => {
+            this.loading = false;
+            this.success = "Регистрация прошла успешно";
+            setTimeout(() => {
+              this.$router.push({ name: "Login" });
+            }, 1500);
+          })
+          .catch((err) => {
+            this.loading = false;
+            const feedback = err.response
+              ? err.response.data.errorMessage
+              : err.message;
+            this.errors.push(feedback);
+          });
       } else {
         this.loading = false;
         this.errors.push("обязательные поля");
       }
-    },
-  },
+    }
+  }
 };
 </script>
 
-<style>
-</style>
+<style></style>

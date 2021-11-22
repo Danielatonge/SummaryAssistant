@@ -4,9 +4,9 @@ import axios from "axios";
 import VuexPersistence from "vuex-persist";
 //  https://speech-to-text-demo-4k67a4hqaa-uc.a.run.app/
 //  https://dpforge.com
+// https://summarytest.herokuapp.com/swagger-ui.html
 Vue.use(Vuex);
-axios.defaults.baseURL =
-  "https://speech-to-text-demo-release-beta-zint7cdqua-uc.a.run.app";
+axios.defaults.baseURL = "https://summarytest.herokuapp.com";
 let settings = {
   play_pause: "ALT + G",
   previous_period: "P",

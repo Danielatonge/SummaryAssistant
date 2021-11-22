@@ -211,11 +211,11 @@ export default {
       } else {
         this.stopRecording();
       }
-    },
+    }
   },
   computed: {
     ...mapState({ part: "current_participant" }),
-    ...mapState(["token"]),
+    ...mapState(["token"])
   },
   data() {
     return {
@@ -226,7 +226,7 @@ export default {
       recording: false,
       editorText: "",
       blobs: [],
-      transcriptList: [],
+      transcriptList: []
     };
   },
   methods: {
@@ -300,12 +300,12 @@ export default {
           };
           request.open(
             "POST",
-            `https://speech-to-text-demo-release-beta-zint7cdqua-uc.a.run.app/1/conference/chunk?conference_id=${That.confId}&include_participants=True`,
+            `https://summarytest.herokuapp.com/1/conference/chunk?conference_id=${That.confId}&include_participants=True`,
             true
           );
           request.setRequestHeader("Authorization", "Bearer " + That.token);
           request.send(blob);
-        },
+        }
       };
       this.stream = stream;
       this.recordRTC = RecordRTC(stream, options);
@@ -335,7 +335,7 @@ export default {
       };
       request.open(
         "POST",
-        `https://speech-to-text-demo-release-beta-zint7cdqua-uc.a.run.app/1/conference/chunk?conference_id=${this.confId}&include_participants=True`,
+        `https://summarytest.herokuapp.com/1/conference/chunk?conference_id=${this.confId}&include_participants=True`,
         true
       );
       request.setRequestHeader("Authorization", "Bearer " + this.token);
@@ -344,7 +344,7 @@ export default {
     startRecording() {
       this.recording = true;
       let mediaConstraints = {
-        audio: true,
+        audio: true
       };
       navigator.mediaDevices
         .getUserMedia(mediaConstraints)
@@ -380,8 +380,8 @@ export default {
         //   text: "2243\nThes: я\n",
         // };
       });
-    },
-  },
+    }
+  }
 };
 </script>
 

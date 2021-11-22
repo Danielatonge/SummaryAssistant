@@ -102,11 +102,10 @@ export default {
       showPassword: false,
       errors: [],
       loading: null,
-      success: "",
+      success: ""
     };
   },
   methods: {
-    
     login() {
       this.errors = [];
       this.loading = true;
@@ -114,7 +113,7 @@ export default {
         this.$store
           .dispatch("retrieveToken", {
             username: this.username,
-            password: this.password,
+            password: this.password
           })
           .then(() => {
             this.loading = false;
@@ -135,10 +134,9 @@ export default {
         this.loading = false;
         this.errors.push("обязательные поля");
       }
-    },
-  },
+    }
+  }
 };
 </script>
 
-<style>
-</style>
+<style></style>
