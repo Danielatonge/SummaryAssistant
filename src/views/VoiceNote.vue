@@ -50,7 +50,7 @@
                     icon
                     color="#14396A"
                   >
-                    <v-icon large @click="addBlockNote"> mdi-plus</v-icon>
+                    <v-icon large @click="addNote"> mdi-plus</v-icon>
                   </v-btn>
                 </div>
               </div>
@@ -59,7 +59,7 @@
             <v-divider class="voice-divider"></v-divider>
 
             <v-list dense light>
-              <div v-for="item in archive_items" :key="item.id">
+              <div v-for="item in items" :key="item.noteId">
                 <ArchiveNav
                   :item="item"
                   :activeId="activeId"
@@ -98,7 +98,7 @@
                     elevation="0"
                     class="rounded-lg ml-3 text-h6"
                     color="#BDD0FB"
-                    @click="deleteConfirmed"
+                    @click="deleteNote"
                   >
                     Да
                   </v-btn>
@@ -154,7 +154,7 @@
             <v-divider></v-divider>
 
             <v-list dense>
-              <v-list-item v-for="item in archive_items" :key="item.title" link>
+              <v-list-item v-for="item in items" :key="item.title" link>
                 <v-list-item-icon>
                   <v-icon>mdi-folder</v-icon>
                 </v-list-item-icon>
@@ -168,6 +168,7 @@
         </v-col>
       </v-row>
     </v-container>
+    {{ "Hello" }}{{ userId }}
   </div>
 </template>
 
@@ -184,14 +185,11 @@ pdfMake.vfs = pdfFonts.pdfMake.vfs;
 export default {
   components: { ArchiveNav, TinyEditor },
   mounted() {
-    this.$store.dispatch("fetchArchives").then((response) => {
-      console.log(response);
-      this.archive_items = response;
-    });
+    this.getAllNotes();
   },
   computed: {
     ...mapState({ part: "current_participant" }),
-    ...mapState(["token"])
+    ...mapState(["token", "userId"])
   },
   watch: {
     recording(val) {
@@ -207,7 +205,7 @@ export default {
       recording: false,
       activeId: null,
       speechId: "",
-      archive_items: [],
+      items: [],
       editorText: "",
       blobs: [],
       transcriptList: [],
@@ -215,45 +213,51 @@ export default {
       deletingItem: {
         title: "",
         id: ""
-      }
+      },
+      note: null,
+      noteTitle: ""
     };
   },
   methods: {
     setActiveNav(item) {
-      this.activeId = item.speechpadId;
-      this.$store
-        .dispatch("fetchArchive", item.speechpadId)
-        .then((response) => {
-          this.transcriptList = [
-            {
-              confidence: 1,
-              isFinal: true,
-              transcript: response,
-              done: true
-            }
-          ];
-          console.log("ARCHIVE", response);
-          this.displayResult();
-        });
+      this.activeId = item.noteId;
+      this.$store.dispatch("fetchArchive", item.noteId).then((response) => {
+        this.transcriptList = [
+          {
+            confidence: 1,
+            isFinal: true,
+            transcript: response,
+            done: true
+          }
+        ];
+        console.log("ARCHIVE", response);
+        this.displayResult();
+      });
     },
     addBlockNote() {
       let defaultTitle = "Новаязапись";
-      let maxNum = 0;
-      const x = this.archive_items;
-      const len = x.length;
-      for (let i = 0; i < len; i++) {
-        const name = x[i].speechpadName.replace(/\s+/g, "");
-        if (name.indexOf(defaultTitle) !== -1) {
-          const count = parseInt(name.slice(-1));
-          if (count > maxNum) {
-            maxNum = count;
-          }
-        }
-      }
-      let title = `Новая запись ${maxNum + 1}`;
-      console.log(title);
-      this.$store.dispatch("createBlockNote", title).then((response) => {
-        this.archive_items.push({
+      // let maxNum = 0;
+      // const x = this.items;
+      // const len = x.length;
+      // for (let i = 0; i < len; i++) {
+      //   const name = x[i].speechpadName.replace(/\s+/g, "");
+      //   if (name.indexOf(defaultTitle) !== -1) {
+      //     const count = parseInt(name.slice(-1));
+      //     if (count > maxNum) {
+      //       maxNum = count;
+      //     }
+      //   }
+      // }
+      // let title = `Новая запись ${maxNum + 1}`;
+      // console.log(title);
+      const random = Math.floor(Math.random() * 100000);
+      const note = {
+        noteId: random,
+        text: "",
+        title: defaultTitle
+      };
+      this.$store.dispatch("createBlockNote", note).then((response) => {
+        this.items.push({
           speechpadId: response.speechpadId,
           speechpadName: response.speechpadName
         });
@@ -273,7 +277,7 @@ export default {
     deleteConfirmed() {
       const deletingId = this.deletingItem.speechpadId;
       this.$store.dispatch("deleteBlockNote", deletingId).then(() => {
-        this.archive_items = this.archive_items.filter(
+        this.items = this.items.filter(
           (item) => item.speechpadId !== deletingId
         );
       });
@@ -390,6 +394,71 @@ export default {
       recordRTC.stopRecording(this.processAudio.bind(this));
       let stream = this.stream;
       stream.getAudioTracks().forEach((track) => track.stop());
+    },
+    addNote() {
+      this.$store.dispatch("createNote", this.noteTitle).then((response) => {
+        console.log("NEW NOTE: ", response);
+        this.note = response.note;
+        this.items.push(response.note);
+      });
+    },
+    deleteNote() {
+      this.$store.dispatch("deleteNote", this.note.noteId).then((response) => {
+        console.log("DELETED NOTE: ", response);
+        this.note = null;
+        this.editorText = "";
+        this.getAllNotes();
+      });
+
+      const deletingId = this.deletingItem.speechpadId;
+      this.$store.dispatch("deleteBlockNote", deletingId).then(() => {
+        this.items = this.items.filter(
+          (item) => item.speechpadId !== deletingId
+        );
+      });
+      this.editorText = "";
+      this.deleteDialog = false;
+    },
+    saveNote() {
+      this.note.text = this.editorText;
+      this.$store.dispatch("saveNote", this.note).then((response) => {
+        console.log("SAVED NOTE: ", response);
+        this.$store.dispatch("clearSpeechPad", this.speechId).then(() => {
+          this.$store.dispatch("createSpeechPad").then((response) => {
+            console.log("SpeechId: ", response);
+            this.speechId = response;
+          });
+        });
+      });
+    },
+    swapNote: function (item) {
+      this.transcriptText = "";
+      console.log("SWAPPING SPEECH ID ", this.speechId);
+      if (this.speechId !== "" && this.speechId !== null) {
+        this.$store
+          .dispatch("deleteVoiceNote", this.speechId)
+          .then((response) => {
+            console.log("DELETED VOICE NOTE: ", response);
+          });
+      }
+      this.$store.dispatch("createSpeechPad").then((response) => {
+        console.log("SpeechId: ", response);
+        this.speechId = response;
+      });
+      this.note = item;
+      this.editorText = item.text;
+    },
+    getAllNotes() {
+      this.$store.dispatch("getAllNotes").then((response) => {
+        console.log("Loaded notes: ", response);
+        this.items = response;
+      });
+    },
+    ping() {
+      console.log("NOTE CURR: ", this.note);
+    },
+    addToArchive() {
+      this.$store.dispatch("addToArchive", this.editorText);
     }
   }
 };

@@ -41,16 +41,16 @@ export default {
   props: {
     item: {
       type: Object,
-      required: true,
+      required: true
     },
     activeId: {
-      required: false,
-    },
+      required: false
+    }
   },
   data() {
     return {
       active: false,
-      disabled: true,
+      disabled: true
     };
   },
   methods: {
@@ -72,8 +72,8 @@ export default {
         this.$emit("saveEditedVoiceNoteName", item);
         this.disabled = true;
       }
-    },
-  },
+    }
+  }
 };
 </script>
 

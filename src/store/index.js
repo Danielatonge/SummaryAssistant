@@ -15,15 +15,16 @@ let settings = {
   increase_speed: "SHIFT + G",
   restart: "F12",
   add_label: "A",
-  copy: "H",
+  copy: "H"
 };
 
 const vuexLocal = new VuexPersistence({
-  storage: window.sessionStorage,
+  storage: window.localStorage
 });
 
 export default new Vuex.Store({
   state: {
+    username: "",
     token: null,
     conferenceInfo: [],
     settings: settings || null,
@@ -34,7 +35,7 @@ export default new Vuex.Store({
     current_participant: null,
     archives: [],
     decoded_sample: null,
-    file: null,
+    file: null
   },
   getters: {
     loggedIn(state) {
@@ -70,17 +71,21 @@ export default new Vuex.Store({
     },
     decodedSample(state) {
       return state.decoded_sample;
-    },
+    }
   },
   mutations: {
-    retrieveToken(state, token) {
+    retrieveToken(state, { token, username, id }) {
       state.token = token;
+      state.username = username;
+      state.userId = id;
     },
     saveFile(state, file) {
       state.file = file;
     },
     destroyToken(state) {
       state.token = null;
+      state.username = "";
+      state.userId = "";
       state.conferenceInfo = [];
       state.record = null;
       state.gumStream = null;
@@ -128,7 +133,7 @@ export default new Vuex.Store({
     },
     SET_ARCHIVE_ITEMS(state, payload) {
       state.archives = payload;
-    },
+    }
   },
   actions: {
     modifySettings(context, param) {
@@ -139,7 +144,7 @@ export default new Vuex.Store({
       axios
         .post(`/1/user/settings/set?key=${option}`, {
           description: option,
-          key: key,
+          key: key
         })
         .then((response) => {
           if (!response.data.success) {
@@ -162,7 +167,7 @@ export default new Vuex.Store({
         increase_speed: "",
         restart: "",
         add_label: "",
-        copy: "",
+        copy: ""
       };
       let userRequests = [];
       for (var key in _settings) {
@@ -253,11 +258,11 @@ export default new Vuex.Store({
                 confId: data.conferenceId,
                 id: data.hostId,
                 name: data.hostName,
-                host: true,
+                host: true
               };
               const conf = {
                 confId: data.conferenceId,
-                confName: data.conferenceName,
+                confName: data.conferenceName
               };
               context.commit("addParticipant", host);
               context.commit("setCurrentParticipant", host);
@@ -291,7 +296,7 @@ export default new Vuex.Store({
                 confId: data.conferenceId,
                 id: data.participantId,
                 name: data.participantName,
-                host: false,
+                host: false
               };
               context.commit("setCurrentParticipant", part);
               context.commit("addParticipant", part);
@@ -312,7 +317,7 @@ export default new Vuex.Store({
         id: param.participantId,
         name: param.participantName,
         confId: param.conferenceId,
-        host: false,
+        host: false
       });
     },
     endConference(context, conferenceId) {
@@ -373,7 +378,7 @@ export default new Vuex.Store({
               context.commit("saveUploadInfo", { transcribeId, storageUrl });
               console.log("getStorageLink Successfull: ", {
                 transcribeId,
-                storageUrl,
+                storageUrl
               });
               resolve({ transcribeId, storageUrl });
             } else {
@@ -420,32 +425,28 @@ export default new Vuex.Store({
     retrieveToken(context, credentials) {
       return new Promise((resolve, reject) => {
         axios
-          .post(`/1/user/login`, {
-            login: credentials.username,
-            password: credentials.password,
-          })
+          .post(`/login`, credentials)
           .then((response) => {
             if (response.data.success) {
-              const token = response.data.accessToken;
-              context.commit("retrieveToken", token);
+              const token = response.data.token;
+              const username = response.data.username;
+              const id = response.data.id;
+              context.commit("retrieveToken", { token, username, id });
               resolve(response);
             } else {
               throw new Error(response.data.errorMessage);
             }
           })
           .catch((err) => {
-            console.log("Ring", err);
+            console.log("Login Error: ", err);
             reject(err);
           });
       });
     },
-    registerUser(context, credentials) {
+    registerUser(_context, credentials) {
       return new Promise((resolve, reject) => {
         axios
-          .post(`/1/user/create`, {
-            login: credentials.username,
-            password: credentials.password,
-          })
+          .post(`/register`, credentials)
           .then((response) => {
             if (response.data.success) {
               console.log(response.data.success);
@@ -549,56 +550,13 @@ export default new Vuex.Store({
           });
       });
     },
-    addToArchive(context, text) {
-      context.commit("addArchive", text);
-    },
-    createSpeechPad(context) {
-      axios.defaults.headers.common["Authorization"] =
-        "Bearer " + context.state.token;
-      return new Promise((resolve, reject) => {
-        axios
-          .post(`/1/speechpad/create?model=default`)
-          .then((response) => {
-            console.log("CREATE:", response.data);
-            if (response.data.success) {
-              resolve(response.data.speechpadId);
-            } else {
-              throw new Error(response.data.errorMessage);
-            }
-          })
-          .catch((err) => {
-            console.log(err);
-            reject(err);
-          });
-      });
-    },
-    createBlockNote(context, title) {
-      axios.defaults.headers.common["Authorization"] =
-        "Bearer " + context.state.token;
-      console.log("CREATE:");
-      return new Promise((resolve, reject) => {
-        axios
-          .post(`/1/speechpad/create?model=default&name=${title}`)
-          .then((response) => {
-            console.log("CREATED:", response.data);
-            if (response.data.success) {
-              resolve(response.data);
-            } else {
-              throw new Error(response.data.errorMessage);
-            }
-          })
-          .catch((err) => {
-            console.log(err);
-            reject(err);
-          });
-      });
-    },
+
     deleteBlockNote(context, id) {
       axios.defaults.headers.common["Authorization"] =
         "Bearer " + context.state.token;
       return new Promise((resolve, reject) => {
         axios
-          .post(`/1/speechpad/remove?speechpad_id=${id}`)
+          .delete(`/api/notes?id=${id}`)
           .then((response) => {
             if (response.data.success) {
               resolve();
@@ -617,9 +575,7 @@ export default new Vuex.Store({
         "Bearer " + context.state.token;
       return new Promise((resolve, reject) => {
         axios
-          .post(
-            `/1/speechpad/rename?speechpad_id=${payload.speechpadId}&new_name=${payload.speechpadName}`
-          )
+          .put(`/id=${payload.speechpadId}&new_name=${payload.speechpadName}`)
           .then((response) => {
             if (response.data.success) {
               resolve();
@@ -658,7 +614,7 @@ export default new Vuex.Store({
       console.log("GET ALL:");
       return new Promise((resolve, reject) => {
         axios
-          .get(`/1/speechpad/getAll`)
+          .get(`/api/notes/all`)
           .then((response) => {
             console.log(response.data.speechpads);
             if (response.data.success) {
@@ -698,7 +654,165 @@ export default new Vuex.Store({
           });
       });
     },
+    addToArchive(context, text) {
+      context.commit("addArchive", text);
+    },
+    createNote(context, noteTitle) {
+      axios.defaults.headers.common["Authorization"] =
+        "Bearer " + context.state.token;
+      return new Promise((resolve, reject) => {
+        const json = {
+          title: noteTitle,
+          user: { userId: context.state.userId }
+        };
+        console.log(json);
+        axios
+          .post(`/api/notes`, json, {
+            headers: {
+              // Overwrite Axios's automatically set Content-Type
+              "Content-Type": "application/json"
+            }
+          })
+          .then((response) => {
+            console.log(response);
+            if (response.data.success) {
+              resolve(response.data);
+            } else {
+              throw new Error("Bad request");
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+            reject(err);
+          });
+      });
+    },
+    saveNote(context, note) {
+      axios.defaults.headers.common["Authorization"] =
+        "Bearer " + context.state.token;
+      return new Promise((resolve, reject) => {
+        const json = note;
+        console.log(json);
+        axios
+          .put(`/api/notes`, json, {
+            headers: {
+              // Overwrite Axios's automatically set Content-Type
+              "Content-Type": "application/json"
+            }
+          })
+          .then((response) => {
+            console.log(response);
+            if (response.data.success) {
+              resolve(response.data);
+            } else {
+              throw new Error("Bad request");
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+            reject(err);
+          });
+      });
+    },
+    deleteVoiceNote(context, note_id) {
+      axios.defaults.headers.common["Authorization"] =
+        "Bearer " + context.state.token;
+      return new Promise((resolve, reject) => {
+        axios
+          .post(`api/voice.clear?note_id=${note_id}`)
+          .then((response) => {
+            console.log(response);
+            if (response.data.success) {
+              resolve(response.data);
+            } else {
+              throw new Error("Bad request");
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+            reject(err);
+          });
+      });
+    },
+    deleteNote(context, noteId) {
+      axios.defaults.headers.common["Authorization"] =
+        "Bearer " + context.state.token;
+      return new Promise((resolve, reject) => {
+        axios
+          .delete(`api/notes?id=${noteId}`)
+          .then((response) => {
+            console.log(response);
+            if (response.data.success) {
+              resolve(response.data.notes);
+            } else {
+              throw new Error("Bad request");
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+            reject(err);
+          });
+      });
+    },
+    getAllNotes(context) {
+      axios.defaults.headers.common["Authorization"] =
+        "Bearer " + context.state.token;
+      return new Promise((resolve, reject) => {
+        axios
+          .get(`/api/notes/user?id=${context.state.userId}`)
+          .then((response) => {
+            console.log(response);
+            if (response.data.success) {
+              resolve(response.data.notes);
+            } else {
+              throw new Error("Bad request");
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+            reject(err);
+          });
+      });
+    },
+    createSpeechPad(context) {
+      axios.defaults.headers.common["Authorization"] =
+        "Bearer " + context.state.token;
+      return new Promise((resolve, reject) => {
+        axios
+          .post(`/api/voice/newnote?model=default`)
+          .then((response) => {
+            if (response.data.success) {
+              resolve(response.data.speechpadId);
+            } else {
+              throw new Error(response.data.errorMessage);
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+            reject(err);
+          });
+      });
+    },
+    clearSpeechPad(context, noteId) {
+      axios.defaults.headers.common["Authorization"] =
+        "Bearer " + context.state.token;
+      return new Promise((resolve, reject) => {
+        axios
+          .delete(`/api/voice?id=${noteId}`)
+          .then((response) => {
+            if (response.data.success) {
+              resolve(response.data.speechpadId);
+            } else {
+              throw new Error(response.data.errorMessage);
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+            reject(err);
+          });
+      });
+    }
   },
   modules: {},
-  plugins: [vuexLocal.plugin],
+  plugins: [vuexLocal.plugin]
 });

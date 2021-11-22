@@ -34,6 +34,7 @@
                   v-model="username"
                   label="ФИО"
                   outlined
+                  autocomplete="new-password"
                   background-color="grey lighten-2"
                   hide-details="auto"
                 ></v-text-field>
@@ -45,6 +46,7 @@
                   v-model="password"
                   label="Пароль"
                   outlined
+                  autocomplete="new-password"
                   background-color="grey lighten-2"
                   hide-details="auto"
                   :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
