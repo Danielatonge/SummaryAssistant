@@ -64,7 +64,7 @@
                 <ArchiveNav
                   :item="item"
                   :activeId="activeId"
-                  @saveEditedVoiceNoteName="saveEditedVoiceNoteName"
+                  @updateNote="updateNote"
                   @openDeleteDialog="openDeleteDialog"
                   @setActiveNav="setActiveNav"
                 />
@@ -112,7 +112,7 @@
             :editorText="editorText"
             @input="
               (value) => {
-                editorText = value;
+                modifyNote(value);
               }
             "
           ></tiny-editor>
@@ -181,7 +181,6 @@
         </v-col>
       </v-row>
     </v-container>
-    {{ editorText }}
   </div>
 </template>
 
@@ -229,6 +228,12 @@ export default {
     };
   },
   methods: {
+
+    modifyNote(value) {
+      this.editorText = value;
+      this.note.text = value;
+      this.$store.dispatch("updateNote", this.note);
+    },
     setActiveNav(item) {
       this.activeId = item.noteId;
       this.note = item;
@@ -268,9 +273,9 @@ export default {
         this.items.push(note);
       });
     },
-    saveEditedVoiceNoteName(item) {
+    updateNote(item) {
       console.log(item);
-      this.$store.dispatch("saveModifiedBlockNoteName", item);
+      this.$store.dispatch("updateNote", item);
     },
     openDeleteDialog(item) {
       console.log(item);
@@ -289,7 +294,10 @@ export default {
     },
     getTranscription() {
       const title = this.note.title;
-      const text = this.note.text.replace("<br>", "\n");
+      let text = this.note.text;
+      text = text.replace("<br>", "\n");
+      text = text.replace("<span style='color:green'>", "\n");
+      text = text.replace("</span>", "\n");
       let content = [`Speech Pad: ${title}`];
 
       // const len = data.transcribeResult.length;

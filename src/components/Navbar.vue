@@ -28,18 +28,19 @@
             v-model="tab"
             class="mr-4"
             background-color="transparent"
+            ref="tabs"
           >
             <v-tabs-slider class="#117DEC"></v-tabs-slider>
             <v-tab
               v-for="item in links"
               :key="item.text"
-              router
+              exact
               :to="item.route"
               class="size-tab text-color"
             >
               {{ item.text }}
             </v-tab>
-            <v-tab router to="/settings" key="Настройки">
+            <v-tab exact to="/settings" key="Настройки">
               <Setting />
             </v-tab>
           </v-tabs>
@@ -100,20 +101,28 @@ export default {
       { text: "Расшифровка", route: "/decode" },
       { text: "Конференции", route: "/conference" },
       { text: "Голосовой блокнот", route: "/voice_note" },
-      { text: "Справка", route: "/reference" },
-    ],
+      { text: "Справка", route: "/reference" }
+    ]
   }),
+  mounted() {
+    this.$nextTick(() => {
+      setTimeout(() => {
+        this.$refs.tabs.onResize();
+      }, 900);
+      //650
+    });
+  },
   computed: {
     loggedIn() {
       return this.$store.getters.loggedIn;
-    },
+    }
   },
   methods: {
     toggleSideBar() {
       this.dropdownActive = !this.dropdownActive;
       this.$emit("sidebar-changed");
-    },
-  },
+    }
+  }
 };
 </script>
 

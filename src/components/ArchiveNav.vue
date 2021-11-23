@@ -63,14 +63,11 @@ export default {
     openDeleteDialog(item) {
       this.$emit("openDeleteDialog", item);
     },
-    saveEditedVoiceNote(item) {
-      this.$emit("saveEditedVoiceNote", item);
-    },
     editDialog(item) {
       if (this.disabled === true) {
         this.disabled = false;
       } else {
-        this.$emit("saveEditedVoiceNoteName", item);
+        this.$emit("updateNote", item);
         this.disabled = true;
       }
     }

@@ -571,7 +571,7 @@ export default new Vuex.Store({
           });
       });
     },
-    saveModifiedBlockNoteName(context, note) {
+    updateNote(context, note) {
       axios.defaults.headers.common["Authorization"] =
         "Bearer " + context.state.token;
       return new Promise((resolve, reject) => {

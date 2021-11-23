@@ -9,6 +9,8 @@
           handleEditorChange(value);
         }
       "
+      model-events="blur focusout"
+      @blur="console.log('Here')"
       apiKey="06j1sdk82snkig4i7v5u03ne6nrs1dabbh9ftqntbcutrvv6"
       output-format="text"
       :init="{
