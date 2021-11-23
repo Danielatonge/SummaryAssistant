@@ -110,6 +110,11 @@
           <tiny-editor
             class="adapt-editor"
             :editorText="editorText"
+            @input="
+              (value) => {
+                editorText = value;
+              }
+            "
           ></tiny-editor>
         </v-col>
       </v-row>
@@ -134,7 +139,14 @@
         </v-col>
         <v-col cols="12" class="voice-border my-8">
           <v-sheet height="500px">
-            <tiny-editor :editorText="editorText"></tiny-editor>
+            <tiny-editor
+              :editorText="editorText"
+              @input="
+                (value) => {
+                  editorText = value;
+                }
+              "
+            ></tiny-editor>
           </v-sheet>
         </v-col>
         <v-col cols="12" class="voice-border">
@@ -169,6 +181,7 @@
         </v-col>
       </v-row>
     </v-container>
+    {{ editorText }}
   </div>
 </template>
 
