@@ -110,6 +110,7 @@
           <tiny-editor
             class="adapt-editor"
             :editorText="editorText"
+            :disabled="disableEditor"
             @input="
               (value) => {
                 modifyNote(value);
@@ -224,11 +225,11 @@ export default {
       deleteDialog: false,
       deletingItem: {},
       note: null,
-      noteTitle: ""
+      noteTitle: "",
+      disableEditor: false
     };
   },
   methods: {
-
     modifyNote(value) {
       this.editorText = value;
       this.note.text = value;
@@ -390,6 +391,7 @@ export default {
       this.$store.dispatch("createSpeechPad").then((response) => {
         console.log("SpeechId: ", response);
         this.speechId = response;
+        this.disableEditor = true;
 
         this.editorText = this.note.text;
         let mediaConstraints = {
@@ -405,6 +407,7 @@ export default {
       recordRTC.stopRecording(this.processAudio.bind(this));
       let stream = this.stream;
       stream.getAudioTracks().forEach((track) => track.stop());
+      this.disableEditor = false;
       this.$store
         .dispatch("deleteVoiceNote", this.speechId)
         .then((response) => {

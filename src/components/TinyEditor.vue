@@ -9,6 +9,7 @@
           handleEditorChange(value);
         }
       "
+      :disabled="disabled"
       model-events="blur focusout"
       @blur="console.log('Here')"
       apiKey="06j1sdk82snkig4i7v5u03ne6nrs1dabbh9ftqntbcutrvv6"
@@ -38,6 +39,10 @@ export default {
   props: {
     editorText: {
       type: String
+    },
+    disabled: {
+      type: Boolean,
+      require: false
     }
   },
 
