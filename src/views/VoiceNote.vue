@@ -37,6 +37,7 @@
             width="100%"
             color="rgba(17,125,236,0.05)"
             class="drawer-border-right"
+            :class="{ disableNavDrawer: recording }"
           >
             <template v-slot:prepend>
               <div>
@@ -154,7 +155,7 @@
             <v-divider></v-divider>
 
             <v-list dense>
-              <v-list-item v-for="item in items" :key="item.title" link>
+              <v-list-item v-for="item in items" :key="item.noteId" link>
                 <v-list-item-icon>
                   <v-icon>mdi-folder</v-icon>
                 </v-list-item-icon>
@@ -168,7 +169,6 @@
         </v-col>
       </v-row>
     </v-container>
-    {{ "Hello" }}{{ userId }}
   </div>
 </template>
 
@@ -210,10 +210,7 @@ export default {
       blobs: [],
       transcriptList: [],
       deleteDialog: false,
-      deletingItem: {
-        title: "",
-        id: ""
-      },
+      deletingItem: {},
       note: null,
       noteTitle: ""
     };
@@ -221,52 +218,45 @@ export default {
   methods: {
     setActiveNav(item) {
       this.activeId = item.noteId;
-      this.$store.dispatch("fetchArchive", item.noteId).then((response) => {
-        this.transcriptList = [
-          {
-            confidence: 1,
-            isFinal: true,
-            transcript: response,
-            done: true
-          }
-        ];
-        console.log("ARCHIVE", response);
-        this.displayResult();
-      });
+      this.note = item;
+
+      this.transcriptList = [
+        {
+          confidence: 1,
+          isFinal: true,
+          transcript: item.text,
+          done: true
+        }
+      ];
+      console.log("ARCHIVE", item.text);
+      this.displayResult();
     },
     addBlockNote() {
       let defaultTitle = "Новаязапись";
-      // let maxNum = 0;
-      // const x = this.items;
-      // const len = x.length;
-      // for (let i = 0; i < len; i++) {
-      //   const name = x[i].speechpadName.replace(/\s+/g, "");
-      //   if (name.indexOf(defaultTitle) !== -1) {
-      //     const count = parseInt(name.slice(-1));
-      //     if (count > maxNum) {
-      //       maxNum = count;
-      //     }
-      //   }
-      // }
-      // let title = `Новая запись ${maxNum + 1}`;
-      // console.log(title);
-      const random = Math.floor(Math.random() * 100000);
+      let maxNum = 0;
+      const x = this.items;
+      const len = x.length;
+      for (let i = 0; i < len; i++) {
+        const name = x[i].speechpadName.replace(/\s+/g, "");
+        if (name.indexOf(defaultTitle) !== -1) {
+          const count = parseInt(name.slice(-1));
+          if (count > maxNum) {
+            maxNum = count;
+          }
+        }
+      }
+      let title = `Новая запись ${maxNum + 1}`;
+      console.log(title);
       const note = {
-        noteId: random,
         text: "",
         title: defaultTitle
       };
-      this.$store.dispatch("createBlockNote", note).then((response) => {
-        this.items.push({
-          speechpadId: response.speechpadId,
-          speechpadName: response.speechpadName
-        });
+      this.$store.dispatch("createBlockNote", note).then(() => {
+        this.items.push(note);
       });
     },
     saveEditedVoiceNoteName(item) {
-      const edited_title = item.speechpadName;
-      console.log(edited_title);
-
+      console.log(item);
       this.$store.dispatch("saveModifiedBlockNoteName", item);
     },
     openDeleteDialog(item) {
@@ -285,28 +275,22 @@ export default {
       this.deleteDialog = false;
     },
     getTranscription() {
-      this.$store
-        .dispatch("getTranscriptionSpeechPad", this.activeId)
-        .then((data) => {
-          console.log(data);
-          let content = [`Speech Pad: ${data.speechpadName}`];
+      const title = this.note.title;
+      const text = this.note.text.replace("<br>", "\n");
+      let content = [`Speech Pad: ${title}`];
 
-          const len = data.transcribeResult.length;
-          for (let i = 0; i < len; i++) {
-            content.push(data.transcribeResult[i].transcript);
-          }
+      // const len = data.transcribeResult.length;
+      // for (let i = 0; i < len; i++) {
+      //   content.push(data.transcribeResult[i].transcript);
+      // }
 
-          console.log(content);
-          const docDefinition = {
-            content: content
-          };
-          pdfMake
-            .createPdf(docDefinition)
-            .download(`Транскрипция_${data.speechpadName}.pdf`);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      content.push(text);
+
+      console.log(content);
+      const docDefinition = {
+        content: content
+      };
+      pdfMake.createPdf(docDefinition).download(`Транскрипция_${title}.pdf`);
     },
     renderResponse(response) {
       response.results.forEach((r) => {
@@ -358,10 +342,10 @@ export default {
               That.renderResponse(JSON.parse(this.responseText));
             }
           };
-          // https://cors-anywhere.herokuapp.com/
+
           request.open(
             "POST",
-            `https://summarytest.herokuapp.com/1/speechpad/chunk?speechpad_id=${That.activeId}`,
+            `https://summarytest.herokuapp.com/api/voice/chunk?id=${That.speechId}`,
             true
           );
           request.setRequestHeader("Authorization", "Bearer " + That.token);
@@ -382,42 +366,62 @@ export default {
       console.log("processAudio: ", recordedBlob);
     },
     startRecording() {
-      let mediaConstraints = {
-        audio: true
-      };
-      navigator.mediaDevices
-        .getUserMedia(mediaConstraints)
-        .then(this.successCallback.bind(this));
+      this.$store.dispatch("createSpeechPad").then((response) => {
+        console.log("SpeechId: ", response);
+        this.speechId = response;
+
+        this.editorText = this.note.text;
+        let mediaConstraints = {
+          audio: true
+        };
+        navigator.mediaDevices
+          .getUserMedia(mediaConstraints)
+          .then(this.successCallback.bind(this));
+      });
     },
     stopRecording() {
       let recordRTC = this.recordRTC;
       recordRTC.stopRecording(this.processAudio.bind(this));
       let stream = this.stream;
       stream.getAudioTracks().forEach((track) => track.stop());
+      this.$store
+        .dispatch("deleteVoiceNote", this.speechId)
+        .then((response) => {
+          console.log("DELETED VOICE NOTE: ", response);
+        });
+      this.note.text = this.editorText;
+      this.$store.dispatch("saveNote", this.note).then((response) => {
+        console.log("UPDATED NOTE: ", response);
+      });
     },
     addNote() {
-      this.$store.dispatch("createNote", this.noteTitle).then((response) => {
+      let defaultTitle = "Новаязапись";
+      let maxNum = 0;
+      const x = this.items;
+      const len = x.length;
+      for (let i = 0; i < len; i++) {
+        const name = x[i].title.replace(/\s+/g, "");
+        if (name.indexOf(defaultTitle) !== -1) {
+          const count = parseInt(name.slice(-1));
+          if (count > maxNum) {
+            maxNum = count;
+          }
+        }
+      }
+      let title = `Новая запись ${maxNum + 1}`;
+
+      this.$store.dispatch("createNote", title).then((response) => {
         console.log("NEW NOTE: ", response);
-        this.note = response.note;
         this.items.push(response.note);
       });
     },
     deleteNote() {
-      this.$store.dispatch("deleteNote", this.note.noteId).then((response) => {
-        console.log("DELETED NOTE: ", response);
-        this.note = null;
-        this.editorText = "";
+      console.log(this.note);
+      this.$store.dispatch("deleteNote", this.deletingItem.noteId).then(() => {
         this.getAllNotes();
+        this.editorText = "";
+        this.deleteDialog = false;
       });
-
-      const deletingId = this.deletingItem.speechpadId;
-      this.$store.dispatch("deleteBlockNote", deletingId).then(() => {
-        this.items = this.items.filter(
-          (item) => item.speechpadId !== deletingId
-        );
-      });
-      this.editorText = "";
-      this.deleteDialog = false;
     },
     saveNote() {
       this.note.text = this.editorText;
@@ -431,7 +435,7 @@ export default {
         });
       });
     },
-    swapNote: function (item) {
+    swapNote(item) {
       this.transcriptText = "";
       console.log("SWAPPING SPEECH ID ", this.speechId);
       if (this.speechId !== "" && this.speechId !== null) {
@@ -453,12 +457,6 @@ export default {
         console.log("Loaded notes: ", response);
         this.items = response;
       });
-    },
-    ping() {
-      console.log("NOTE CURR: ", this.note);
-    },
-    addToArchive() {
-      this.$store.dispatch("addToArchive", this.editorText);
     }
   }
 };
@@ -498,5 +496,9 @@ export default {
 .v-dialog {
   position: absolute;
   top: 250px;
+}
+
+.disableNavDrawer {
+  pointer-events: none;
 }
 </style>

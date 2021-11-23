@@ -1,7 +1,7 @@
 <template>
   <div
     class="d-flex py-2 pl-3 justify-space-between"
-    :class="item.speechpadId === activeId ? 'skyblue' : 'transparent'"
+    :class="item.noteId === activeId ? 'skyblue' : 'transparent'"
   >
     <!--    <div class="my-auto">-->
     <!--      <v-icon class="size-icon mr-3" color="#14396A"> mdi-folder</v-icon>-->
@@ -11,11 +11,12 @@
         dense
         :outlined="!disabled"
         :disabled="disabled"
-        v-model="item.speechpadName"
+        v-model="item.title"
         :background-color="disabled ? 'transparent' : '#E8EDF1'"
         color="#BEC9D6"
         class="rounded-lg"
         hide-details=" auto"
+        @keyup.enter="editDialog(item)"
       >
       </v-text-field>
     </span>

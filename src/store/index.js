@@ -25,6 +25,7 @@ const vuexLocal = new VuexPersistence({
 export default new Vuex.Store({
   state: {
     username: "",
+    userId: "",
     token: null,
     conferenceInfo: [],
     settings: settings || null,
@@ -570,12 +571,12 @@ export default new Vuex.Store({
           });
       });
     },
-    saveModifiedBlockNoteName(context, payload) {
+    saveModifiedBlockNoteName(context, note) {
       axios.defaults.headers.common["Authorization"] =
         "Bearer " + context.state.token;
       return new Promise((resolve, reject) => {
         axios
-          .put(`/id=${payload.speechpadId}&new_name=${payload.speechpadName}`)
+          .put(`/api/notes`, note)
           .then((response) => {
             if (response.data.success) {
               resolve();
@@ -714,12 +715,12 @@ export default new Vuex.Store({
           });
       });
     },
-    deleteVoiceNote(context, note_id) {
+    deleteVoiceNote(context, voiceNoteId) {
       axios.defaults.headers.common["Authorization"] =
         "Bearer " + context.state.token;
       return new Promise((resolve, reject) => {
         axios
-          .post(`api/voice.clear?note_id=${note_id}`)
+          .delete(`api/voice?id=${voiceNoteId}`)
           .then((response) => {
             console.log(response);
             if (response.data.success) {
@@ -741,7 +742,6 @@ export default new Vuex.Store({
         axios
           .delete(`api/notes?id=${noteId}`)
           .then((response) => {
-            console.log(response);
             if (response.data.success) {
               resolve(response.data.notes);
             } else {
@@ -781,6 +781,10 @@ export default new Vuex.Store({
         axios
           .post(`/api/voice/newnote?model=default`)
           .then((response) => {
+            console.log(
+              "🚀 ~ file: index.js ~ line 784 ~ .then ~ response",
+              response.data
+            );
             if (response.data.success) {
               resolve(response.data.speechpadId);
             } else {
