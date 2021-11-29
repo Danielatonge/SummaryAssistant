@@ -11,7 +11,6 @@
       "
       :disabled="disabled"
       model-events="blur focusout"
-      @blur="console.log('Here')"
       apiKey="06j1sdk82snkig4i7v5u03ne6nrs1dabbh9ftqntbcutrvv6"
       output-format="text"
       :init="{
@@ -51,9 +50,7 @@ export default {
   },
   methods: {
     handleEditorChange(val) {
-      console.log("Now");
       this.$emit("input", val);
-      console.log(val);
       const height = this.$refs.edit.editor.getBody().scrollHeight;
       this.$refs.edit.editor.getWin().scrollTo(500, height);
     }
