@@ -435,7 +435,7 @@ export default new Vuex.Store({
               context.commit("retrieveToken", { token, username, id });
               resolve(response);
             } else {
-              throw new Error(response.data.errorMessage);
+              throw new Error(response.data.message);
             }
           })
           .catch((err) => {
@@ -450,10 +450,10 @@ export default new Vuex.Store({
           .post(`/register`, credentials)
           .then((response) => {
             if (response.data.success) {
-              console.log(response.data.success);
+              console.log(response);
               resolve(response);
             } else {
-              throw new Error(response.data.errorMessage);
+              throw new Error(response.data.message);
             }
           })
           .catch((err) => {

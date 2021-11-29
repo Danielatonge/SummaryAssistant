@@ -397,6 +397,7 @@ export default {
         let mediaConstraints = {
           audio: true
         };
+        console.log("Here: Navigator");
         navigator.mediaDevices
           .getUserMedia(mediaConstraints)
           .then(this.successCallback.bind(this));

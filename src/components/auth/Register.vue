@@ -53,6 +53,7 @@
                   :type="showPassword ? 'text' : 'password'"
                   class="input-group--focused"
                   @click:append="showPassword = !showPassword"
+                  @keyup.enter="registerUser"
                 ></v-text-field>
               </v-col>
             </v-row>
@@ -116,9 +117,10 @@ export default {
             username: this.username,
             password: this.password
           })
-          .then(() => {
+          .then((response) => {
             this.loading = false;
             this.success = "Регистрация прошла успешно";
+            console.log(response);
             setTimeout(() => {
               this.$router.push({ name: "Login" });
             }, 1500);
@@ -126,7 +128,7 @@ export default {
           .catch((err) => {
             this.loading = false;
             const feedback = err.response
-              ? err.response.data.errorMessage
+              ? err.response.data.message
               : err.message;
             this.errors.push(feedback);
           });

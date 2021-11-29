@@ -52,6 +52,7 @@
                   :type="showPassword ? 'text' : 'password'"
                   class="input-group--focused"
                   @click:append="showPassword = !showPassword"
+                  @keyup.enter="login"
                 ></v-text-field>
               </v-col>
             </v-row>
@@ -127,10 +128,9 @@ export default {
           .catch((err) => {
             this.loading = false;
             const feedback = err.response
-              ? err.response.data.errorMessage
+              ? err.response.data.message
               : err.message;
             this.errors.push(feedback);
-            console.log("EEr", err.message);
           });
       } else {
         this.loading = false;
