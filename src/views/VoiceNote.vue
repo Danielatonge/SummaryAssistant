@@ -442,6 +442,8 @@ export default {
     },
     deleteNote() {
       console.log(this.note);
+      if (this.activeId === this.deletingItem.noteId) this.activeId = null;
+
       this.$store.dispatch("deleteNote", this.deletingItem.noteId).then(() => {
         this.getAllNotes();
         this.editorText = "";
