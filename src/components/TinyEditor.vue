@@ -58,4 +58,8 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+div[title="Resize"].tox-statusbar__resize-handle {
+  display: none !important;
+}
+</style>

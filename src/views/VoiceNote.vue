@@ -43,7 +43,6 @@
               <div>
                 <div class="text-center" style="position: relative">
                   <div class="text-h6 mb-2 pt-2">Мои записи</div>
-
                   <v-btn
                     right
                     class="pa-6 do-relative"
@@ -199,6 +198,9 @@ export default {
   components: { ArchiveNav, TinyEditor },
   mounted() {
     this.getAllNotes();
+  },
+  beforeDestroy() {
+    this.stopRecording();
   },
   computed: {
     ...mapState({ part: "current_participant" }),
