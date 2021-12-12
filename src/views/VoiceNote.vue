@@ -397,7 +397,19 @@ export default {
 
         this.editorText = this.note.text;
         let mediaConstraints = {
-          audio: true
+          audio: {
+            mandatory: {
+              echoCancellation: false,
+              googAutoGainControl: false,
+              googNoiseSuppression: false,
+              googHighpassFilter: false
+            },
+            optional: [
+              {
+                googAudioMirroring: false
+              }
+            ]
+          }
         };
         console.log("Here: Navigator");
         navigator.mediaDevices
