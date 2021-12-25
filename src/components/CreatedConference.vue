@@ -192,11 +192,11 @@ export default {
       } else {
         this.stopRecording();
       }
-    },
+    }
   },
   computed: {
     ...mapState({ part: "current_participant" }),
-    ...mapState(["token", "conferenceInfo"]),
+    ...mapState(["token", "conferenceInfo"])
   },
   data() {
     return {
@@ -206,7 +206,7 @@ export default {
       recording: false,
       editorText: "",
       blobs: [],
-      transcriptList: [],
+      transcriptList: []
     };
   },
   methods: {
@@ -286,7 +286,7 @@ export default {
           );
           request.setRequestHeader("Authorization", "Bearer " + That.token);
           request.send(blob);
-        },
+        }
       };
       this.stream = stream;
       this.recordRTC = RecordRTC(stream, options);
@@ -315,8 +315,8 @@ export default {
         }
       };
       request.open(
-        "POST",
-        `https://summarytest.herokuapp.com/api/conference/chunk?conferenceId=${That.conferenceInfo.confId}&participantId=${That.part.participantId}`,
+        "GET",
+        `https://summarytest.herokuapp.com/api/conference/activechat?conferenceId=${That.conferenceInfo.confId}&participantId=${That.part.participantId}`,
         true
       );
       request.setRequestHeader("Authorization", "Bearer " + this.token);
@@ -325,7 +325,7 @@ export default {
     startRecording() {
       this.recording = true;
       let mediaConstraints = {
-        audio: true,
+        audio: true
       };
       navigator.mediaDevices
         .getUserMedia(mediaConstraints)
@@ -348,8 +348,8 @@ export default {
 
           console.log(JSON.stringify(data, null, 2));
         });
-    },
-  },
+    }
+  }
 };
 </script>
 

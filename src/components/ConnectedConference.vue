@@ -319,8 +319,8 @@ export default {
         }
       };
       request.open(
-        "POST",
-        `https://summarytest.herokuapp.com/api/conference/chunk?conferenceId=${That.conferenceInfo.confId}&participantId=${That.part.participantId}`,
+        "GET",
+        `https://summarytest.herokuapp.com/api/conference/activechat?conferenceId=${That.conferenceInfo.confId}&participantId=${That.part.participantId}`,
         true
       );
       request.setRequestHeader("Authorization", "Bearer " + this.token);
