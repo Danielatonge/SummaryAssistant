@@ -125,7 +125,7 @@ export default {
             conferenceName: this.conferenceName,
             organizerName: this.organizerName,
           })
-          .then((confId) => {
+          .then(({ confId }) => {
             this.loading = false;
             this.success = "Успешно созданная конференция";
             setTimeout(() => {

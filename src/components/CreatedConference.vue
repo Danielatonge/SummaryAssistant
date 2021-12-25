@@ -13,16 +13,6 @@
           <audio ref="audio"></audio>
           <v-spacer></v-spacer>
           <div class="d-block d-sm-flex">
-            <!--            <v-btn-->
-            <!--              class="px-4 mr-3 primary-fill"-->
-            <!--              :disabled="recording"-->
-            <!--              dark-->
-            <!--              outlined-->
-            <!--              rounded-->
-            <!--              @click="getTranscription"-->
-            <!--            >-->
-            <!--              Получить расшифровку-->
-            <!--            </v-btn>-->
             <v-btn
               @click="endConference"
               class="px-4 primary-fill font-weight-bold"
@@ -36,6 +26,7 @@
           </div>
         </v-col>
       </v-row>
+      {{ conferenceInfo }}
       <v-row class="voice-border">
         <v-col md="4" lg="3" class="pa-0">
           <v-navigation-drawer
@@ -50,9 +41,9 @@
                 <v-list-item-content class="text-center">
                   <v-list-item-title>
                     <div class="font-weight-bold mb-1">
-                      {{ confName.toUpperCase() }}
+                      {{ conferenceInfo.confName.toUpperCase() }}
                     </div>
-                    <div>№ {{ confId }}</div>
+                    <div>Код приглашения: {{ conferenceInfo.inviteCode }}</div>
                   </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
@@ -65,10 +56,6 @@
                 :key="index"
                 link
               >
-                <!-- <v-list-item-icon class="mr-2" v-show="item.host">
-                  <v-icon>mdi-account</v-icon>
-                </v-list-item-icon> -->
-
                 <v-list-item-content>
                   <div class="font-weight-bold px-5">
                     {{ item.name }}
@@ -94,7 +81,7 @@
     </v-container>
     <v-container class="py-10 hidden-md-and-up">
       <p class="text-h4 text-color font-weight-bold mb-7 text-left">
-        Конференция № {{ confId }}
+        Конференция № {{ conferenceInfo.confId }}
       </p>
       <v-row>
         <v-col cols="12" class="d-flex">
@@ -125,7 +112,7 @@
                     <div class="font-weight-bold mb-1">
                       {{ confName.toUpperCase() }}
                     </div>
-                    <div>№ {{ confId }}</div>
+                    <div>№ {{ conferenceInfo.confId }}</div>
                   </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
@@ -139,10 +126,6 @@
                 :key="index"
                 link
               >
-                <!-- <v-list-item-icon class="mr-2" v-show="item.host">
-                  <v-icon>mdi-account</v-icon>
-                </v-list-item-icon> -->
-
                 <v-list-item-content>
                   <v-list-item-title>{{ item.name }}</v-list-item-title>
                 </v-list-item-content>
@@ -189,10 +172,7 @@ import RecordRTC, { StereoAudioRecorder } from "recordrtc";
 export default {
   components: { TinyEditor },
   created() {
-    const confId = this.$route.params.id;
-    console.log(this.part.id);
-    this.confId = confId;
-    this.confName = this.$store.getters.confName(confId);
+    console.log(this.part.participantId);
   },
   mounted() {
     this.intervalId = setInterval(() => {
@@ -203,6 +183,7 @@ export default {
   },
   beforeDestroy() {
     clearInterval(this.intervalId);
+    this.stopRecording();
   },
   watch: {
     recording(val) {
@@ -211,30 +192,30 @@ export default {
       } else {
         this.stopRecording();
       }
-    }
+    },
   },
   computed: {
     ...mapState({ part: "current_participant" }),
-    ...mapState(["token"])
+    ...mapState(["token", "conferenceInfo"]),
   },
   data() {
     return {
       intervalId: null,
       participants: [],
-      confId: "",
       confName: "",
       recording: false,
       editorText: "",
       blobs: [],
-      transcriptList: []
+      transcriptList: [],
     };
   },
   methods: {
     endConference() {
-      // this.download();
-      this.$store.dispatch("endConference", this.confId).then(() => {
-        this.$router.push({ path: "/conference" });
-      });
+      this.$store
+        .dispatch("endConference", this.conferenceInfo.confId)
+        .then(() => {
+          this.$router.push({ path: "/conference" });
+        });
     },
     renderResponse(response) {
       this.participants = response.participants;
@@ -300,12 +281,12 @@ export default {
           };
           request.open(
             "POST",
-            `https://summarytest.herokuapp.com/1/conference/chunk?conference_id=${That.confId}&include_participants=True`,
+            `https://summarytest.herokuapp.com/api/conference/chunk?conferenceId=${That.conferenceInfo.confId}&participantId=${That.part.participantId}`,
             true
           );
           request.setRequestHeader("Authorization", "Bearer " + That.token);
           request.send(blob);
-        }
+        },
       };
       this.stream = stream;
       this.recordRTC = RecordRTC(stream, options);
@@ -335,7 +316,7 @@ export default {
       };
       request.open(
         "POST",
-        `https://summarytest.herokuapp.com/1/conference/chunk?conference_id=${this.confId}&include_participants=True`,
+        `https://summarytest.herokuapp.com/api/conference/chunk?conferenceId=${That.conferenceInfo.confId}&participantId=${That.part.participantId}`,
         true
       );
       request.setRequestHeader("Authorization", "Bearer " + this.token);
@@ -344,7 +325,7 @@ export default {
     startRecording() {
       this.recording = true;
       let mediaConstraints = {
-        audio: true
+        audio: true,
       };
       navigator.mediaDevices
         .getUserMedia(mediaConstraints)
@@ -357,31 +338,18 @@ export default {
       let stream = this.stream;
       stream.getAudioTracks().forEach((track) => track.stop());
     },
-    // download() {
-    //   this.recordRTC ? this.recordRTC.save("audio.wav"): null;
-    // },
     getTranscription() {
-      this.$store.dispatch("getTranscription", this.confId).then((data) => {
-        let doc = jsPDF();
-        doc.text(10, 10, data);
-        doc.save(`Transcription_.pdf`);
+      this.$store
+        .dispatch("getTranscription", this.conferenceInfo.confId)
+        .then((data) => {
+          let doc = jsPDF();
+          doc.text(10, 10, data);
+          doc.save(`Transcription_.pdf`);
 
-        console.log(JSON.stringify(data, null, 2));
-
-        // const format = {
-        //   conferenceName: "2243",
-        //   entries: [
-        //     {
-        //       participantName: "Thes",
-        //       text: "я",
-        //     },
-        //   ],
-        //   success: true,
-        //   text: "2243\nThes: я\n",
-        // };
-      });
-    }
-  }
+          console.log(JSON.stringify(data, null, 2));
+        });
+    },
+  },
 };
 </script>
 

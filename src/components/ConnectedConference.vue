@@ -168,7 +168,7 @@ export default {
       } else {
         this.stopRecording();
       }
-    }
+    },
   },
   mounted() {
     this.intervalId = setInterval(() => {
@@ -179,10 +179,11 @@ export default {
   },
   beforeDestroy() {
     clearInterval(this.intervalId);
+    this.stopRecording();
   },
   computed: {
     ...mapState({ part: "current_participant" }),
-    ...mapState(["token"])
+    ...mapState(["token", "conferenceInfo"]),
   },
   created() {
     const confId = this.$route.params.id;
@@ -200,15 +201,16 @@ export default {
       partInfo: null,
       editorText: "",
       blobs: [],
-      transcriptList: []
+      transcriptList: [],
     };
   },
   methods: {
     exitConference() {
-      // this.download();
-      this.$store.dispatch("exitConference", this.part.id).then(() => {
-        this.$router.push({ path: "/conference" });
-      });
+      this.$store
+        .dispatch("exitConference", this.part.participantId)
+        .then(() => {
+          this.$router.push({ path: "/conference" });
+        });
     },
     renderResponse(response) {
       this.participants = response.participants;
@@ -272,12 +274,12 @@ export default {
           };
           request.open(
             "POST",
-            `https://summarytest.herokuapp.com/1/conference/chunk?conference_id=${That.confId}&include_participants=True`,
+            `https://summarytest.herokuapp.com/api/conference/chunk?conferenceId=${That.conferenceInfo.confId}&participantId=${That.part.participantId}`,
             true
           );
           request.setRequestHeader("Authorization", "Bearer " + That.token);
           request.send(blob);
-        }
+        },
       };
       this.stream = stream;
       this.recordRTC = RecordRTC(stream, options);
@@ -294,7 +296,7 @@ export default {
     },
     startRecording() {
       let mediaConstraints = {
-        audio: true
+        audio: true,
       };
       navigator.mediaDevices
         .getUserMedia(mediaConstraints)
@@ -318,16 +320,13 @@ export default {
       };
       request.open(
         "POST",
-        `https://summarytest.herokuapp.com/1/conference/chunk?conference_id=${this.confId}&include_participants=True`,
+        `https://summarytest.herokuapp.com/api/conference/chunk?conferenceId=${That.conferenceInfo.confId}&participantId=${That.part.participantId}`,
         true
       );
       request.setRequestHeader("Authorization", "Bearer " + this.token);
       request.send(blob);
-    }
-    // download() {
-    //   this.recordRTC ? this.recordRTC.save("audio.wav") : null;
-    // },
-  }
+    },
+  },
 };
 </script>
 

@@ -10,7 +10,7 @@ let settings = {
   add_label: "A",
   copy: "H",
 };
-const API = "https://dpforge.com";
+const API = "https://summarytest.herokuapp.com";
 
 export const modifySettings = (context, param) => {
   const key = param.key;
@@ -18,7 +18,7 @@ export const modifySettings = (context, param) => {
   axios.defaults.headers.common["Authorization"] =
     "Bearer " + context.state.token;
   axios
-    .post(`${API}/1/user/settings/set?key=${option}`, {
+    .post(`${API}/api/user/settings/set?key=${option}`, {
       description: option,
       key: key,
     })
@@ -50,7 +50,7 @@ export const getSettingKeys = (context) => {
     userRequests.push(
       new Promise((resolve, reject) => {
         axios
-          .get(`${API}/1/user/settings/get?key=${key}`)
+          .get(`${API}/api/user/settings/get?key=${key}`)
           .then((response) => {
             _settings[key] = response.data ? response.data.key : "";
             resolve(_settings[key]);
@@ -81,7 +81,7 @@ export const getTranscription = (context, param) => {
   return new Promise((resolve, reject) => {
     axios
       .post(
-        `${API}/1/conference/download?conference_id=${param.confId}&format=json`
+        `${API}/api/conference/download?conference_id=${param.confId}&format=json`
       )
       .then((response) => {
         if (response.data.success) {
@@ -106,7 +106,7 @@ export const createConference = (context, param) => {
   return new Promise((resolve, reject) => {
     axios
       .post(
-        `${API}/1/conference/create?conference_name=${confN}&host_name=${orgN}`
+        `${API}/api/conference/create?conference_name=${confN}&host_name=${orgN}`
       )
       .then((response) => {
         if (response.data.success) {
@@ -131,7 +131,7 @@ export const joinConference = (context, param) => {
   return new Promise((resolve, reject) => {
     axios
       .post(
-        `${API}/1/conference/join_speaker?conference_id=${confId}&speaker_name=${partN}`
+        `${API}/api/conference/join_speaker?conference_id=${confId}&speaker_name=${partN}`
       )
       .then((response) => {
         if (response.data.success) {
@@ -162,7 +162,7 @@ export const endConference = (context, conferenceId) => {
     "Bearer " + context.state.token;
   return new Promise((resolve, reject) => {
     axios
-      .post(`${API}/1/conference/finish?conference_id=${conferenceId}`)
+      .post(`${API}/api/conference/finish?conference_id=${conferenceId}`)
       .then((response) => {
         if (response.data.success) {
           context.commit("destroyConferenceInfo");
@@ -186,7 +186,7 @@ export const destroyToken = (context) => {
     context.commit("destroyToken");
     // return new Promise((resolve, reject) => {
     //   axios
-    //     .post(`${API}/1/user/logout`)
+    //     .post(`${API}/api/user/logout`)
     //     .then((response) => {
     //       localStorage.removeItem("accessToken");
     //       context.commit("destroyToken");
@@ -235,7 +235,7 @@ export const uploadMediaToStorage = (context, payload) => {
 export const retrieveToken = (context, credentials) => {
   return new Promise((resolve, reject) => {
     axios
-      .post(`${API}/1/user/login`, {
+      .post(`${API}/api/user/login`, {
         login: credentials.username,
         password: credentials.password,
       })
@@ -257,7 +257,7 @@ export const retrieveToken = (context, credentials) => {
 export const registerUser = (context, credentials) => {
   return new Promise((resolve, reject) => {
     axios
-      .post(`${API}/1/user/create`, {
+      .post(`${API}/api/user/create`, {
         login: credentials.username,
         password: credentials.password,
       })

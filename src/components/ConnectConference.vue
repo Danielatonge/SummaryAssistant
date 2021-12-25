@@ -28,7 +28,7 @@
                 <v-text-field
                   :rules="[rules.required]"
                   v-model="conferenceId"
-                  label="Номер конференции"
+                  label="Код приглашения"
                   outlined
                   class="rounded-lg"
                   background-color="rgba(196, 196, 196, 0.2)"

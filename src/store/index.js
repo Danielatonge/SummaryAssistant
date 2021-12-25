@@ -2,8 +2,6 @@ import Vue from "vue";
 import Vuex from "vuex";
 import axios from "axios";
 import VuexPersistence from "vuex-persist";
-//  https://speech-to-text-demo-4k67a4hqaa-uc.a.run.app/
-//  https://dpforge.com
 // https://summarytest.herokuapp.com/swagger-ui.html
 Vue.use(Vuex);
 axios.defaults.baseURL = "https://summarytest.herokuapp.com";
@@ -27,7 +25,7 @@ export default new Vuex.Store({
     username: "",
     userId: "",
     token: null,
-    conferenceInfo: [],
+    conferenceInfo: {},
     settings: settings || null,
     record: null,
     gumStream: null,
@@ -87,7 +85,7 @@ export default new Vuex.Store({
       state.token = null;
       state.username = "";
       state.userId = "";
-      state.conferenceInfo = [];
+      state.conferenceInfo = {};
       state.record = null;
       state.gumStream = null;
       state.decode_upload = null;
@@ -97,18 +95,13 @@ export default new Vuex.Store({
       state.decoded_sample = null;
     },
     setConferenceInfo(state, data) {
-      console.log(data);
-      state.conferenceInfo.push(data);
+      state.conferenceInfo = data;
     },
     setSettings(state, data) {
       state.settings = data;
     },
-    destroyConferenceInfo(state, confId) {
-      const confInfo = state.conferenceInfo.filter((x) => x.confId !== confId);
-      const parts = state.participants.filter((x) => x.confId !== confId);
-
-      state.conferenceInfo = confInfo;
-      state.participants = parts;
+    destroyConferenceInfo(state) {
+      state.conferenceInfo = {};
     },
     destroyParticipantInfo(state, partId) {
       state.participants = state.participants.filter((x) => x.id !== partId);
@@ -126,11 +119,8 @@ export default new Vuex.Store({
     saveDecodeTranscript(state, payload) {
       state.decoded_sample = payload;
     },
-    addArchive(state, payload) {
+    ADD_ARCHIVE(state, payload) {
       state.archives.push(payload);
-    },
-    saveParticipants(state, parts) {
-      state.participants = parts;
     },
     SET_ARCHIVE_ITEMS(state, payload) {
       state.archives = payload;
@@ -143,7 +133,7 @@ export default new Vuex.Store({
       axios.defaults.headers.common["Authorization"] =
         "Bearer " + context.state.token;
       axios
-        .post(`/1/user/settings/set?key=${option}`, {
+        .post(`/api/user/settings/set?key=${option}`, {
           description: option,
           key: key
         })
@@ -175,7 +165,7 @@ export default new Vuex.Store({
         userRequests.push(
           new Promise((resolve, reject) => {
             axios
-              .get(`/1/user/settings/get?key=${key}`)
+              .get(`/api/user/settings/get?key=${key}`)
               .then((response) => {
                 _settings[key] = response.data ? response.data.key : "";
                 resolve(_settings[key]);
@@ -205,15 +195,12 @@ export default new Vuex.Store({
         "Bearer " + context.state.token;
       return new Promise((resolve, reject) => {
         axios
-          .get(`/1/conference/download?conference_id=${confId}&format=json`)
+          .get(`/api/conference/pdf?id=${confId}`)
           .then((response) => {
-            if (response.data.success) {
-              const data = response.data;
-              console.log(data);
-              resolve(data);
-            } else {
-              throw new Error(response.data.errorMessage);
-            }
+            const data = response.data;
+            console.log(data);
+            resolve(data);
+
           })
           .catch((err) => {
             console.log(err);
@@ -226,7 +213,7 @@ export default new Vuex.Store({
         "Bearer " + context.state.token;
       return new Promise((resolve, reject) => {
         axios
-          .get(`/1/speechpad/get?speechpad_id=${speechpadId}`)
+          .get(`/api/speechpad/get?speechpad_id=${speechpadId}`)
           .then((response) => {
             if (response.data.success) {
               const data = response.data;
@@ -250,28 +237,28 @@ export default new Vuex.Store({
       return new Promise((resolve, reject) => {
         axios
           .post(
-            `/1/conference/create?conference_name=${confN}&host_name=${orgN}`
+            `/api/conference?conferenceName=${confN}&ownerName=${orgN}`
           )
           .then((response) => {
-            if (response.data.success) {
-              const data = response.data;
-              const host = {
-                confId: data.conferenceId,
-                id: data.hostId,
-                name: data.hostName,
-                host: true
-              };
-              const conf = {
-                confId: data.conferenceId,
-                confName: data.conferenceName
-              };
-              context.commit("addParticipant", host);
-              context.commit("setCurrentParticipant", host);
-              context.commit("setConferenceInfo", conf);
-              resolve(data.conferenceId);
-            } else {
-              throw new Error(response.data.errorMessage);
-            }
+            console.log(response)
+
+            const data = response.data;
+            const host = {
+              confId: data.conferenceId,
+              participantId: data.owner.participantId,
+              name: data.owner.name,
+              host: true
+            };
+            const conf = {
+              confId: data.conferenceId,
+              confName: data.conferenceName,
+              inviteCode: data.inviteCode,
+            };
+            context.commit("addParticipant", host);
+            context.commit("setCurrentParticipant", host);
+            context.commit("setConferenceInfo", conf);
+            resolve(conf);
+
           })
           .catch((err) => {
             console.log(err);
@@ -280,31 +267,30 @@ export default new Vuex.Store({
       });
     },
     joinConference(context, param) {
-      const confId = param.confId;
+      const inviteCode = param.confId;
       const partN = param.partName;
       axios.defaults.headers.common["Authorization"] =
         "Bearer " + context.state.token;
       return new Promise((resolve, reject) => {
         axios
           .post(
-            `/1/conference/join_speaker?conference_id=${confId}&speaker_name=${partN}`
+            `/api/conference/join?inviteCode=${inviteCode}&name=${partN}`
           )
           .then((response) => {
-            if (response.data.success) {
-              const data = response.data;
-              console.log(data);
-              const part = {
-                confId: data.conferenceId,
-                id: data.participantId,
-                name: data.participantName,
-                host: false
-              };
-              context.commit("setCurrentParticipant", part);
-              context.commit("addParticipant", part);
-              resolve(data.conferenceId);
-            } else {
-              throw new Error(response.data.errorMessage);
-            }
+            console.log(response)
+
+            const data = response.data;
+            console.log(data);
+            const part = {
+              confId: data.conference.conferenceId,
+              participantId: data.participantId,
+              name: data.name,
+              host: false
+            };
+            context.commit("setCurrentParticipant", part);
+            context.commit("addParticipant", part);
+            resolve(data.conference.conferenceId);
+
           })
           .catch((err) => {
             console.log(err);
@@ -326,14 +312,10 @@ export default new Vuex.Store({
         "Bearer " + context.state.token;
       return new Promise((resolve, reject) => {
         axios
-          .post(`/1/conference/finish?conference_id=${conferenceId}`)
+          .post(`/api/conference/finish?conferenceId=${conferenceId}`)
           .then((response) => {
-            if (response.data.success) {
-              context.commit("destroyConferenceInfo", conferenceId);
-              resolve(response);
-            } else {
-              throw new Error(response.data.errorMessage);
-            }
+            context.commit("destroyConferenceInfo");
+            resolve(response);
           })
           .catch((err) => {
             console.log(err);
@@ -342,7 +324,23 @@ export default new Vuex.Store({
       });
     },
     exitConference(context, partId) {
-      context.commit("destroyParticipantInfo", partId);
+
+      axios.defaults.headers.common["Authorization"] =
+        "Bearer " + context.state.token;
+      return new Promise((resolve, reject) => {
+        axios
+          .post(`/api/conference/leave?participantId=${partId}`)
+          .then((response) => {
+            console.log(response)
+            context.commit("destroyParticipantInfo", partId);
+            resolve(response);
+
+          })
+          .catch((err) => {
+            console.log(err);
+            reject(err);
+          });
+      });
     },
     destroyToken(context) {
       axios.defaults.headers.common["Authorization"] =
@@ -352,7 +350,7 @@ export default new Vuex.Store({
         context.commit("destroyToken");
         // return new Promise((resolve, reject) => {
         //   axios
-        //     .post(`/1/user/logout`)
+        //     .post(`/api/user/logout`)
         //     .then((response) => {
         //       localStorage.removeItem("accessToken");
         //       context.commit("destroyToken");
@@ -595,7 +593,7 @@ export default new Vuex.Store({
         "Bearer " + context.state.token;
       return new Promise((resolve, reject) => {
         axios
-          .post(`/1/speechpad/modify?speechpad_id=${payload.id}`, payload)
+          .post(`/api/speechpad/modify?speechpad_id=${payload.id}`, payload)
           .then((response) => {
             if (response.data.success) {
               resolve();
@@ -636,7 +634,7 @@ export default new Vuex.Store({
         "Bearer " + context.state.token;
       return new Promise((resolve, reject) => {
         axios
-          .get(`/1/speechpad/get?speechpad_id=${speechpadId}`)
+          .get(`/api/speechpad/get?speechpad_id=${speechpadId}`)
           .then((response) => {
             if (response.data.success) {
               console.log(response.data);
@@ -656,7 +654,7 @@ export default new Vuex.Store({
       });
     },
     addToArchive(context, text) {
-      context.commit("addArchive", text);
+      context.commit("ADD_ARCHIVE", text);
     },
     createNote(context, noteTitle) {
       axios.defaults.headers.common["Authorization"] =

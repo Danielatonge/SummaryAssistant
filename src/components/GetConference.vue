@@ -117,21 +117,22 @@ export default {
           .dispatch("getTranscription", this.confId)
           .then((data) => {
             console.log(data);
-            let content = [`Conference: ${data.conferenceName}`];
 
-            const len = data.entries.length;
-            for (var i = 0; i < len; i++) {
-              content.push(
-                `${data.entries[i].participantName} :- ${data.entries[i].text}`
-              );
-            }
+            // let content = [`Conference: ${data.conferenceName}`];
 
-            var docDefinition = {
-              content: content,
-            };
-            pdfMake
-              .createPdf(docDefinition)
-              .download(`Транскрипция_${data.conferenceName}.pdf`);
+            // const len = data.entries.length;
+            // for (var i = 0; i < len; i++) {
+            //   content.push(
+            //     `${data.entries[i].participantName} :- ${data.entries[i].text}`
+            //   );
+            // }
+
+            // var docDefinition = {
+            //   content: content,
+            // };
+            // pdfMake
+            //   .createPdf(docDefinition)
+            //   .download(`Транскрипция_${data.conferenceName}.pdf`);
 
             this.loading = false;
             this.success = "получена транскрипция успешно";
@@ -139,12 +140,12 @@ export default {
               this.$router.push({ path: "/conference" });
             }, 1500);
           })
-          .catch((err) => {
+          .catch(() => {
             this.loading = false;
-            const feedback = err.response
-              ? err.response.data.errorMessage
-              : err.message;
-            this.errors.push(feedback);
+            // const feedback = err.response
+            //   ? err.response.data.errorMessage
+            //   : err.message;
+            this.errors.push("Конференция не существует");
           });
       } else {
         this.loading = false;
