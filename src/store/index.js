@@ -198,7 +198,7 @@ export default new Vuex.Store({
           .get(`/api/conference/pdf?id=${confId}`)
           .then((response) => {
             const data = response.data;
-            console.log(data);
+            console.log(response.data);
             resolve(data);
 
           })

@@ -118,6 +118,14 @@ export default {
           .then((data) => {
             console.log(data);
 
+            let FILE = window.URL.createObjectURL(new Blob([data]));
+
+            let docUrl = document.createElement("etxa");
+            docUrl.href = FILE;
+            docUrl.setAttribute("download", "transcription.pdf");
+            document.body.appendChild(docUrl);
+            docUrl.click();
+
             // let content = [`Conference: ${data.conferenceName}`];
 
             // const len = data.entries.length;
