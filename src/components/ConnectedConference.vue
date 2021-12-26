@@ -61,7 +61,9 @@
                 <v-list-item-content>
                   <div class="font-weight-bold px-5">
                     {{ item.name }}
-                    <v-icon color="green">mdi-circle-small</v-icon>
+                    <v-icon x-large color="green" v-show="item.isActive"
+                      >mdi-circle-small</v-icon
+                    >
                   </div>
                 </v-list-item-content>
               </v-list-item>
