@@ -241,7 +241,8 @@ export default {
       confName: "",
       recording: false,
       editorText: "",
-      blobs: []
+      blobs: [],
+      intermediate: {}
     };
   },
   methods: {
@@ -276,6 +277,18 @@ export default {
         });
       }
     },
+    intermediateResponse(response) {
+      response.forEach((t) => {
+        this.intermediate[t.participantName] = t.result;
+      });
+
+      Object.entries(this.intermediate).forEach(([key, value]) => {
+        if (value === this.intermediate[key]) {
+          this.editorText +=
+            "<p style='color:red'><b>" + key + ":</b> " + value + "</p>";
+        }
+      });
+    },
 
     successCallback(stream) {
       const That = this;
@@ -283,7 +296,7 @@ export default {
         type: "audio",
         mimeType: "audio/wav",
         recorderType: StereoAudioRecorder,
-        timeSlice: 500,
+        timeSlice: 1700,
         desiredSampRate: 16000,
         bufferSize: 8192,
         numberOfAudioChannels: 1,
@@ -298,7 +311,7 @@ export default {
             ) {
               console.log("CHUNK:", this.responseText);
               That.participants = JSON.parse(this.responseText).users;
-              this.intermediateResponse(JSON.parse(this.responseText).results);
+              That.intermediateResponse(JSON.parse(this.responseText).results);
             }
           };
           request.open(
