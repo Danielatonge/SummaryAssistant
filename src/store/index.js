@@ -221,7 +221,7 @@ export default new Vuex.Store({
       axios.defaults.headers.common["Authorization"] =
         "Bearer " + context.state.token;
       return axios
-        .get(`/api/conference/pdf?id=${confId}`, {
+        .get(`/api/conference/pdf?inviteCode=${confId}`, {
           responseType: "blob"
         })
         .then((response) => {

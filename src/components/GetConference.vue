@@ -87,23 +87,24 @@
 let pdfMake = require("pdfmake/build/pdfmake.js");
 let pdfFonts = require("pdfmake/build/vfs_fonts.js");
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
+import download from "downloadjs";
 
 export default {
   data() {
     return {
       confId: "",
       rules: {
-        required: (value) => !!value || "нужное поле",
+        required: (value) => !!value || "нужное поле"
       },
       errors: [],
       loading: false,
-      success: "",
+      success: ""
     };
   },
   computed: {
     errorFeedback() {
       return this.confId.length !== 0;
-    },
+    }
   },
   methods: {
     RouteConference() {
@@ -115,32 +116,13 @@ export default {
       if (this.errorFeedback) {
         this.$store
           .dispatch("getTranscription", this.confId)
-          .then((data) => {
-            console.log(data);
-
-            let FILE = window.URL.createObjectURL(new Blob([data]));
-
-            let docUrl = document.createElement("etxa");
-            docUrl.href = FILE;
-            docUrl.setAttribute("download", "transcription.pdf");
-            document.body.appendChild(docUrl);
-            docUrl.click();
-
-            // let content = [`Conference: ${data.conferenceName}`];
-
-            // const len = data.entries.length;
-            // for (var i = 0; i < len; i++) {
-            //   content.push(
-            //     `${data.entries[i].participantName} :- ${data.entries[i].text}`
-            //   );
-            // }
-
-            // var docDefinition = {
-            //   content: content,
-            // };
-            // pdfMake
-            //   .createPdf(docDefinition)
-            //   .download(`Транскрипция_${data.conferenceName}.pdf`);
+          .then((response) => {
+            const content = response.headers["content-type"];
+            download(
+              response.data,
+              `Conference Transcription ${this.confId}`,
+              content
+            );
 
             this.loading = false;
             this.success = "получена транскрипция успешно";
@@ -159,8 +141,8 @@ export default {
         this.loading = false;
         this.errors.push("обязательные поля");
       }
-    },
-  },
+    }
+  }
 };
 </script>
 
