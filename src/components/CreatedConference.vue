@@ -26,6 +26,7 @@
           </div>
         </v-col>
       </v-row>
+      {{ participants }}
       <v-row class="voice-border">
         <v-col md="4" lg="3" class="pa-0">
           <v-navigation-drawer
@@ -58,6 +59,9 @@
                 <v-list-item-content>
                   <div class="font-weight-bold px-5">
                     {{ item.name }}
+                    <v-icon x-large color="green" v-show="item.isActive"
+                      >mdi-circle-small</v-icon
+                    >
                   </div>
                 </v-list-item-content>
               </v-list-item>
@@ -126,7 +130,10 @@
                 link
               >
                 <v-list-item-content>
-                  <v-list-item-title>{{ item.name }}</v-list-item-title>
+                  <v-list-item-title
+                    >{{ item.name }}
+                    <v-icon color="green">mdi-circle-small</v-icon>
+                  </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
             </v-list>

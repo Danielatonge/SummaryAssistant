@@ -59,7 +59,10 @@
                 <!--                </v-list-item-icon>-->
 
                 <v-list-item-content>
-                  <div class="font-weight-bold px-5">{{ item.name }}</div>
+                  <div class="font-weight-bold px-5">
+                    {{ item.name }}
+                    <v-icon color="green">mdi-circle-small</v-icon>
+                  </div>
                 </v-list-item-content>
               </v-list-item>
             </v-list>
