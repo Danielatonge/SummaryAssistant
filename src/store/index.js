@@ -127,6 +127,17 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    receiveSentences({ state }, confId) {
+      axios.defaults.headers.common["Authorization"] = "Bearer " + state.token;
+      return axios
+        .get(`/api/conference/sentences?conferenceId=${confId}`)
+        .then((response) => {
+          return response.data;
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    },
     modifySettings(context, param) {
       const key = param.key;
       const option = param.description;
@@ -200,7 +211,6 @@ export default new Vuex.Store({
             const data = response.data;
             console.log(response.data);
             resolve(data);
-
           })
           .catch((err) => {
             console.log(err);
@@ -236,11 +246,9 @@ export default new Vuex.Store({
         "Bearer " + context.state.token;
       return new Promise((resolve, reject) => {
         axios
-          .post(
-            `/api/conference?conferenceName=${confN}&ownerName=${orgN}`
-          )
+          .post(`/api/conference?conferenceName=${confN}&ownerName=${orgN}`)
           .then((response) => {
-            console.log(response)
+            console.log(response);
 
             const data = response.data;
             const host = {
@@ -252,13 +260,12 @@ export default new Vuex.Store({
             const conf = {
               confId: data.conferenceId,
               confName: data.conferenceName,
-              inviteCode: data.inviteCode,
+              inviteCode: data.inviteCode
             };
             context.commit("addParticipant", host);
             context.commit("setCurrentParticipant", host);
             context.commit("setConferenceInfo", conf);
             resolve(conf);
-
           })
           .catch((err) => {
             console.log(err);
@@ -273,11 +280,9 @@ export default new Vuex.Store({
         "Bearer " + context.state.token;
       return new Promise((resolve, reject) => {
         axios
-          .post(
-            `/api/conference/join?inviteCode=${inviteCode}&name=${partN}`
-          )
+          .post(`/api/conference/join?inviteCode=${inviteCode}&name=${partN}`)
           .then((response) => {
-            console.log(response)
+            console.log(response);
 
             const data = response.data;
             console.log(data);
@@ -290,7 +295,6 @@ export default new Vuex.Store({
             context.commit("setCurrentParticipant", part);
             context.commit("addParticipant", part);
             resolve(data.conference.conferenceId);
-
           })
           .catch((err) => {
             console.log(err);
@@ -324,17 +328,15 @@ export default new Vuex.Store({
       });
     },
     exitConference(context, partId) {
-
       axios.defaults.headers.common["Authorization"] =
         "Bearer " + context.state.token;
       return new Promise((resolve, reject) => {
         axios
           .post(`/api/conference/leave?participantId=${partId}`)
           .then((response) => {
-            console.log(response)
+            console.log(response);
             context.commit("destroyParticipantInfo", partId);
             resolve(response);
-
           })
           .catch((err) => {
             console.log(err);

@@ -26,7 +26,6 @@
           </div>
         </v-col>
       </v-row>
-      {{ conferenceInfo }}
       <v-row class="voice-border">
         <v-col md="4" lg="3" class="pa-0">
           <v-navigation-drawer
@@ -180,8 +179,13 @@ export default {
         this.sendEmptyChunks();
       }
     }, 2000);
+
+    this.sentenceId = setInterval(() => {
+      this.receiveSentences();
+    }, 2000);
   },
   beforeDestroy() {
+    clearInterval(this.sentenceId);
     clearInterval(this.intervalId);
     this.stopRecording();
   },
@@ -200,16 +204,24 @@ export default {
   },
   data() {
     return {
+      sentenceId: null,
       intervalId: null,
       participants: [],
       confName: "",
       recording: false,
       editorText: "",
-      blobs: [],
-      transcriptList: []
+      blobs: []
     };
   },
   methods: {
+    receiveSentences() {
+      this.$store
+        .dispatch("receiveSentences", this.conferenceInfo.confId)
+        .then((response) => {
+          console.log("SENTENCES: ", response);
+          this.renderResponse(response);
+        });
+    },
     endConference() {
       this.$store
         .dispatch("endConference", this.conferenceInfo.confId)
@@ -218,42 +230,17 @@ export default {
         });
     },
     renderResponse(response) {
-      this.participants = response.participants;
-      response.transcripts.forEach((t) => {
-        const len = this.transcriptList.length;
-        let modify = false;
-        for (let i = 0; i < len; i++) {
-          if (!this.transcriptList[i].isFinal) {
-            this.transcriptList[i] = t;
-            modify = true;
-          }
-        }
-        if (!modify) {
-          this.transcriptList.push(t);
-        }
-      });
-
-      this.displayResult();
-    },
-    displayResult() {
       this.editorText = "";
-      this.transcriptList.forEach((t) => {
-        if (t.isFinal) {
+      if (response.sentences) {
+        response.sentences.forEach((t) => {
           this.editorText +=
             "<p style='color:green'><b>" +
             t.participantName +
             ":</b> " +
-            t.value +
+            t.text +
             "</p>";
-        } else {
-          this.editorText +=
-            "<p style='color:red'><b>" +
-            t.participantName +
-            ":</b> " +
-            t.value +
-            "</p>";
-        }
-      });
+        });
+      }
     },
 
     successCallback(stream) {
@@ -275,8 +262,8 @@ export default {
               this.readyState === XMLHttpRequest.DONE &&
               this.status === 200
             ) {
-              console.log(this.responseText);
-              That.renderResponse(JSON.parse(this.responseText));
+              console.log("CHUNK:", this.responseText);
+              That.participants = JSON.parse(this.responseText).users;
             }
           };
           request.open(
@@ -311,7 +298,7 @@ export default {
       request.onreadystatechange = function () {
         if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
           console.log("Empty:", this.responseText);
-          That.renderResponse(JSON.parse(this.responseText));
+          That.participants = JSON.parse(this.responseText).users;
         }
       };
       request.open(

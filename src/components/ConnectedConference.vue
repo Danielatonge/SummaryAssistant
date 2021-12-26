@@ -168,7 +168,7 @@ export default {
       } else {
         this.stopRecording();
       }
-    },
+    }
   },
   mounted() {
     this.intervalId = setInterval(() => {
@@ -176,14 +176,19 @@ export default {
         this.sendEmptyChunks();
       }
     }, 2000);
+
+    this.sentenceId = setInterval(() => {
+      this.receiveSentences();
+    }, 2000);
   },
   beforeDestroy() {
+    clearInterval(this.sentenceId);
     clearInterval(this.intervalId);
     this.stopRecording();
   },
   computed: {
     ...mapState({ part: "current_participant" }),
-    ...mapState(["token", "conferenceInfo"]),
+    ...mapState(["token", "conferenceInfo"])
   },
   created() {
     const confId = this.$route.params.id;
@@ -192,6 +197,7 @@ export default {
   },
   data() {
     return {
+      sentenceId: null,
       intervalId: null,
       participants: [],
       individual: null,
@@ -200,11 +206,18 @@ export default {
       recording: false,
       partInfo: null,
       editorText: "",
-      blobs: [],
-      transcriptList: [],
+      blobs: []
     };
   },
   methods: {
+    receiveSentences() {
+      this.$store
+        .dispatch("receiveSentences", this.conferenceInfo.confId)
+        .then((response) => {
+          console.log("SENTENCES: ", response);
+          this.renderResponse(response);
+        });
+    },
     exitConference() {
       this.$store
         .dispatch("exitConference", this.part.participantId)
@@ -213,42 +226,17 @@ export default {
         });
     },
     renderResponse(response) {
-      this.participants = response.participants;
-      response.transcripts.forEach((t) => {
-        const len = this.transcriptList.length;
-        let modify = false;
-        for (let i = 0; i < len; i++) {
-          if (!this.transcriptList[i].isFinal) {
-            this.transcriptList[i] = t;
-            modify = true;
-          }
-        }
-        if (!modify) {
-          this.transcriptList.push(t);
-        }
-      });
-
-      this.displayResult();
-    },
-    displayResult() {
       this.editorText = "";
-      this.transcriptList.forEach((t) => {
-        if (t.isFinal) {
+      if (response.sentences) {
+        response.sentences.forEach((t) => {
           this.editorText +=
             "<p style='color:green'><b>" +
             t.participantName +
             ":</b> " +
-            t.value +
+            t.text +
             "</p>";
-        } else {
-          this.editorText +=
-            "<p style='color:red'><b>" +
-            t.participantName +
-            ":</b> " +
-            t.value +
-            "</p>";
-        }
-      });
+        });
+      }
     },
     successCallback(stream) {
       const That = this;
@@ -269,7 +257,8 @@ export default {
               this.readyState === XMLHttpRequest.DONE &&
               this.status === 200
             ) {
-              That.renderResponse(JSON.parse(this.responseText));
+              console.log(this.responseText);
+              That.participants = JSON.parse(this.responseText).users;
             }
           };
           request.open(
@@ -279,7 +268,7 @@ export default {
           );
           request.setRequestHeader("Authorization", "Bearer " + That.token);
           request.send(blob);
-        },
+        }
       };
       this.stream = stream;
       this.recordRTC = RecordRTC(stream, options);
@@ -296,7 +285,7 @@ export default {
     },
     startRecording() {
       let mediaConstraints = {
-        audio: true,
+        audio: true
       };
       navigator.mediaDevices
         .getUserMedia(mediaConstraints)
@@ -315,7 +304,7 @@ export default {
       request.onreadystatechange = function () {
         if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
           console.log("Empty:", this.responseText);
-          That.renderResponse(JSON.parse(this.responseText));
+          That.participants = JSON.parse(this.responseText).users;
         }
       };
       request.open(
@@ -325,8 +314,8 @@ export default {
       );
       request.setRequestHeader("Authorization", "Bearer " + this.token);
       request.send(blob);
-    },
-  },
+    }
+  }
 };
 </script>
 
