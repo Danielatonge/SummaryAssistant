@@ -2,6 +2,7 @@ import Vue from "vue";
 import Vuex from "vuex";
 import axios from "axios";
 import VuexPersistence from "vuex-persist";
+
 // https://summarytest.herokuapp.com/swagger-ui.html
 Vue.use(Vuex);
 axios.defaults.baseURL = "https://summarytest.herokuapp.com";
@@ -201,22 +202,34 @@ export default new Vuex.Store({
         context.commit("setSettings", settings);
       });
     },
+    getVoiceNotePDF(context, noteId) {
+      axios.defaults.headers.common["Authorization"] =
+        "Bearer " + context.state.token;
+
+      return axios
+        .get(`/api/note/pdf?id=${noteId}`, {
+          responseType: "blob"
+        })
+        .then((response) => {
+          return response;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
     getTranscription(context, confId) {
       axios.defaults.headers.common["Authorization"] =
         "Bearer " + context.state.token;
-      return new Promise((resolve, reject) => {
-        axios
-          .get(`/api/conference/pdf?id=${confId}`)
-          .then((response) => {
-            const data = response.data;
-            console.log(response.data);
-            resolve(data);
-          })
-          .catch((err) => {
-            console.log(err);
-            reject(err);
-          });
-      });
+      return axios
+        .get(`/api/conference/pdf?id=${confId}`, {
+          responseType: "blob"
+        })
+        .then((response) => {
+          return response;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
     getTranscriptionSpeechPad(context, speechpadId) {
       axios.defaults.headers.common["Authorization"] =

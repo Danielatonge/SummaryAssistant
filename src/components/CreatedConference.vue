@@ -164,7 +164,7 @@
 <script>
 import TinyEditor from "@/components/TinyEditor.vue";
 import { mapState } from "vuex";
-import { jsPDF } from "jspdf";
+import download from "downloadjs";
 // import axios from "axios";
 import RecordRTC, { StereoAudioRecorder } from "recordrtc";
 
@@ -328,12 +328,9 @@ export default {
     getTranscription() {
       this.$store
         .dispatch("getTranscription", this.conferenceInfo.confId)
-        .then((data) => {
-          let doc = jsPDF();
-          doc.text(10, 10, data);
-          doc.save(`Transcription_.pdf`);
-
-          console.log(JSON.stringify(data, null, 2));
+        .then((response) => {
+          const content = response.headers["content-type"];
+          download(response.data, "Transcription Voice Note", content);
         });
     }
   }

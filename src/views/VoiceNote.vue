@@ -189,6 +189,7 @@ import TinyEditor from "@/components/TinyEditor.vue";
 import { mapState } from "vuex";
 import RecordRTC, { StereoAudioRecorder } from "recordrtc";
 import ArchiveNav from "@/components/ArchiveNav.vue";
+import download from "downloadjs";
 
 let pdfMake = require("pdfmake/build/pdfmake.js");
 let pdfFonts = require("pdfmake/build/vfs_fonts.js");
@@ -296,11 +297,12 @@ export default {
       this.deleteDialog = false;
     },
     getTranscription() {
-      // this.$store.dispatch("getVoiceNotePDF", ).then(() => {
-      //   this.items = this.items.filter(
-      //     (item) => item.speechpadId !== deletingId
-      //   );
-      // });
+      this.$store
+        .dispatch("getVoiceNotePDF", this.activeId)
+        .then((response) => {
+          const content = response.headers["content-type"];
+          download(response.data, "Transcription Voice Note", content);
+        });
       // const title = this.note.title;
       // let text = this.note.text;
       // text = text.replace("<br>", "\n");
