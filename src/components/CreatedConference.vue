@@ -188,6 +188,7 @@ export default {
     clearInterval(this.sentenceId);
     clearInterval(this.intervalId);
     this.stopRecording();
+    this.endUnsafely();
   },
   watch: {
     recording(val) {
@@ -221,6 +222,9 @@ export default {
           console.log("SENTENCES: ", response);
           this.renderResponse(response);
         });
+    },
+    endUnsafely() {
+      this.$store.dispatch("endConference", this.conferenceInfo.confId);
     },
     endConference() {
       this.$store

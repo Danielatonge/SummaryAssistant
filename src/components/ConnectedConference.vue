@@ -186,6 +186,7 @@ export default {
     clearInterval(this.sentenceId);
     clearInterval(this.intervalId);
     this.stopRecording();
+    this.endUnsafely();
   },
   computed: {
     ...mapState({ part: "current_participant" }),
@@ -212,6 +213,9 @@ export default {
           console.log("SENTENCES: ", response);
           this.renderResponse(response);
         });
+    },
+    endUnsafely() {
+      this.$store.dispatch("exitConference", this.part.participantId);
     },
     exitConference() {
       this.$store
