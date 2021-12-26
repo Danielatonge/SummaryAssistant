@@ -288,10 +288,12 @@ export default new Vuex.Store({
             console.log(data);
             const part = {
               confId: data.conference.conferenceId,
+              confName: data.conference.conferenceName,
               participantId: data.participantId,
               name: data.name,
               host: false
             };
+
             context.commit("setCurrentParticipant", part);
             context.commit("addParticipant", part);
             resolve(data.conference.conferenceId);

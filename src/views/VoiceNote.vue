@@ -296,25 +296,23 @@ export default {
       this.deleteDialog = false;
     },
     getTranscription() {
-      const title = this.note.title;
-      let text = this.note.text;
-      text = text.replace("<br>", "\n");
-      text = text.replace("<span style='color:green'>", "\n");
-      text = text.replace("</span>", "\n");
-      let content = [`Speech Pad: ${title}`];
-
-      // const len = data.transcribeResult.length;
-      // for (let i = 0; i < len; i++) {
-      //   content.push(data.transcribeResult[i].transcript);
-      // }
-
-      content.push(text);
-
-      console.log(content);
-      const docDefinition = {
-        content: content
-      };
-      pdfMake.createPdf(docDefinition).download(`Транскрипция_${title}.pdf`);
+      // this.$store.dispatch("getVoiceNotePDF", ).then(() => {
+      //   this.items = this.items.filter(
+      //     (item) => item.speechpadId !== deletingId
+      //   );
+      // });
+      // const title = this.note.title;
+      // let text = this.note.text;
+      // text = text.replace("<br>", "\n");
+      // text = text.replace("<span style='color:green'>", "\n");
+      // text = text.replace("</span>", "\n");
+      // let content = [`Speech Pad: ${title}`];
+      // content.push(text);
+      // console.log(content);
+      // const docDefinition = {
+      //   content: content
+      // };
+      // pdfMake.createPdf(docDefinition).download(`Транскрипция_${title}.pdf`);
     },
     renderResponse(response) {
       response.results.forEach((r) => {

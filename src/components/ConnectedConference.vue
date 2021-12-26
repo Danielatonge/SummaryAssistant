@@ -25,7 +25,7 @@
           </div>
         </v-col>
       </v-row>
-
+      {{ part }}
       <v-row class="voice-border">
         <v-col md="4" lg="3" class="pa-0">
           <v-navigation-drawer
@@ -39,7 +39,9 @@
               <v-list-item>
                 <v-list-item-content class="text-center">
                   <v-list-item-title>
-                    <div class="font-weight-bold mb-1">Обсуждение проекта</div>
+                    <div class="font-weight-bold mb-1">
+                      Обсуждение: {{ part.confName }}
+                    </div>
                   </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
@@ -76,7 +78,7 @@
     </v-container>
     <v-container class="py-10 hidden-md-and-up">
       <p class="text-h4 text-color font-weight-bold mb-7 text-left">
-        Конференция № {{ confId }}
+        Конференция: {{ part.confName }}
       </p>
 
       <v-row>
@@ -112,7 +114,7 @@
                 <v-list-item-content class="text-center">
                   <v-list-item-title>
                     <div class="font-weight-bold mb-1"></div>
-                    <div>№ {{ confId }}</div>
+                    <div>{{ part.confName }}</div>
                   </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
@@ -188,21 +190,15 @@ export default {
   },
   computed: {
     ...mapState({ part: "current_participant" }),
-    ...mapState(["token", "conferenceInfo"])
+    ...mapState(["token"])
   },
-  created() {
-    const confId = this.$route.params.id;
-    this.confId = confId;
-    this.confName = this.$store.getters.confName(confId);
-  },
+  created() {},
   data() {
     return {
       sentenceId: null,
       intervalId: null,
       participants: [],
       individual: null,
-      confId: null,
-      confName: null,
       recording: false,
       partInfo: null,
       editorText: "",
@@ -212,7 +208,7 @@ export default {
   methods: {
     receiveSentences() {
       this.$store
-        .dispatch("receiveSentences", this.conferenceInfo.confId)
+        .dispatch("receiveSentences", this.part.confId)
         .then((response) => {
           console.log("SENTENCES: ", response);
           this.renderResponse(response);
@@ -263,7 +259,7 @@ export default {
           };
           request.open(
             "POST",
-            `https://summarytest.herokuapp.com/api/conference/chunk?conferenceId=${That.conferenceInfo.confId}&participantId=${That.part.participantId}`,
+            `https://summarytest.herokuapp.com/api/conference/chunk?conferenceId=${That.part.confId}&participantId=${That.part.participantId}`,
             true
           );
           request.setRequestHeader("Authorization", "Bearer " + That.token);
@@ -309,7 +305,7 @@ export default {
       };
       request.open(
         "GET",
-        `https://summarytest.herokuapp.com/api/conference/activechat?conferenceId=${That.conferenceInfo.confId}&participantId=${That.part.participantId}`,
+        `https://summarytest.herokuapp.com/api/conference/activechat?conferenceId=${That.part.confId}&participantId=${That.part.participantId}`,
         true
       );
       request.setRequestHeader("Authorization", "Bearer " + this.token);
