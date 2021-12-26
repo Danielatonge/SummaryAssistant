@@ -2,19 +2,19 @@
   <div>
     <v-container class="text-center mt-10">
       <v-row>
-        <v-col cols="8">
-          <p
+        <v-col cols="12" class="d-flex justify-center">
+          <div
             class="
               text-h4
               px-8
               font-weight-bold
               mb-4
-              text-color text-left
+              text-color
               hidden-md-and-up
             "
           >
             Конференции
-          </p>
+          </div>
         </v-col>
       </v-row>
       <v-row class="d-flex justify-center">
@@ -55,15 +55,15 @@ export default {
       {
         text: "Подключиться к конференции",
         link: "/conference/connect",
-        blue: true,
+        blue: true
       },
       {
         text: "Получить расшифровку",
         link: "/conference/get-encoding",
-        blue: true,
-      },
-    ],
-  }),
+        blue: true
+      }
+    ]
+  })
 };
 </script>
 

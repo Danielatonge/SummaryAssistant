@@ -26,7 +26,7 @@
           </div>
         </v-col>
       </v-row>
-      {{ participants }}
+
       <v-row class="voice-border">
         <v-col md="4" lg="3" class="pa-0">
           <v-navigation-drawer
@@ -84,7 +84,7 @@
     </v-container>
     <v-container class="py-10 hidden-md-and-up">
       <p class="text-h4 text-color font-weight-bold mb-7 text-left">
-        Конференция № {{ conferenceInfo.confId }}
+        Конференция: {{ conferenceInfo.confName }}
       </p>
       <v-row>
         <v-col cols="12" class="d-flex">
@@ -95,33 +95,40 @@
           >
             {{ recording ? "mdi-stop" : "mdi-microphone-outline" }}
           </v-icon>
-          <audio ref="audio"></audio>
+
           <v-img width="80%" :src="require('../assets/signal.png')"></v-img>
         </v-col>
-        <v-col cols="12">
-          <tiny-editor :editorText="editorText"></tiny-editor>
+        <v-col cols="12" class="voice-border my-8 pa-0">
+          <tiny-editor
+            class="adapt-editor x-small"
+            :editorText="editorText"
+          ></tiny-editor>
         </v-col>
-        <v-col cols="12" class="voice-border">
+        <v-col cols="12" class="voice-border pa-0">
           <v-navigation-drawer
             permanent
             width="100%"
             height="200px"
-            color="transparent"
+            color="rgba(17,125,236,0.05)"
           >
             <template v-slot:prepend>
-              <v-list-item>
-                <v-list-item-content class="text-center">
-                  <v-list-item-title>
-                    <div class="font-weight-bold mb-1">
-                      {{ confName.toUpperCase() }}
-                    </div>
-                    <div>№ {{ conferenceInfo.confId }}</div>
-                  </v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
+              <div>
+                <v-list-item>
+                  <v-list-item-content class="text-center">
+                    <v-list-item-title>
+                      <div class="font-weight-bold mb-1">
+                        {{ conferenceInfo.confName.toUpperCase() }}
+                      </div>
+                      <div>
+                        Код приглашения: {{ conferenceInfo.inviteCode }}
+                      </div>
+                    </v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </div>
             </template>
 
-            <v-divider></v-divider>
+            <v-divider class="voice-divider"></v-divider>
 
             <v-list dense class="ml-n2">
               <v-list-item
@@ -130,18 +137,34 @@
                 link
               >
                 <v-list-item-content>
-                  <v-list-item-title
-                    >{{ item.name }}
-                    <v-icon color="green">mdi-circle-small</v-icon>
-                  </v-list-item-title>
+                  <div class="font-weight-bold px-5">
+                    {{ item.name }}
+                    <v-icon x-large color="green" v-show="item.isActive"
+                      >mdi-circle-small</v-icon
+                    >
+                  </div>
                 </v-list-item-content>
               </v-list-item>
             </v-list>
           </v-navigation-drawer>
         </v-col>
+        <v-col class="d-flex justify-center mt-2">
+          <v-btn
+            width="250px"
+            height="50px"
+            @click="endConference"
+            class="bold-button orange text-wrap"
+            dark
+            :disabled="recording"
+            outlined
+            rounded
+          >
+            Завершить конференцию
+          </v-btn>
+        </v-col>
       </v-row>
-      <v-row class="mt-10 d-flex justify-center">
-        <v-btn
+      <!-- <v-row class="mt-10 d-flex justify-center"> -->
+      <!-- <v-btn
           width="250px"
           height="50px"
           class="bold-button text-wrap mb-3 mr-2 primary-fill"
@@ -151,8 +174,8 @@
           @click="getTranscription"
         >
           Получить расшифровку
-        </v-btn>
-        <v-btn
+        </v-btn> -->
+      <!-- <v-btn
           width="250px"
           height="50px"
           @click="endConference"
@@ -162,8 +185,8 @@
           rounded
         >
           Завершить конференцию
-        </v-btn>
-      </v-row>
+        </v-btn> -->
+      <!-- </v-row> -->
     </v-container>
   </div>
 </template>
@@ -275,6 +298,7 @@ export default {
             ) {
               console.log("CHUNK:", this.responseText);
               That.participants = JSON.parse(this.responseText).users;
+              this.intermediateResponse(JSON.parse(this.responseText).results);
             }
           };
           request.open(

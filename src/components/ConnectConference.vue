@@ -103,17 +103,17 @@ export default {
       conferenceId: "",
       participantName: "",
       rules: {
-        required: (value) => !!value || "нужное поле",
+        required: (value) => !!value || "нужное поле"
       },
       errors: [],
       loading: false,
-      success: "",
+      success: ""
     };
   },
   computed: {
     errorFeedback() {
       return this.conferenceId.length !== 0 && this.participantName.length != 0;
-    },
+    }
   },
   methods: {
     RouteConference() {
@@ -126,7 +126,7 @@ export default {
         this.$store
           .dispatch("joinConference", {
             confId: this.conferenceId,
-            partName: this.participantName,
+            partName: this.participantName
           })
           .then((confId) => {
             this.loading = false;
@@ -135,19 +135,16 @@ export default {
               this.$router.push({ path: `/conference/connected/${confId}` });
             }, 1500);
           })
-          .catch((err) => {
+          .catch(() => {
             this.loading = false;
-            const feedback = err.response
-              ? err.response.data.errorMessage
-              : err.message;
-            this.errors.push(feedback);
+            this.errors.push("Конференция не существует");
           });
       } else {
         this.loading = false;
         this.errors.push("обязательные поля");
       }
-    },
-  },
+    }
+  }
 };
 </script>
 

@@ -10,17 +10,19 @@
         </v-col>
         <v-col cols="12" md="8" lg="6">
           <div class="text-h5 setting-column">
-            <v-row class="justify-center">
-              <v-col cols="12" class="d-flex">
-                <v-icon class="text-color mhide" large @click="RouteConference">
-                  mdi-arrow-left
-                </v-icon>
-                <div class="text-h5 mx-auto text-color">
-                  <span class="ml-n10 font-weight-bold">
-                    Создание конференции
-                  </span>
+            <v-row class="justify-center" style="position: relative">
+              <v-col cols="12" class="d-flex justify-center">
+                <div class="text-h5 d-flex font-weight-bold text-color">
+                  Создание конференции
                 </div>
               </v-col>
+              <v-icon
+                class="text-color mb-n10 mhide arrow-relative"
+                large
+                @click="RouteConference"
+              >
+                mdi-arrow-left
+              </v-icon>
             </v-row>
 
             <v-row class="justify-center mt-12">
@@ -103,17 +105,17 @@ export default {
       conferenceName: "",
       organizerName: "",
       rules: {
-        required: (value) => !!value || "нужное поле",
+        required: (value) => !!value || "нужное поле"
       },
       errors: [],
       loading: false,
-      success: "",
+      success: ""
     };
   },
   computed: {
     errorFeedback() {
       return this.conferenceName.length !== 0 && this.organizerName.length != 0;
-    },
+    }
   },
   methods: {
     createConference() {
@@ -123,7 +125,7 @@ export default {
         this.$store
           .dispatch("createConference", {
             conferenceName: this.conferenceName,
-            organizerName: this.organizerName,
+            organizerName: this.organizerName
           })
           .then(({ confId }) => {
             this.loading = false;
@@ -132,12 +134,10 @@ export default {
               this.$router.push({ path: `/conference/created/${confId}` });
             }, 1500);
           })
-          .catch((err) => {
+          .catch(() => {
             this.loading = false;
-            const feedback = err.response
-              ? err.response.data.errorMessage
-              : err.message;
-            this.errors.push(feedback);
+
+            this.errors.push("Внутренняя Ошибка Сервера");
           });
       } else {
         this.loading = false;
@@ -146,8 +146,8 @@ export default {
     },
     RouteConference() {
       this.$router.push("/conference");
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -169,5 +169,11 @@ export default {
   > .v-input__control
   > .v-input__slot:hover {
   color: rgba(20, 57, 106, 0.8);
+}
+
+.arrow-relative {
+  position: absolute;
+  right: 240px;
+  top: -45px;
 }
 </style>

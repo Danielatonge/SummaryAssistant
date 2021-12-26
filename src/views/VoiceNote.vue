@@ -137,47 +137,74 @@
           </v-icon>
           <v-img width="80%" :src="require('../assets/signal.png')"></v-img>
         </v-col>
-        <v-col cols="12" class="voice-border my-8">
-          <v-sheet height="500px">
+        <v-col cols="12" class="voice-border my-8 pa-0">
+          <v-sheet height="500px" class="adapt-editor">
             <tiny-editor
+              class="adapt-editor x-small"
               :editorText="editorText"
+              :disabled="disableEditor"
               @input="
                 (value) => {
-                  editorText = value;
+                  modifyNote(value);
                 }
               "
             ></tiny-editor>
           </v-sheet>
         </v-col>
-        <v-col cols="12" class="voice-border">
+        <v-col cols="12" class="voice-border pa-0">
           <v-navigation-drawer
             permanent
             width="100%"
             height="200px"
-            color="transparent"
+            color="rgba(17,125,236,0.05)"
+            :class="{ disableNavDrawer: recording }"
           >
             <template v-slot:prepend>
-              <v-list-item>
-                <v-list-item-content class="text-center">
-                  <v-list-item-title>Архив записей</v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
+              <div>
+                <div class="text-center" style="position: relative">
+                  <div class="text-h6 mb-2 pt-2">Мои записи</div>
+                  <v-btn
+                    right
+                    class="pa-6 do-relative"
+                    text
+                    icon
+                    color="#14396A"
+                  >
+                    <v-icon large @click="addNote"> mdi-plus</v-icon>
+                  </v-btn>
+                </div>
+              </div>
             </template>
 
-            <v-divider></v-divider>
+            <v-divider class="voice-divider"></v-divider>
 
-            <v-list dense>
-              <v-list-item v-for="item in items" :key="item.noteId" link>
-                <v-list-item-icon>
-                  <v-icon>mdi-folder</v-icon>
-                </v-list-item-icon>
-
-                <v-list-item-content>
-                  <v-list-item-title>{{ item.title }}</v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
+            <v-list dense light>
+              <div v-for="item in items" :key="item.noteId">
+                <ArchiveNav
+                  :item="item"
+                  :activeId="activeId"
+                  @updateNote="updateNote"
+                  @openDeleteDialog="openDeleteDialog"
+                  @setActiveNav="setActiveNav"
+                />
+              </div>
             </v-list>
           </v-navigation-drawer>
+        </v-col>
+        <v-col class="d-flex justify-center mt-2">
+          <div>
+            <v-btn
+              class="px-4 primary-fill font-weight-bold"
+              :disabled="recording || !activeId"
+              dark
+              large
+              outlined
+              rounded
+              @click="getTranscription"
+            >
+              Получить расшифровку
+            </v-btn>
+          </div>
         </v-col>
       </v-row>
     </v-container>
@@ -523,7 +550,9 @@ export default {
 .tox.tox-tinymce {
   border-radius: 0 15px 15px 0 !important;
 }
-
+.x-small .tox.tox-tinymce {
+  border-radius: 15px !important;
+}
 .do-relative {
   position: absolute;
   right: 0;

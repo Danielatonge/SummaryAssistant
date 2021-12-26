@@ -98,33 +98,37 @@
         </v-col>
       </v-row>
       <v-row class="my-8">
-        <v-col cols="12" class="voice-border">
-          <v-sheet height="500px">
-            <tiny-editor :editorText="editorText"></tiny-editor>
+        <v-col cols="12" class="voice-border pa-0">
+          <v-sheet height="500px" class="adapt-editor">
+            <tiny-editor
+              class="adapt-editor x-small"
+              :editorText="editorText"
+            ></tiny-editor>
           </v-sheet>
         </v-col>
       </v-row>
       <v-row class="mb-6">
-        <v-col cols="12" class="voice-border">
+        <v-col cols="12" class="voice-border pa-0">
           <v-navigation-drawer
             permanent
             height="200px"
             width="100%"
             v-model="individual"
-            color="transparent"
+            color="rgba(17,125,236,0.05)"
           >
             <template v-slot:prepend>
               <v-list-item>
                 <v-list-item-content class="text-center">
                   <v-list-item-title>
-                    <div class="font-weight-bold mb-1"></div>
-                    <div>{{ part.confName }}</div>
+                    <div class="font-weight-bold mb-1">
+                      Обсуждение: {{ part.confName }}
+                    </div>
                   </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
             </template>
 
-            <v-divider></v-divider>
+            <v-divider class="voice-divider"></v-divider>
 
             <v-list dense class="ml-n2">
               <v-list-item
@@ -132,12 +136,13 @@
                 :key="index"
                 link
               >
-                <v-list-item-icon class="mr-2" v-show="item.host">
-                  <v-icon>mdi-account</v-icon>
-                </v-list-item-icon>
-
                 <v-list-item-content>
-                  <v-list-item-title>{{ item.name }}</v-list-item-title>
+                  <div class="font-weight-bold px-5">
+                    {{ item.name }}
+                    <v-icon x-large color="green" v-show="item.isActive"
+                      >mdi-circle-small</v-icon
+                    >
+                  </div>
                 </v-list-item-content>
               </v-list-item>
             </v-list>
@@ -152,6 +157,7 @@
           outlined
           rounded
           @click="exitConference"
+          :disabled="recording"
         >
           Выйти
         </v-btn>
