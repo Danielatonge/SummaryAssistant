@@ -25,7 +25,6 @@
           </div>
         </v-col>
       </v-row>
-      {{ part }}
       <v-row class="voice-border">
         <v-col md="4" lg="3" class="pa-0">
           <v-navigation-drawer
