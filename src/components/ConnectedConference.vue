@@ -30,8 +30,12 @@
           <v-card-title class="justify-center text-center">
             <span class="text-h6 font-weight-bold">
               Конференция завершена.<br />
+            </span>
+            <span class="subtitle-1 font-weight-bold">
               Хотите добавить ее в архив, чтобы в позднее получить расшифровку?
-              (Конференция хранится не более 5 дней)</span
+              <span class="body-1"
+                >(Конференция хранится не более 5 дней)</span
+              ></span
             >
           </v-card-title>
           <v-card-actions class="px-9 pb-7 justify-center">
