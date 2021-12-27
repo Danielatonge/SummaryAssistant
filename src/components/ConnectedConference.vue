@@ -265,6 +265,7 @@ export default {
           .then(() => {
             this.$router.push("/conference");
           });
+        this.$router.push("/conference");
       });
     },
     receiveSentences() {
