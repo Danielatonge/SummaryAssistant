@@ -28,7 +28,7 @@
                 <v-text-field
                   :rules="[rules.required]"
                   v-model="confId"
-                  label="Номер конференции"
+                  label="Код приглашения"
                   outlined
                   class="rounded-lg"
                   background-color="rgba(196, 196, 196, 0.2)"
@@ -104,7 +104,7 @@
                 v-for="(item, index) in conferences"
                 :key="index"
                 link
-                @click="getTranscription(item)"
+                @click="getConferenceTranscription(item.inviteCode)"
               >
                 <v-list-item-content
                   class="d-flex justify-between align-center"
@@ -116,7 +116,6 @@
                     Код приглашения:
                     {{ item.inviteCode }}
                   </div>
-                  
                 </v-list-item-content>
               </v-list-item>
             </v-list>
@@ -158,6 +157,16 @@ export default {
     }
   },
   methods: {
+    getConferenceTranscription(inviteCode) {
+      this.$store.dispatch("getTranscription", inviteCode).then((response) => {
+        const content = response.headers["content-type"];
+        download(
+          response.data,
+          `Conference Transcription ${inviteCode}`,
+          content
+        );
+      });
+    },
     RouteConference() {
       this.$router.push("/conference");
     },
