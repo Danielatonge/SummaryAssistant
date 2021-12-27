@@ -328,10 +328,7 @@ export default {
               That.participants = JSON.parse(this.responseText).users;
               That.intermediateResponse(JSON.parse(this.responseText).results);
             }
-            if (
-              JSON.parse(this.responseText).users.length === 0 &&
-              this.status !== 200
-            ) {
+            if (JSON.parse(this.responseText).users.length === 0) {
               That.exitDialog = true;
             }
           };
@@ -392,10 +389,7 @@ export default {
           console.log("Empty:", this.responseText);
           That.participants = JSON.parse(this.responseText).users;
         }
-        if (
-          JSON.parse(this.responseText).users.length === 0 &&
-          this.status !== 200
-        ) {
+        if (JSON.parse(this.responseText).users.length === 0) {
           That.exitDialog = true;
         }
       };
