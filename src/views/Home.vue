@@ -20,8 +20,8 @@
             <v-img contain :src="require('../assets/record.png')"></v-img>
           </v-avatar>
           <div class="main-text mb-md-10 text-left px-6 px-md-0">
-            Summary позволяет расшифровать конференции в реальном врменени,
-            аудио и видео файлы, приложив к этому минимум усилий.
+            Summary позволяет расшифровать конференции в реальном времени, аудио
+            и видео файлы, приложив к этому минимум усилий.
           </div>
 
           <div class="mt-10">
@@ -137,7 +137,7 @@ export default {
   mounted() {},
   components: {
     [Glide.name]: Glide,
-    [GlideSlide.name]: GlideSlide,
+    [GlideSlide.name]: GlideSlide
   },
   data: () => ({
     active: 4,
@@ -147,24 +147,24 @@ export default {
         title: "Расшифровка",
         text: "Загружайте аудио и видео форматы файлов для получения расшифровки.",
         button_text: "Загрузить файл",
-        button_link: "/decode",
+        button_link: "/decode"
       },
       {
         picture: "/microphone",
         title: "Конференция",
         text: "Создайте свою комнату, подключите собеседников и выгрузите текстовый файл с расшифровкой сразу после завершения конференции.",
         button_text: "Начать конференцию",
-        button_link: "/conference",
+        button_link: "/conference"
       },
       {
         picture: "/note",
         title: "Голосовой блокнот",
         text: "Создавайте заметки с помощью нашего голосового блокнота и обращайтесь к ним в любое удобное для вас время.",
         button_text: "Записать голос",
-        button_link: "/voice_note",
-      },
-    ],
-  }),
+        button_link: "/voice_note"
+      }
+    ]
+  })
 };
 </script>
 
