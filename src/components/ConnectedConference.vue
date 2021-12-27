@@ -50,7 +50,7 @@
                 elevation="0"
                 class="rounded-lg mr-3 text-h6"
                 color="#C8CFD9"
-                @click="exitConference"
+                @click="$router.push('/conference')"
               >
                 Да
               </v-btn>
