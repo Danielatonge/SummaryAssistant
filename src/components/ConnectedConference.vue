@@ -28,9 +28,13 @@
       <v-dialog v-model="exitDialog" persistent max-width="450px">
         <v-card color="#F5F5F5">
           <v-card-title class="justify-center text-center">
-            <span class="text-h6 font-weight-bold">
+            <span v-if="participants.length" class="text-h6 font-weight-bold">
+              Вы вышли из чата.<br />
+            </span>
+            <span v-else class="text-h6 font-weight-bold">
               Конференция завершена.<br />
             </span>
+
             <span class="subtitle-1 font-weight-bold">
               Хотите добавить ее в архив, чтобы в позднее получить расшифровку?
               <span class="body-1"
@@ -338,6 +342,7 @@ export default {
               JSON.parse(this.responseText).users.length === 0 ||
               this.status === 403
             ) {
+              That.participants = JSON.parse(this.responseText).users;
               That.exitDialog = true;
             }
           };
@@ -402,6 +407,7 @@ export default {
           JSON.parse(this.responseText).users.length === 0 ||
           this.status === 403
         ) {
+          That.participants = JSON.parse(this.responseText).users;
           That.exitDialog = true;
         }
       };
