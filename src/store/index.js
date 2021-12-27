@@ -139,6 +139,17 @@ export default new Vuex.Store({
           console.error(err);
         });
     },
+    getConferences({ state }) {
+      axios.defaults.headers.common["Authorization"] = "Bearer " + state.token;
+      return axios
+        .get(`/api/conference`)
+        .then((response) => {
+          return response.data;
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    },
     modifySettings(context, param) {
       const key = param.key;
       const option = param.description;

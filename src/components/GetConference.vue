@@ -78,6 +78,51 @@
           </div>
         </v-col>
       </v-row>
+      <v-row class="mt-16 d-flex justify-center">
+        <v-col cols="7" class="voice-border pa-0">
+          <v-navigation-drawer
+            permanent
+            height="200px"
+            width="100%"
+            v-model="individual"
+            color="rgba(17,125,236,0.05)"
+          >
+            <template v-slot:prepend>
+              <v-list-item>
+                <v-list-item-content class="text-center">
+                  <v-list-item-title>
+                    <div class="font-weight-bold mb-1">Конференции</div>
+                  </v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </template>
+
+            <v-divider class="voice-divider"></v-divider>
+
+            <v-list dense class="ml-n2">
+              <v-list-item
+                v-for="(item, index) in conferences"
+                :key="index"
+                link
+                @click="getTranscription(item)"
+              >
+                <v-list-item-content
+                  class="d-flex justify-between align-center"
+                >
+                  <div class="font-weight-bold px-5 d-flex">
+                    Название: {{ item.conferenceName }}
+                  </div>
+                  <div class="font-weight-bold px-5 d-flex">
+                    Код приглашения:
+                    {{ item.inviteCode }}
+                  </div>
+                  
+                </v-list-item-content>
+              </v-list-item>
+            </v-list>
+          </v-navigation-drawer>
+        </v-col>
+      </v-row>
     </v-container>
   </div>
 </template>
@@ -97,8 +142,15 @@ export default {
       },
       errors: [],
       loading: false,
-      success: ""
+      success: "",
+      individual: null,
+      conferences: []
     };
+  },
+  mounted() {
+    this.$store.dispatch("getConferences").then((response) => {
+      this.conferences = response ? response.conferences : [];
+    });
   },
   computed: {
     errorFeedback() {

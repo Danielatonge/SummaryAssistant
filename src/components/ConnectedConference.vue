@@ -257,7 +257,7 @@ export default {
       Object.entries(this.intermediate).forEach(([key, value]) => {
         if (value === this.intermediate[key]) {
           this.editorText +=
-            "<p style='color:red'><b>" + key + ":</b> " + value + "</p>";
+            "<p style='color:#808080'><b>" + key + ":</b> " + value + "</p>";
         }
       });
     },
@@ -267,7 +267,7 @@ export default {
         type: "audio",
         mimeType: "audio/wav",
         recorderType: StereoAudioRecorder,
-        timeSlice: 1700,
+        timeSlice: 2500,
         desiredSampRate: 16000,
         bufferSize: 8192,
         numberOfAudioChannels: 1,
@@ -284,6 +284,12 @@ export default {
               That.participants = JSON.parse(this.responseText).users;
               That.intermediateResponse(JSON.parse(this.responseText).results);
             }
+            // if (
+            //   this.readyState === XMLHttpRequest.DONE &&
+            //   this.status === 403
+            // ) {
+            //   console.log(this.status)
+            // }
           };
           request.open(
             "POST",
@@ -309,7 +315,19 @@ export default {
     },
     startRecording() {
       let mediaConstraints = {
-        audio: true
+        audio: {
+          mandatory: {
+            echoCancellation: false,
+            googAutoGainControl: false,
+            googNoiseSuppression: false,
+            googHighpassFilter: false
+          },
+          optional: [
+            {
+              googAudioMirroring: false
+            }
+          ]
+        }
       };
       navigator.mediaDevices
         .getUserMedia(mediaConstraints)
