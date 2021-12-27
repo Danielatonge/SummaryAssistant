@@ -15,7 +15,7 @@
             <v-btn
               class="px-10 primary-fill font-weight-bold"
               :disabled="recording"
-              @click="deleteConference"
+              @click="exitDialog = true"
               dark
               outlined
               rounded
@@ -46,7 +46,7 @@
                 elevation="0"
                 class="rounded-lg mr-3 text-h6"
                 color="#C8CFD9"
-                @click="$router.push('/conference')"
+                @click="exitConference"
               >
                 Да
               </v-btn>
@@ -195,7 +195,7 @@
           dark
           outlined
           rounded
-          @click="deleteConference"
+          @click="exitDialog = true"
           :disabled="recording"
         >
           Выйти
