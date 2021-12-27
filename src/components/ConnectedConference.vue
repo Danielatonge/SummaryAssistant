@@ -15,7 +15,7 @@
             <v-btn
               class="px-10 primary-fill font-weight-bold"
               :disabled="recording"
-              @click="exitConference"
+              @click="deleteConference"
               dark
               outlined
               rounded
@@ -195,7 +195,7 @@
           dark
           outlined
           rounded
-          @click="exitConference"
+          @click="deleteConference"
           :disabled="recording"
         >
           Выйти
@@ -259,12 +259,13 @@ export default {
   },
   methods: {
     deleteConference() {
-      this.$store
-        .dispatch("detachConference", this.part.confId)
-        .then((response) => {
-          console.log("Detached: ", response);
-          this.$router.push("/conference");
-        });
+      this.$store.dispatch("detachConference", this.part.confId).then(() => {
+        this.$store
+          .dispatch("exitConference", this.part.participantId)
+          .then(() => {
+            this.$router.push("/conference");
+          });
+      });
     },
     receiveSentences() {
       this.$store
@@ -278,7 +279,7 @@ export default {
       this.$store.dispatch("exitConference", this.part.participantId);
     },
     exitConference() {
-      this.$store
+      return this.$store
         .dispatch("exitConference", this.part.participantId)
         .then(() => {
           this.$router.push({ path: "/conference" });
@@ -332,7 +333,10 @@ export default {
               That.participants = JSON.parse(this.responseText).users;
               That.intermediateResponse(JSON.parse(this.responseText).results);
             }
-            if (JSON.parse(this.responseText).users.length === 0) {
+            if (
+              JSON.parse(this.responseText).users.length === 0 ||
+              this.status === 403
+            ) {
               That.exitDialog = true;
             }
           };
@@ -393,7 +397,10 @@ export default {
           console.log("Empty:", this.responseText);
           That.participants = JSON.parse(this.responseText).users;
         }
-        if (JSON.parse(this.responseText).users.length === 0) {
+        if (
+          JSON.parse(this.responseText).users.length === 0 ||
+          this.status === 403
+        ) {
           That.exitDialog = true;
         }
       };
