@@ -31,7 +31,7 @@
               <v-col cols="10" sm="8" md="6">
                 <v-text-field
                   v-model="username"
-                  label="ФИО"
+                  label="Имя пользователя"
                   outlined
                   autocomplete="new-password"
                   background-color="grey lighten-2"
