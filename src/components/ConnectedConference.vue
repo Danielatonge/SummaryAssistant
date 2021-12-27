@@ -25,6 +25,41 @@
           </div>
         </v-col>
       </v-row>
+      <v-dialog v-model="exitDialog" persistent max-width="450px">
+        <v-card color="#F5F5F5">
+          <v-card-title class="justify-center text-center">
+            <span class="text-h6 font-weight-bold">
+              Конференция завершена.<br />
+              Хотите добавить ее в архив, чтобы в позднее получить расшифровку?
+              (Конференция хранится не более 5 дней)</span
+            >
+          </v-card-title>
+          <v-card-actions class="px-9 pb-7 justify-center">
+            <div>
+              <v-btn
+                width="140px"
+                height="45px"
+                elevation="0"
+                class="rounded-lg mr-3 text-h6"
+                color="#C8CFD9"
+                @click="$router.push('/conference')"
+              >
+                Да
+              </v-btn>
+              <v-btn
+                width="140px"
+                height="45px"
+                elevation="0"
+                class="rounded-lg ml-3 text-h6"
+                color="#BDD0FB"
+                @click="deleteConference"
+              >
+                Нет
+              </v-btn>
+            </div>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
       <v-row class="voice-border">
         <v-col md="4" lg="3" class="pa-0">
           <v-navigation-drawer
@@ -214,10 +249,19 @@ export default {
       partInfo: null,
       editorText: "",
       blobs: [],
-      intermediate: {}
+      intermediate: {},
+      exitDialog: false
     };
   },
   methods: {
+    deleteConference() {
+      this.$store
+        .dispatch("detachConference", this.part.confId)
+        .then((response) => {
+          console.log("Detached: ", response);
+          this.$router.push("/conference");
+        });
+    },
     receiveSentences() {
       this.$store
         .dispatch("receiveSentences", this.part.confId)
@@ -284,12 +328,12 @@ export default {
               That.participants = JSON.parse(this.responseText).users;
               That.intermediateResponse(JSON.parse(this.responseText).results);
             }
-            // if (
-            //   this.readyState === XMLHttpRequest.DONE &&
-            //   this.status === 403
-            // ) {
-            //   console.log(this.status)
-            // }
+            if (
+              JSON.parse(this.responseText).users.length === 0 &&
+              this.status !== 200
+            ) {
+              That.exitDialog = true;
+            }
           };
           request.open(
             "POST",

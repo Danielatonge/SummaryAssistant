@@ -128,6 +128,17 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    detachConference({ state }, confId) {
+      axios.defaults.headers.common["Authorization"] = "Bearer " + state.token;
+      return axios
+        .get(`/api/conference/detach?conferenceId=${confId}`)
+        .then((response) => {
+          return response.data;
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    },
     receiveSentences({ state }, confId) {
       axios.defaults.headers.common["Authorization"] = "Bearer " + state.token;
       return axios
