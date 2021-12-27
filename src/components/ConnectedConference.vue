@@ -36,11 +36,9 @@
             </span>
 
             <span class="subtitle-1 font-weight-bold">
-              Хотите добавить ее в архив, чтобы в позднее получить расшифровку?
-              <span class="body-1"
-                >(Конференция хранится не более 5 дней)</span
-              ></span
-            >
+              Хотите добавить ее в архив, чтобы в позднее получить расшифровку? </span
+            ><br />
+            <span class="body-1">(Конференция хранится не более 5 дней)</span>
           </v-card-title>
           <v-card-actions class="px-9 pb-7 justify-center">
             <div>
