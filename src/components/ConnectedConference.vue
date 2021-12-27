@@ -392,6 +392,12 @@ export default {
           console.log("Empty:", this.responseText);
           That.participants = JSON.parse(this.responseText).users;
         }
+        if (
+          JSON.parse(this.responseText).users.length === 0 &&
+          this.status !== 200
+        ) {
+          That.exitDialog = true;
+        }
       };
       request.open(
         "GET",
